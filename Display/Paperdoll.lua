@@ -13,17 +13,16 @@ addon:RegisterModule("Paperdoll", M)
 
 local C = addon.Constants
 local FONT = "Fonts\\FRIZQT__.TTF"
-local LABEL_SIZE = 10
-local VALUE_SIZE = 10
+local LABEL_SIZE = 11
+local VALUE_SIZE = 15
 
 -- Positioning: anchored to CharacterModelFrame bottom area
--- TacoTip uses BOTTOMLEFT of PaperDollFrame at y=248/260, but this
--- places text in the middle of the frame. Instead, anchor to the model
--- frame's bottom edge where TacoTip actually renders.
-local GS_LABEL_X, GS_LABEL_Y = 10, 50
-local GS_VALUE_X, GS_VALUE_Y = 10, 36
-local ILVL_LABEL_X, ILVL_LABEL_Y = 140, 50
-local ILVL_VALUE_X, ILVL_VALUE_Y = 140, 36
+-- Label sits above value. GS on left, iLvl on right.
+-- GS anchored BOTTOMLEFT, iLvl anchored BOTTOMRIGHT
+local GS_LABEL_X, GS_LABEL_Y = 12, 40
+local GS_VALUE_X, GS_VALUE_Y = 12, 24
+local ILVL_LABEL_X, ILVL_LABEL_Y = -12, 40
+local ILVL_VALUE_X, ILVL_VALUE_Y = -12, 24
 
 ---------------------------------------------------------------------------
 -- Lifecycle
@@ -84,18 +83,20 @@ function M:EnsureDisplay()
     self.gsValue:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", GS_VALUE_X, GS_VALUE_Y)
     self.gsValue:SetText("0")
 
-    -- iLvl label
+    -- iLvl label (anchored bottom-right)
     self.ilvlLabel = anchor:CreateFontString(nil, "OVERLAY")
     self.ilvlLabel:SetFont(FONT, LABEL_SIZE)
-    self.ilvlLabel:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", ILVL_LABEL_X, ILVL_LABEL_Y)
+    self.ilvlLabel:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", ILVL_LABEL_X, ILVL_LABEL_Y)
     self.ilvlLabel:SetText("iLvl")
     self.ilvlLabel:SetTextColor(0.53, 0.53, 0.53, 1)
+    self.ilvlLabel:SetJustifyH("RIGHT")
 
-    -- iLvl value
+    -- iLvl value (anchored bottom-right)
     self.ilvlValue = anchor:CreateFontString(nil, "OVERLAY")
     self.ilvlValue:SetFont(FONT, VALUE_SIZE)
-    self.ilvlValue:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", ILVL_VALUE_X, ILVL_VALUE_Y)
+    self.ilvlValue:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", ILVL_VALUE_X, ILVL_VALUE_Y)
     self.ilvlValue:SetText("0")
+    self.ilvlValue:SetJustifyH("RIGHT")
 end
 
 ---------------------------------------------------------------------------
