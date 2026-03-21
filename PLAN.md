@@ -217,44 +217,87 @@ Mirrors VeevHUD: `.pkgmeta` + `.github/workflows/release.yml` using `BigWigsMods
 
 ## Open Questions
 
-1. **Gossip protocol details**: Deferred to phase 4. Needs careful design around bandwidth, staleness, and trust.
-2. **Stat weight sourcing**: Need to compile actual per-spec weight tables from sim data. Large research task.
+1. **Gossip protocol details**: Deferred to Sprint 5. Needs careful design around bandwidth, staleness, and trust.
+2. **Stat weight validation**: Cross-reference our weights against Pawn's `ScaleTemplates.lua` for correctness. Pawn has battle-tested per-spec weights.
 
 ---
 
-## Implementation Phases
+## Implementation Sprints
 
-### Phase 1 — Core Scoring + Self Display
-- Stat weight tables (PvE, all specs)
-- Item scoring engine (base stats + gems + enchants)
-- Proc database (raid trinkets/weapons)
-- Enchant + gem databases
-- Cap-aware weight adjustments
-- Character panel display
-- `/tgs` slash command
+### Phase 1 — Core Scoring + Self Display ✅ DONE
 
-### Phase 2 — Tooltips + Inspect
-- Unit tooltip hook (mouseover players)
-- Inspect frame display
-- `INSPECT_READY` full item link capture
-- Score cache with TTL
-- Item tooltip (optional)
+Committed and pushed. Working:
+- Scoring engine (two-pass, cap-aware, calibrated)
+- Static databases: 282 enchants, 151 gems, 12 proc items
+- Self-scanner with gear change detection
+- Paperdoll display, `/tgs` slash command
+- WCLogs-inspired color brackets (Blue=heroic blues naked, Epic=Kara epics naked)
+- Structured logging, spec detection for all 27 specs
+- Reference gear sets for calibration (Priest Healer, Pre-Raid through Sunwell)
 
-### Phase 3 — Communication + Group Surfaces
-- AceComm broadcast (own score to guild/party/raid)
-- LFG channel auto-append
-- LFGBulletinBoard tooltip integration
-- Raid frame integration
-- `/tgs report` chat command
+### Sprint 2 — Inspect + Unit Tooltip
 
-### Phase 4 — PvP + Gossip
-- PvP stat weights
-- PvE/PvP auto-detection or toggle
-- Gossip protocol for third-party score sharing
-- Anti-fake validation + block list
+Highest user impact — see other players' scores.
 
-### Phase 5 — Polish
-- Set bonus valuation
-- Phase-aware score caps
-- Options panel (item tooltip toggle, display preferences)
-- Community-contributed proc database expansion
+| Item | Files | Deps | Size |
+|---|---|---|---|
+| **ScoreCache** | `Scoring/ScoreCache.lua` (new) | None | S |
+| **InspectHandler** | `Inspect/InspectHandler.lua` (new) | ScoreCache | M |
+| **UnitTooltip** | `Display/UnitTooltip.lua` (new) | ScoreCache, InspectHandler | M |
+| **InspectFrame** | `Display/InspectFrame.lua` (new) | InspectHandler | S |
+| **Cleanup** | Remove debug auto-run code from `Core/Core.lua` | All above | S |
+
+Key: InspectHandler hooks `INSPECT_READY` directly (NOT LibClassicInspector's cache) to get full item links with gems/enchants. Inspect queue with 1s throttle. Spec detection for inspected players via `GetTalentTabInfo(tab, true, true)`.
+
+### Sprint 3 — Communication + Group Surfaces
+
+Social visibility — scores where groups form.
+
+| Item | Files | Deps | Size |
+|---|---|---|---|
+| **AceComm setup** | `Libs/embeds.xml`, `.pkgmeta`, `Tools/fetch-libs.sh` | None | S |
+| **AddonChannel** | `Communication/AddonChannel.lua` (new) | ScoreCache | M |
+| **LFG UI integration** | `Display/LFGIntegration.lua` (new) | ScoreCache | M |
+| **`/tgs report`** | `Core/SlashCommands.lua` | SelfScanner | S |
+
+LFG integration: show known scores next to player names in LFG UI elements (Blizzard LFG tool, LFGBulletinBoard if loaded). NOT auto-appending to chat messages. Soft dependency on LFGBB — hooks only if loaded.
+
+AddonChannel: AceComm prefix "TGS", broadcast own score on login/group join/gear change. Anti-fake: reject scores above MAX_PLAUSIBLE_SCORE.
+
+### Sprint 4 — Item Tooltip + Data Quality
+
+| Item | Files | Deps | Size |
+|---|---|---|---|
+| **ItemTooltip** | `Display/ItemTooltip.lua` (new) | SelfScanner | S |
+| **Socket bonus scoring** | `Scoring/ItemScoring.lua` | GemDatabase (needs color field) | M |
+| **Data validation script** | `Tools/validate_data.py` (new) | None | S |
+| **Pre-commit hook** | `.githooks/pre-commit` (new) | validate_data | S |
+| **Stat weight validation** | Cross-ref against Pawn `ScaleTemplates.lua` | None | M |
+
+### Sprint 5 — Set Bonuses + PvP + Options
+
+| Item | Files | Deps | Size |
+|---|---|---|---|
+| **SetBonusDatabase** | `Data/SetBonusDatabase.lua` (new), `Scoring/ItemScoring.lua` | None | M |
+| **PvP stat weights** | `Scoring/StatWeights.lua` | None | L |
+| **PvE/PvP auto-detect** | `Core/Core.lua`, `Inspect/SelfScanner.lua` | PvP weights | S |
+| **Options panel** | `UI/Options.lua` (new) | All display modules | M |
+
+Set bonus detection uses `GetItemInfo()[16]` for setID (confirmed working). SetBonusDatabase maps `{setID, pieceCount}` to equivalent stat budgets per spec.
+
+### Sprint 6 — Gossip + Polish
+
+| Item | Files | Deps | Size |
+|---|---|---|---|
+| **GossipProtocol** | `Communication/GossipProtocol.lua` (new) | AddonChannel, ScoreCache | L |
+| **Anti-fake hardening** | `Communication/AddonChannel.lua` | GossipProtocol | M |
+| **More reference sets** | `Data/ReferenceSets.lua` | None | M |
+| **Proc DB expansion** (12 → 80) | `Data/ProcDatabase.lua` | None | L |
+| **RaidFrame inline scores** (optional) | `Display/RaidFrame.lua` (new) | ScoreCache | M |
+
+### Pre-Release Cleanup (before any public release)
+
+- Remove `RunAPIDiscovery()` from `Core/Core.lua`
+- Remove auto-print/auto-calibrate `C_Timer.After` blocks from `Core/Core.lua`
+- Remove `RunCalibration()` auto-run (keep as `/tgs calibrate` command)
+- Verify all debug logging is gated behind `debugMode`
