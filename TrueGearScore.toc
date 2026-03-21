@@ -29,10 +29,14 @@ Data\ReferenceSets.lua
 Scoring\StatWeights.lua
 Scoring\CapEngine.lua
 Scoring\ItemScoring.lua
+Scoring\ScoreCache.lua
 
 # Inspect
 Inspect\SelfScanner.lua
+Inspect\InspectHandler.lua
 
 # Display
 Display\ScoreColors.lua
 Display\Paperdoll.lua
+Display\UnitTooltip.lua
+Display\InspectFrame.lua

@@ -2,7 +2,8 @@
 -- TrueGearScore Reference Gear Sets
 -- Used for calibration: score hypothetical BIS sets to tune color brackets.
 -- Each set is a table of { [slotID] = itemID }.
--- Sourced from Wowhead TBC Classic BIS guides (Priest Healer).
+-- Sourced from Wowhead TBC Classic BIS guides (Priest Healer, Warlock Destro,
+-- Mage Fire, Paladin Holy/Ret, Shaman Resto/Enh/Ele, Druid Resto/Feral/Balance).
 --
 -- Slot IDs: 1=Head, 2=Neck, 3=Shoulder, 5=Chest, 6=Waist, 7=Legs,
 -- 8=Feet, 9=Wrist, 10=Hands, 11=Finger1, 12=Finger2, 13=Trinket1,
@@ -185,6 +186,254 @@ addon.ReferenceSets = {
             [16] = 34335,  -- Hammer of Sanctification
             [17] = 34206,  -- Book of Highborne Hymns
             [18] = 34348,  -- Wand of Cleansing Light
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Warlock (Destruction) — Wowhead TBC Classic BIS guides
+    ---------------------------------------------------------------------------
+
+    WARLOCK_DESTRO_PRERAID = {
+        name = "Warlock Destro Pre-Raid BIS",
+        spec = "WARLOCK_DESTRO",
+        items = {
+            [1]  = 24266,  -- Spellstrike Hood
+            [2]  = 28134,  -- Brooch of Heightened Potential
+            [3]  = 21869,  -- Frozen Shadoweave Shoulders
+            [5]  = 21871,  -- Frozen Shadoweave Robe
+            [6]  = 21846,  -- Spellfire Belt
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 21870,  -- Frozen Shadoweave Boots
+            [9]  = 21186,  -- Rockfury Bracers
+            [10] = 21847,  -- Spellfire Gloves
+            [11] = 29172,  -- Ashyen's Gift
+            [12] = 28227,  -- Sparking Arcanite Ring
+            [13] = 29370,  -- Icon of the Silver Crescent
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 23050,  -- Cloak of the Necropolis
+            [16] = 31336,  -- Blade of Wizardry
+            [17] = 29270,  -- Flametongue Seal
+            [18] = 22128,  -- Master Firestone
+        },
+    },
+
+    WARLOCK_DESTRO_P1 = {
+        name = "Warlock Destro Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "WARLOCK_DESTRO",
+        items = {
+            [1]  = 28963,  -- Voidheart Crown
+            [2]  = 28530,  -- Brooch of Unquenchable Fury
+            [3]  = 28967,  -- Voidheart Mantle
+            [5]  = 28964,  -- Voidheart Robe
+            [6]  = 21846,  -- Spellfire Belt
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 21870,  -- Frozen Shadoweave Boots
+            [9]  = 24250,  -- Bracers of Havok
+            [10] = 21847,  -- Spellfire Gloves
+            [11] = 28793,  -- Band of Crimson Fury
+            [12] = 29172,  -- Ashyen's Gift
+            [13] = 27683,  -- Quagmirran's Eye
+            [14] = 29370,  -- Icon of the Silver Crescent
+            [15] = 28766,  -- Ruby Drape of the Mysticant
+            [16] = 28770,  -- Nathrezim Mindblade
+            [17] = 29270,  -- Flametongue Seal
+            [18] = 28673,  -- Tirisfal Wand of Ascendancy
+        },
+    },
+
+    WARLOCK_DESTRO_P2 = {
+        name = "Warlock Destro Phase 2 BIS (SSC/TK)",
+        spec = "WARLOCK_DESTRO",
+        items = {
+            [1]  = 32494,  -- Destruction Holo-gogs
+            [2]  = 24116,  -- Eye of the Night
+            [3]  = 28967,  -- Voidheart Mantle
+            [5]  = 30107,  -- Vestments of the Sea-Witch
+            [6]  = 30038,  -- Belt of Blasting
+            [7]  = 30213,  -- Leggings of the Corruptor
+            [8]  = 30037,  -- Boots of Blasting
+            [9]  = 29918,  -- Mindstorm Wristbands
+            [10] = 28968,  -- Voidheart Gloves
+            [11] = 30109,  -- Ring of Endless Coils
+            [12] = 29302,  -- Band of Eternity
+            [13] = 27683,  -- Quagmirran's Eye
+            [14] = 29370,  -- Icon of the Silver Crescent
+            [15] = 28766,  -- Ruby Drape of the Mysticant
+            [16] = 32053,  -- Merciless Gladiator's Spellblade
+            [17] = 30049,  -- Fathomstone
+            [18] = 29982,  -- Wand of the Forgotten Star
+        },
+    },
+
+    WARLOCK_DESTRO_P3 = {
+        name = "Warlock Destro Phase 3 BIS (BT/Hyjal)",
+        spec = "WARLOCK_DESTRO",
+        items = {
+            [1]  = 31051,  -- Hood of the Malefic
+            [2]  = 32349,  -- Translucent Spellthread Necklace
+            [3]  = 31054,  -- Mantle of the Malefic
+            [5]  = 30107,  -- Vestments of the Sea-Witch
+            [6]  = 30038,  -- Belt of Blasting
+            [7]  = 30916,  -- Leggings of Channeled Elements
+            [8]  = 32239,  -- Slippers of the Seacaller
+            [9]  = 32586,  -- Bracers of Nimble Thought
+            [10] = 31050,  -- Gloves of the Malefic
+            [11] = 32527,  -- Ring of Ancient Knowledge
+            [12] = 32247,  -- Ring of Captured Storms
+            [13] = 32483,  -- The Skull of Gul'dan
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 32590,  -- Nethervoid Cloak
+            [16] = 32374,  -- Zhar'doom, Greatstaff of the Devourer
+            [17] = 30872,  -- Chronicle of Dark Secrets
+            [18] = 32343,  -- Wand of Prismatic Focus
+        },
+    },
+
+    WARLOCK_DESTRO_P5 = {
+        name = "Warlock Destro Phase 5 BIS (Sunwell)",
+        spec = "WARLOCK_DESTRO",
+        items = {
+            [1]  = 34340,  -- Dark Conjuror's Collar
+            [2]  = 34678,  -- Shattered Sun Pendant of Acumen
+            [3]  = 34210,  -- Amice of the Convoker
+            [5]  = 34364,  -- Sunfire Robe
+            [6]  = 34541,  -- Belt of the Malefic
+            [7]  = 34181,  -- Leggings of Calamity
+            [8]  = 34564,  -- Boots of the Malefic
+            [9]  = 34436,  -- Bracers of the Malefic
+            [10] = 34344,  -- Handguards of Defiled Worlds
+            [11] = 34362,  -- Loop of Forged Power
+            [12] = 34230,  -- Ring of Omnipotence
+            [13] = 32483,  -- The Skull of Gul'dan
+            [14] = 34429,  -- Shifting Naaru Sliver
+            [15] = 34242,  -- Tattered Cape of Antonidas
+            [16] = 34182,  -- Grand Magister's Staff of Torrents
+            [17] = 34179,  -- Heart of the Pit
+            [18] = 34347,  -- Wand of the Demonsoul
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Mage (Fire) — Wowhead TBC Classic BIS guides
+    ---------------------------------------------------------------------------
+
+    MAGE_FIRE_PRERAID = {
+        name = "Mage Fire Pre-Raid BIS",
+        spec = "MAGE_FIRE",
+        items = {
+            [1]  = 28193,  -- Mana-Etched Crown
+            [2]  = 28134,  -- Brooch of Heightened Potential
+            [3]  = 27796,  -- Mana-Etched Spaulders
+            [5]  = 21848,  -- Spellfire Robe
+            [6]  = 21846,  -- Spellfire Belt
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 28406,  -- Sigil-Laced Boots
+            [9]  = 28411,  -- General's Silk Cuffs
+            [10] = 21847,  -- Spellfire Gloves
+            [11] = 28555,  -- Seal of the Exorcist
+            [12] = 29367,  -- Ring of Cryptic Dreams
+            [13] = 27683,  -- Quagmirran's Eye
+            [14] = 29370,  -- Icon of the Silver Crescent
+            [15] = 23050,  -- Cloak of the Necropolis
+            [16] = 23554,  -- Eternium Runed Blade
+            [17] = 29270,  -- Flametongue Seal
+            [18] = 28386,  -- Nether Core's Control Rod
+        },
+    },
+
+    MAGE_FIRE_P1 = {
+        name = "Mage Fire Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "MAGE_FIRE",
+        items = {
+            [1]  = 29076,  -- Collar of the Aldor
+            [2]  = 28530,  -- Brooch of Unquenchable Fury
+            [3]  = 29079,  -- Pauldrons of the Aldor
+            [5]  = 21848,  -- Spellfire Robe
+            [6]  = 21846,  -- Spellfire Belt
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 28585,  -- Ruby Slippers
+            [9]  = 28515,  -- Bands of Nefarious Deeds
+            [10] = 21847,  -- Spellfire Gloves
+            [11] = 28793,  -- Band of Crimson Fury
+            [12] = 29287,  -- Violet Signet of the Archmage
+            [13] = 29370,  -- Icon of the Silver Crescent
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 28766,  -- Ruby Drape of the Mysticant
+            [16] = 28802,  -- Bloodmaw Magus-Blade
+            [17] = 28781,  -- Karaborian Talisman
+            [18] = 28783,  -- Eredar Wand of Obliteration
+        },
+    },
+
+    MAGE_FIRE_P2 = {
+        name = "Mage Fire Phase 2 BIS (SSC/TK)",
+        spec = "MAGE_FIRE",
+        items = {
+            [1]  = 32494,  -- Destruction Holo-gogs
+            [2]  = 30015,  -- The Sun King's Talisman
+            [3]  = 30024,  -- Mantle of the Elven Kings
+            [5]  = 30107,  -- Vestments of the Sea-Witch
+            [6]  = 30038,  -- Belt of Blasting
+            [7]  = 30207,  -- Leggings of Tirisfal
+            [8]  = 30037,  -- Boots of Blasting
+            [9]  = 29918,  -- Mindstorm Wristbands
+            [10] = 29987,  -- Gauntlets of the Sun King
+            [11] = 29302,  -- Band of Eternity
+            [12] = 29922,  -- Band of Al'ar
+            [13] = 27683,  -- Quagmirran's Eye
+            [14] = 29370,  -- Icon of the Silver Crescent
+            [15] = 28766,  -- Ruby Drape of the Mysticant
+            [16] = 29988,  -- The Nexus Key
+            [17] = 30049,  -- Fathomstone
+            [18] = 29982,  -- Wand of the Forgotten Star
+        },
+    },
+
+    MAGE_FIRE_P3 = {
+        name = "Mage Fire Phase 3 BIS (BT/Hyjal)",
+        spec = "MAGE_FIRE",
+        items = {
+            [1]  = 32525,  -- Cowl of the Illidari High Lord
+            [2]  = 32589,  -- Hellfire-Encased Pendant
+            [3]  = 31059,  -- Mantle of the Tempest
+            [5]  = 31057,  -- Robes of the Tempest
+            [6]  = 30038,  -- Belt of Blasting
+            [7]  = 31058,  -- Leggings of the Tempest
+            [8]  = 32239,  -- Slippers of the Seacaller
+            [9]  = 32586,  -- Bracers of Nimble Thought
+            [10] = 31055,  -- Gloves of the Tempest
+            [11] = 32527,  -- Ring of Ancient Knowledge
+            [12] = 32247,  -- Ring of Captured Storms
+            [13] = 32483,  -- The Skull of Gul'dan
+            [14] = 30720,  -- Serpent-Coil Braid
+            [15] = 32524,  -- Shroud of the Highborne
+            [16] = 32374,  -- Zhar'doom, Greatstaff of the Devourer
+            [17] = 30872,  -- Chronicle of Dark Secrets
+            [18] = 29982,  -- Wand of the Forgotten Star
+        },
+    },
+
+    MAGE_FIRE_P5 = {
+        name = "Mage Fire Phase 5 BIS (Sunwell)",
+        spec = "MAGE_FIRE",
+        items = {
+            [1]  = 34340,  -- Dark Conjuror's Collar
+            [2]  = 34204,  -- Amulet of Unfettered Magics
+            [3]  = 31059,  -- Mantle of the Tempest
+            [5]  = 34364,  -- Sunfire Robe
+            [6]  = 34557,  -- Belt of the Tempest
+            [7]  = 34181,  -- Leggings of Calamity
+            [8]  = 34574,  -- Boots of the Tempest
+            [9]  = 34447,  -- Bracers of the Tempest
+            [10] = 34344,  -- Handguards of Defiled Worlds
+            [11] = 34362,  -- Loop of Forged Power
+            [12] = 33497,  -- Mana Attuned Band
+            [13] = 34429,  -- Shifting Naaru Sliver
+            [14] = 32483,  -- The Skull of Gul'dan
+            [15] = 34242,  -- Tattered Cape of Antonidas
+            [16] = 34336,  -- Sunflare
+            [17] = 34179,  -- Heart of the Pit
+            [18] = 34347,  -- Wand of the Demonsoul
         },
     },
 }

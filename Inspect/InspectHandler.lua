@@ -1,0 +1,278 @@
+---------------------------------------------------------------------------
+-- TrueGearScore Inspect Handler
+-- Hooks INSPECT_READY to capture full item links (with gems/enchants)
+-- from other players. Queues inspect requests to avoid flooding.
+--
+-- Key: We hook INSPECT_READY directly, NOT LibClassicInspector's cache,
+-- because LCI only stores item IDs (no gem/enchant data).
+-- GetInventoryItemLink(unit, slot) during active inspect gives full links.
+---------------------------------------------------------------------------
+
+local _, addon = ...
+
+local M = {}
+M.addon = addon
+addon:RegisterModule("InspectHandler", M)
+
+local C = addon.Constants
+
+-- Inspect queue and state
+M.inspectQueue = {}      -- { unit1, unit2, ... }
+M.inspecting = false     -- Currently waiting for INSPECT_READY
+M.inspectUnit = nil      -- Unit we're currently inspecting
+M.inspectGUID = nil      -- GUID of unit we're inspecting
+M.lastInspectTime = 0    -- Throttle: minimum 1.5s between inspects
+M.callbacks = {}         -- { [guid] = { func1, func2, ... } }
+
+local INSPECT_THROTTLE = 1.5  -- Seconds between NotifyInspect calls
+
+---------------------------------------------------------------------------
+-- Lifecycle
+---------------------------------------------------------------------------
+
+function M:Initialize()
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("INSPECT_READY")
+    eventFrame:RegisterEvent("UNIT_INVENTORY_CHANGED")
+    eventFrame:SetScript("OnEvent", function(_, event, arg1)
+        if event == "INSPECT_READY" then
+            self:OnInspectReady(arg1)
+        elseif event == "UNIT_INVENTORY_CHANGED" then
+            -- Invalidate cache if a nearby player changes gear
+            if arg1 and UnitIsPlayer(arg1) and not UnitIsUnit(arg1, "player") then
+                local guid = UnitGUID(arg1)
+                if guid then
+                    addon.ScoreCache:Invalidate(guid)
+                end
+            end
+        end
+    end)
+end
+
+---------------------------------------------------------------------------
+-- Public API
+---------------------------------------------------------------------------
+
+--- Request a score for a unit. Returns cached score if available,
+--- otherwise queues an inspect and calls callback when done.
+-- @param unit      Unit token (e.g., "target", "mouseover")
+-- @param callback  Optional function(guid, score, entry) called when score is ready
+-- @return table or nil  Cached score entry if immediately available
+function M:RequestScore(unit)
+    if not unit or not UnitIsPlayer(unit) or UnitIsUnit(unit, "player") then
+        return nil
+    end
+
+    local guid = UnitGUID(unit)
+    if not guid then return nil end
+
+    -- Check cache first
+    local cached = addon.ScoreCache:Get(guid)
+    if cached then
+        return cached
+    end
+
+    -- Can we inspect this unit?
+    if not CanInspect(unit) then
+        return nil
+    end
+
+    -- Queue the inspect
+    self:QueueInspect(unit, guid)
+    return nil
+end
+
+--- Register a one-shot callback for when a GUID's score becomes available.
+-- @param guid      Player GUID
+-- @param callback  function(guid, score, cacheEntry)
+function M:RegisterCallback(guid, callback)
+    if not self.callbacks[guid] then
+        self.callbacks[guid] = {}
+    end
+    self.callbacks[guid][#self.callbacks[guid] + 1] = callback
+end
+
+---------------------------------------------------------------------------
+-- Inspect queue management
+---------------------------------------------------------------------------
+
+function M:QueueInspect(unit, guid)
+    -- Don't double-queue
+    if self.inspectGUID == guid then return end
+    for _, entry in ipairs(self.inspectQueue) do
+        if entry.guid == guid then return end
+    end
+
+    self.inspectQueue[#self.inspectQueue + 1] = { unit = unit, guid = guid }
+    self:ProcessQueue()
+end
+
+function M:ProcessQueue()
+    if self.inspecting then return end
+    if #self.inspectQueue == 0 then return end
+
+    local now = GetTime()
+    if (now - self.lastInspectTime) < INSPECT_THROTTLE then
+        -- Wait and retry
+        C_Timer.After(INSPECT_THROTTLE - (now - self.lastInspectTime) + 0.1, function()
+            self:ProcessQueue()
+        end)
+        return
+    end
+
+    local entry = table.remove(self.inspectQueue, 1)
+    if not entry then return end
+
+    -- Verify unit is still valid and in range
+    if not UnitIsPlayer(entry.unit) or not CanInspect(entry.unit) then
+        -- Skip this one, try next
+        self:ProcessQueue()
+        return
+    end
+
+    -- Verify GUID still matches (unit token may have changed target)
+    if UnitGUID(entry.unit) ~= entry.guid then
+        self:ProcessQueue()
+        return
+    end
+
+    self.inspecting = true
+    self.inspectUnit = entry.unit
+    self.inspectGUID = entry.guid
+    self.lastInspectTime = now
+
+    addon:DebugPrint("InspectHandler: NotifyInspect(" .. entry.unit .. ") guid=" .. entry.guid)
+    NotifyInspect(entry.unit)
+
+    -- Safety timeout: if INSPECT_READY never fires, reset after 5s
+    C_Timer.After(5, function()
+        if self.inspecting and self.inspectGUID == entry.guid then
+            addon:DebugPrint("InspectHandler: Inspect timeout for " .. entry.guid)
+            self.inspecting = false
+            self.inspectUnit = nil
+            self.inspectGUID = nil
+            self:ProcessQueue()
+        end
+    end)
+end
+
+---------------------------------------------------------------------------
+-- INSPECT_READY handler
+---------------------------------------------------------------------------
+
+function M:OnInspectReady(guid)
+    -- Anniversary Edition may pass guid or nil
+    if guid and self.inspectGUID and guid ~= self.inspectGUID then
+        -- Not our inspect, ignore
+        return
+    end
+
+    local unit = self.inspectUnit
+    if not unit or not UnitIsPlayer(unit) then
+        self.inspecting = false
+        self.inspectUnit = nil
+        self.inspectGUID = nil
+        self:ProcessQueue()
+        return
+    end
+
+    local actualGUID = UnitGUID(unit)
+    if not actualGUID then
+        self.inspecting = false
+        self.inspectUnit = nil
+        self.inspectGUID = nil
+        self:ProcessQueue()
+        return
+    end
+
+    addon:DebugPrint("InspectHandler: INSPECT_READY for " .. tostring(actualGUID))
+
+    -- Capture full item links (with gems/enchants!)
+    local equippedItems = {}
+    local itemCount = 0
+    for _, slotID in ipairs(C.EQUIP_SLOTS) do
+        local itemLink = GetInventoryItemLink(unit, slotID)
+        if itemLink then
+            equippedItems[slotID] = itemLink
+            itemCount = itemCount + 1
+        end
+    end
+
+    addon:DebugPrint("InspectHandler: Captured " .. itemCount .. " items")
+
+    if itemCount > 0 then
+        -- Detect their spec
+        local specKey = self:DetectInspectSpec(unit, actualGUID)
+
+        -- Score them
+        local result = addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
+
+        -- Cache the result
+        addon.ScoreCache:Set(actualGUID, {
+            score = result.totalScore,
+            perSlot = result.perSlot,
+            source = "inspect",
+            specKey = specKey,
+            baseScore = result.baseOnlyScore,
+        })
+
+        addon:DebugPrint("InspectHandler: Scored " .. result.totalScore .. " for " .. tostring(specKey))
+
+        -- Fire callbacks
+        self:FireCallbacks(actualGUID, result.totalScore)
+    end
+
+    -- Reset state and process next in queue
+    self.inspecting = false
+    self.inspectUnit = nil
+    self.inspectGUID = nil
+    ClearInspectPlayer()
+    self:ProcessQueue()
+end
+
+---------------------------------------------------------------------------
+-- Spec detection for inspected players
+---------------------------------------------------------------------------
+
+function M:DetectInspectSpec(unit, guid)
+    local _, class = GetPlayerInfoByGUID(guid)
+    if not class then return nil end
+
+    local points = {}
+    for i = 1, GetNumTalentTabs(true) do
+        local _, _, pointsSpent = GetTalentTabInfo(i, true)
+        points[i] = tonumber(pointsSpent) or 0
+    end
+
+    local maxTree, maxPoints = 1, 0
+    for i = 1, 3 do
+        if (points[i] or 0) > maxPoints then
+            maxTree = i
+            maxPoints = points[i]
+        end
+    end
+
+    local specMap = C.SPEC_MAP[class]
+    local specKey = specMap and specMap[maxTree] or (class .. "_UNKNOWN")
+    addon:DebugPrint("InspectHandler: Detected spec " .. specKey .. " for " .. tostring(class))
+    return specKey
+end
+
+---------------------------------------------------------------------------
+-- Callback management
+---------------------------------------------------------------------------
+
+function M:FireCallbacks(guid, score)
+    local cbs = self.callbacks[guid]
+    if not cbs then return end
+
+    local entry = addon.ScoreCache:Get(guid)
+    for _, cb in ipairs(cbs) do
+        local ok, err = pcall(cb, guid, score, entry)
+        if not ok then
+            addon:DebugPrint("InspectHandler: Callback error: " .. tostring(err))
+        end
+    end
+
+    self.callbacks[guid] = nil
+end

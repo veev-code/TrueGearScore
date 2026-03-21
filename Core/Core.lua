@@ -304,19 +304,12 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1, ...)
                 selfScanner:ScanEquipment()
             end
 
-            -- Auto-print score to chat and log
+            -- Log score on login (diagnostic, not chat spam)
             C_Timer.After(0.5, function()
-                addon.SlashCommands:PrintScore()
-                addon.SlashCommands:PrintBreakdown()
-            end)
-
-            -- Auto-run calibration (items may need caching, retry after delay)
-            C_Timer.After(3, function()
-                addon.SlashCommands:RunCalibration()
-                -- Retry after longer delay for item caching
-                C_Timer.After(10, function()
-                    addon.SlashCommands:RunCalibration()
-                end)
+                local selfScanner = addon:GetModule("SelfScanner")
+                if selfScanner and selfScanner.currentScore then
+                    addon:DebugPrint("Login score: " .. selfScanner.currentScore)
+                end
             end)
         end)
 
