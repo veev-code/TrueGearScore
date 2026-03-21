@@ -295,6 +295,23 @@ Set bonus detection uses `GetItemInfo()[16]` for setID (confirmed working). SetB
 | **Proc DB expansion** (12 → 80) | `Data/ProcDatabase.lua` | None | L |
 | **RaidFrame inline scores** (optional) | `Display/RaidFrame.lua` (new) | ScoreCache | M |
 
+### Cross-Cutting: Paperdoll + Stat Weights
+
+**Paperdoll Rendering Fix** (Sprint 2, bundle with tooltip work)
+- Current: "TrueGearScore" label + score poorly positioned at top-right of character frame
+- Target: Mirror TacoTip's placement — bottom-left of model area, showing `TrueGearScore: XXXX` and `iLvl: XXX` in colored text
+- If TacoTip is installed, hide its GearScore line to avoid duplication (detect via `TT_GS` global)
+- Reference: TacoTip renders at bottom-left with colored score number + "GearScore" label + "iLvl" label
+- Files: `Display/Paperdoll.lua`
+
+**Exhaustive Stat Weight Research** (ongoing, parallel to any sprint)
+- Current weights are directional estimates. Need simulation-driven values for ALL 27 specs.
+- Sources to research: ClassicSim, Fight Club warrior discord, Guybrush TBC spreadsheets, Warlock/Shadow Priest sims, Elitist Jerks archives, class Discord pins, Pawn community scales
+- Cross-reference Pawn's `ScaleTemplates.lua` baseline (generic, not per-spec) as sanity check
+- Priority specs: popular raid specs first (Warlock Destro/Afflic, Hunter BM, Rogue Combat, Warrior Fury, Holy Paladin, Resto Shaman, Resto Druid)
+- Deliver as incremental updates to `Scoring/StatWeights.lua`
+- Must recalibrate after weight changes to maintain TacoTip parity on base scores
+
 ### Pre-Release Cleanup (before any public release)
 
 - Remove `RunAPIDiscovery()` from `Core/Core.lua`
