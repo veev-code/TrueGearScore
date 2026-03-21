@@ -38,7 +38,6 @@ function M:Initialize()
         if event == "INSPECT_READY" then
             self:OnInspectReady(arg1)
         elseif event == "UNIT_INVENTORY_CHANGED" then
-            -- Invalidate cache if a nearby player changes gear
             if arg1 and UnitIsPlayer(arg1) and not UnitIsUnit(arg1, "player") then
                 local guid = UnitGUID(arg1)
                 if guid then
@@ -47,6 +46,63 @@ function M:Initialize()
             end
         end
     end)
+
+    -- Background inspect ticker (same pattern as LibClassicInspector)
+    -- Every 1.5s: try target, then queue, then cycle party/raid members
+    C_Timer.NewTicker(1.5, function()
+        self:InspectTick()
+    end)
+end
+
+---------------------------------------------------------------------------
+-- Background inspect ticker
+---------------------------------------------------------------------------
+
+function M:InspectTick()
+    if InCombatLockdown() then return end
+    if self.inspecting then return end
+
+    -- Priority 1: current target
+    if UnitExists("target") and self:TryProactiveInspect("target") then
+        return
+    end
+
+    -- Priority 2: mouseover (if hovering)
+    if UnitExists("mouseover") and self:TryProactiveInspect("mouseover") then
+        return
+    end
+
+    -- Priority 3: process manual queue
+    if #self.inspectQueue > 0 then
+        self:ProcessQueue()
+        return
+    end
+
+    -- Priority 4: cycle through group members
+    if IsInRaid() then
+        for i = 1, GetNumGroupMembers() do
+            if self:TryProactiveInspect("raid" .. i) then return end
+        end
+    elseif IsInGroup() then
+        for i = 1, GetNumGroupMembers() - 1 do
+            if self:TryProactiveInspect("party" .. i) then return end
+        end
+    end
+end
+
+--- Try to queue an inspect for a unit. Returns true if queued.
+function M:TryProactiveInspect(unit)
+    if not UnitExists(unit) or not UnitIsPlayer(unit) or UnitIsUnit(unit, "player") then
+        return false
+    end
+    if not CanInspect(unit) then return false end
+
+    local guid = UnitGUID(unit)
+    if not guid then return false end
+    if addon.ScoreCache:Get(guid) then return false end  -- Already cached
+
+    self:QueueInspect(unit, guid)
+    return true
 end
 
 ---------------------------------------------------------------------------
@@ -250,11 +306,42 @@ function M:DetectInspectSpec(unit, guid)
     local _, class = GetPlayerInfoByGUID(guid)
     if not class then return nil end
 
-    local points = {}
-    for i = 1, GetNumTalentTabs(true) do
-        local _, _, pointsSpent = GetTalentTabInfo(i, true)
-        points[i] = tonumber(pointsSpent) or 0
+    -- Try LibClassicInspector first (TacoTip bundles it, most reliable)
+    local CI = LibStub and LibStub:GetLibrary("LibClassicInspector", true)
+    if CI and CI.GetSpecialization then
+        local specIndex = CI:GetSpecialization(guid)
+        if specIndex and specIndex > 0 then
+            local specMap = C.SPEC_MAP[class]
+            local specKey = specMap and specMap[specIndex] or (class .. "_UNKNOWN")
+            addon:Log("DIAG", "InspectHandler: Spec via LibClassicInspector: " .. specKey .. " (index=" .. specIndex .. ")")
+            return specKey
+        end
     end
+
+    -- Fallback: try GetTalentTabInfo with inspect flag
+    -- NOTE: This returns OUR talents in Anniversary Edition, not the target's.
+    -- Keeping as fallback in case LCI isn't available.
+    local points = {}
+    local numTabs = 3
+    local usingInspectAPI = false
+
+    -- Try multiple API signatures
+    for i = 1, numTabs do
+        local ok, _, _, pointsSpent = pcall(GetTalentTabInfo, i, true, false)
+        if ok then
+            points[i] = tonumber(pointsSpent) or 0
+            usingInspectAPI = true
+        end
+    end
+
+    if not usingInspectAPI then
+        for i = 1, numTabs do
+            local _, _, pointsSpent = GetTalentTabInfo(i, true)
+            points[i] = tonumber(pointsSpent) or 0
+        end
+    end
+
+    addon:Log("DIAG", "InspectHandler: Talent API fallback " .. class .. " talents=" .. (points[1] or 0) .. "/" .. (points[2] or 0) .. "/" .. (points[3] or 0) .. " (WARNING: may be player's own talents)")
 
     local maxTree, maxPoints = 1, 0
     for i = 1, 3 do
@@ -266,7 +353,7 @@ function M:DetectInspectSpec(unit, guid)
 
     local specMap = C.SPEC_MAP[class]
     local specKey = specMap and specMap[maxTree] or (class .. "_UNKNOWN")
-    addon:DebugPrint("InspectHandler: Detected spec " .. specKey .. " for " .. tostring(class))
+    addon:Log("DIAG", "InspectHandler: Detected spec " .. specKey .. " for " .. tostring(class))
     return specKey
 end
 

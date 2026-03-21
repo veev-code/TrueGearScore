@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------
 -- TrueGearScore Inspect Frame Display
 -- Shows TrueGearScore on the Blizzard Inspect frame.
--- Mirrors the Paperdoll layout: bottom-left with score + iLvl.
+-- Mirrors Paperdoll layout: GS bottom-left, iLvl bottom-right.
+-- Hides TacoTip's inspect GearScore if present.
 ---------------------------------------------------------------------------
 
 local _, addon = ...
@@ -12,81 +13,165 @@ addon:RegisterModule("InspectFrameDisplay", M)
 
 local C = addon.Constants
 local FONT = "Fonts\\FRIZQT__.TTF"
+local LABEL_SIZE = 11
+local VALUE_SIZE = 15
+
+-- Same positioning as Paperdoll, anchored to InspectModelFrame
+local GS_LABEL_X, GS_LABEL_Y = 12, 40
+local GS_VALUE_X, GS_VALUE_Y = 12, 24
+local ILVL_LABEL_X, ILVL_LABEL_Y = -12, 40
+local ILVL_VALUE_X, ILVL_VALUE_Y = -12, 24
 
 ---------------------------------------------------------------------------
 -- Lifecycle
 ---------------------------------------------------------------------------
 
 function M:Initialize()
-    -- InspectFrame may not exist yet at init time (loaded on demand)
-    -- Hook it when it appears
+    -- InspectFrame may not exist yet (loaded on demand)
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("ADDON_LOADED")
     eventFrame:SetScript("OnEvent", function(_, event, addonName)
-        -- InspectFrame is part of Blizzard_InspectUI
         if InspectFrame and not self.hooked then
-            self.hooked = true
-            InspectFrame:HookScript("OnShow", function()
-                self:OnInspectShow()
-            end)
+            self:HookInspectFrame()
             eventFrame:UnregisterEvent("ADDON_LOADED")
         end
     end)
 
-    -- Also try immediately in case it's already loaded
+    -- Try immediately in case already loaded
     if InspectFrame then
-        self.hooked = true
-        InspectFrame:HookScript("OnShow", function()
-            self:OnInspectShow()
-        end)
+        self:HookInspectFrame()
+    end
+end
+
+function M:HookInspectFrame()
+    if self.hooked then return end
+    self.hooked = true
+
+    InspectFrame:HookScript("OnShow", function()
+        self:OnInspectShow()
+    end)
+end
+
+---------------------------------------------------------------------------
+-- Hide TacoTip's inspect GearScore if present
+---------------------------------------------------------------------------
+
+function M:HideTacoTipInspect()
+    -- TacoTip creates these on the inspect frame
+    if InspectGearScore then
+        InspectGearScore:Hide()
+        InspectGearScore:SetText("")
+    end
+    if InspectGearScoreText then
+        InspectGearScoreText:Hide()
+        InspectGearScoreText:SetText("")
+    end
+    if InspectAvgItemLvl then
+        InspectAvgItemLvl:Hide()
+        InspectAvgItemLvl:SetText("")
+    end
+    if InspectAvgItemLvlText then
+        InspectAvgItemLvlText:Hide()
+        InspectAvgItemLvlText:SetText("")
     end
 end
 
 ---------------------------------------------------------------------------
--- Display
+-- Display creation
 ---------------------------------------------------------------------------
 
 function M:OnInspectShow()
     self:EnsureDisplay()
-    -- Update with a small delay to let InspectHandler capture the data
-    C_Timer.After(0.5, function()
-        self:UpdateScore()
-    end)
-    C_Timer.After(2, function()
-        self:UpdateScore()
-    end)
+    self:HideTacoTipInspect()
+
+    -- Update with delays to let InspectHandler capture data
+    self:UpdateScore()
+    C_Timer.After(0.5, function() self:UpdateScore() end)
+    C_Timer.After(2, function() self:UpdateScore() end)
 end
 
 function M:EnsureDisplay()
     if self.gsValue then return end
 
-    local parent = InspectPaperDollFrame or InspectFrame
-    if not parent then return end
+    -- Anchor to the model frame inside the inspect window
+    local anchor = InspectModelFrame or InspectPaperDollFrame or InspectFrame
+    if not anchor then return end
 
-    self.gsLabel = parent:CreateFontString(nil, "OVERLAY")
-    self.gsLabel:SetFont(FONT, 10)
-    self.gsLabel:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", 72, 248)
+    -- GearScore label
+    self.gsLabel = anchor:CreateFontString(nil, "OVERLAY")
+    self.gsLabel:SetFont(FONT, LABEL_SIZE)
+    self.gsLabel:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", GS_LABEL_X, GS_LABEL_Y)
     self.gsLabel:SetText("TrueGearScore")
     self.gsLabel:SetTextColor(0.53, 0.53, 0.53, 1)
 
-    self.gsValue = parent:CreateFontString(nil, "OVERLAY")
-    self.gsValue:SetFont(FONT, 10)
-    self.gsValue:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", 72, 260)
+    -- GearScore value
+    self.gsValue = anchor:CreateFontString(nil, "OVERLAY")
+    self.gsValue:SetFont(FONT, VALUE_SIZE)
+    self.gsValue:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", GS_VALUE_X, GS_VALUE_Y)
     self.gsValue:SetText("")
+
+    -- iLvl label (bottom-right)
+    self.ilvlLabel = anchor:CreateFontString(nil, "OVERLAY")
+    self.ilvlLabel:SetFont(FONT, LABEL_SIZE)
+    self.ilvlLabel:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", ILVL_LABEL_X, ILVL_LABEL_Y)
+    self.ilvlLabel:SetText("iLvl")
+    self.ilvlLabel:SetTextColor(0.53, 0.53, 0.53, 1)
+    self.ilvlLabel:SetJustifyH("RIGHT")
+
+    -- iLvl value (bottom-right)
+    self.ilvlValue = anchor:CreateFontString(nil, "OVERLAY")
+    self.ilvlValue:SetFont(FONT, VALUE_SIZE)
+    self.ilvlValue:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", ILVL_VALUE_X, ILVL_VALUE_Y)
+    self.ilvlValue:SetText("")
+    self.ilvlValue:SetJustifyH("RIGHT")
 end
+
+---------------------------------------------------------------------------
+-- Compute average item level for inspected player
+---------------------------------------------------------------------------
+
+function M:ComputeInspectIlvl(unit)
+    local totalIlvl = 0
+    local count = 0
+
+    for _, slotID in ipairs(C.EQUIP_SLOTS) do
+        local itemLink = GetInventoryItemLink(unit, slotID)
+        if itemLink then
+            local _, _, _, itemLevel = GetItemInfo(itemLink)
+            if itemLevel and itemLevel > 0 then
+                totalIlvl = totalIlvl + itemLevel
+                count = count + 1
+            end
+        end
+    end
+
+    if count > 0 then
+        return math.floor(totalIlvl / count)
+    end
+    return 0
+end
+
+---------------------------------------------------------------------------
+-- Score update
+---------------------------------------------------------------------------
 
 function M:UpdateScore()
     if not self.gsValue then return end
     if not InspectFrame or not InspectFrame:IsShown() then return end
+
+    self:HideTacoTipInspect()
 
     local unit = InspectFrame.unit or "target"
     local guid = UnitGUID(unit)
     if not guid then
         self.gsValue:SetText("--")
         self.gsValue:SetTextColor(0.53, 0.53, 0.53, 1)
+        self.ilvlValue:SetText("--")
+        self.ilvlValue:SetTextColor(0.53, 0.53, 0.53, 1)
         return
     end
 
+    -- Score
     local cached = addon.ScoreCache:Get(guid)
     if cached and cached.score > 0 then
         local r, g, b = addon.ScoreColors:GetColor(cached.score)
@@ -95,5 +180,19 @@ function M:UpdateScore()
     else
         self.gsValue:SetText("...")
         self.gsValue:SetTextColor(0.53, 0.53, 0.53, 1)
+    end
+
+    -- iLvl
+    local avgIlvl = self:ComputeInspectIlvl(unit)
+    if avgIlvl > 0 then
+        local r, g, b = 1, 1, 1
+        if cached and cached.score > 0 then
+            r, g, b = addon.ScoreColors:GetColor(cached.score)
+        end
+        self.ilvlValue:SetText(tostring(avgIlvl))
+        self.ilvlValue:SetTextColor(r, g, b, 1)
+    else
+        self.ilvlValue:SetText("--")
+        self.ilvlValue:SetTextColor(0.53, 0.53, 0.53, 1)
     end
 end

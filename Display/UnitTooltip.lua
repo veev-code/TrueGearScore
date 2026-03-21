@@ -11,6 +11,7 @@ local M = {}
 M.addon = addon
 addon:RegisterModule("UnitTooltip", M)
 
+
 ---------------------------------------------------------------------------
 -- Lifecycle
 ---------------------------------------------------------------------------
@@ -19,6 +20,23 @@ function M:Initialize()
     GameTooltip:HookScript("OnTooltipSetUnit", function(tooltip)
         self:OnTooltipSetUnit(tooltip)
     end)
+end
+
+---------------------------------------------------------------------------
+-- Check if we already added our line to the tooltip
+---------------------------------------------------------------------------
+
+function M:HasScoreLine(tooltip)
+    for i = 1, tooltip:NumLines() do
+        local left = _G["GameTooltipTextLeft" .. i]
+        if left then
+            local text = left:GetText()
+            if text and text:match("^TrueGearScore") then
+                return true
+            end
+        end
+    end
+    return false
 end
 
 ---------------------------------------------------------------------------
@@ -31,6 +49,9 @@ function M:OnTooltipSetUnit(tooltip)
 
     local guid = UnitGUID(unit)
     if not guid then return end
+
+    -- Don't add if already present
+    if self:HasScoreLine(tooltip) then return end
 
     -- Self: use SelfScanner directly
     if UnitIsUnit(unit, "player") then
@@ -51,20 +72,8 @@ function M:OnTooltipSetUnit(tooltip)
     -- No cached score — request inspect
     local inspectHandler = addon:GetModule("InspectHandler")
     if inspectHandler then
-        local immediate = inspectHandler:RequestScore(unit)
-        if immediate then
-            self:AddScoreLine(tooltip, immediate.score, immediate.source)
-        else
-            -- Register callback to update tooltip when inspect completes
-            inspectHandler:RegisterCallback(guid, function(cbGuid, score, entry)
-                -- Tooltip may have changed by now — verify it still shows this unit
-                local _, currentUnit = GameTooltip:GetUnit()
-                if currentUnit and UnitGUID(currentUnit) == cbGuid then
-                    self:AddScoreLine(GameTooltip, score, entry and entry.source)
-                    GameTooltip:Show()  -- Refresh tooltip to display new line
-                end
-            end)
-        end
+        inspectHandler:RequestScore(unit)
+        tooltip:AddLine("TrueGearScore: ...", 0.53, 0.53, 0.53)
     end
 end
 
@@ -76,16 +85,10 @@ function M:AddScoreLine(tooltip, score, source)
     if not score or score <= 0 then return end
 
     local r, g, b = addon.ScoreColors:GetColor(score)
-    local label = addon.ScoreColors:GetBracketLabel(score)
     local sourceTag = ""
     if source == "broadcast" then
-        sourceTag = " ~"  -- Tilde indicates unverified (addon broadcast, not inspect)
+        sourceTag = "~"
     end
 
-    tooltip:AddDoubleLine(
-        "TrueGearScore",
-        tostring(score) .. " (" .. label .. ")" .. sourceTag,
-        0.53, 0.53, 0.53,  -- Left text: grey
-        r, g, b             -- Right text: bracket color
-    )
+    tooltip:AddLine("TrueGearScore: " .. sourceTag .. tostring(score), r, g, b)
 end
