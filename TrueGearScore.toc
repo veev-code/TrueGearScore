@@ -1,0 +1,38 @@
+## Interface: 20505
+## Title: TrueGearScore
+## Notes: Stat-weight-based gear score that accounts for gems, enchants, procs, and stat caps.
+## Author: Veev
+## Version: 0.1.0
+## SavedVariables: TrueGearScoreDB, TrueGearScoreLog
+## OptionalDeps: Ace3
+
+## X-License: MIT
+## X-Curse-Project-ID: 0
+## X-Website: https://github.com/veev-code/TrueGearScore
+
+# Libraries
+Libs\embeds.xml
+
+# Core
+Core\Constants.lua
+Core\Core.lua
+Core\Database.lua
+Core\SlashCommands.lua
+
+# Data
+Data\GemDatabase.lua
+Data\EnchantDatabase.lua
+Data\ProcDatabase.lua
+Data\ReferenceSets.lua
+
+# Scoring
+Scoring\StatWeights.lua
+Scoring\CapEngine.lua
+Scoring\ItemScoring.lua
+
+# Inspect
+Inspect\SelfScanner.lua
+
+# Display
+Display\ScoreColors.lua
+Display\Paperdoll.lua
