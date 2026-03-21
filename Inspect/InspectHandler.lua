@@ -230,15 +230,35 @@ function M:OnInspectReady(guid)
 
     addon:DebugPrint("InspectHandler: INSPECT_READY, targetGUID=" .. tostring(targetGUID))
 
-    -- Find the unit token for this GUID — "mouseover" may have changed
+    -- Find the unit token for this GUID.
+    -- Try the original unit token first (nameplate indices can shift between
+    -- NotifyInspect and INSPECT_READY, so checking the stored token first
+    -- avoids a scan miss).
     local unit = nil
-    for _, testUnit in ipairs({"target", "mouseover", "focus", "party1", "party2", "party3", "party4",
-        "raid1","raid2","raid3","raid4","raid5","raid6","raid7","raid8","raid9","raid10",
-        "raid11","raid12","raid13","raid14","raid15","raid16","raid17","raid18","raid19","raid20",
-        "raid21","raid22","raid23","raid24","raid25"}) do
-        if UnitGUID(testUnit) == targetGUID then
-            unit = testUnit
-            break
+    if self.inspectUnit and UnitGUID(self.inspectUnit) == targetGUID then
+        unit = self.inspectUnit
+    end
+
+    if not unit then
+        for _, testUnit in ipairs({"target", "mouseover", "focus", "party1", "party2", "party3", "party4",
+            "raid1","raid2","raid3","raid4","raid5","raid6","raid7","raid8","raid9","raid10",
+            "raid11","raid12","raid13","raid14","raid15","raid16","raid17","raid18","raid19","raid20",
+            "raid21","raid22","raid23","raid24","raid25"}) do
+            if UnitGUID(testUnit) == targetGUID then
+                unit = testUnit
+                break
+            end
+        end
+    end
+
+    -- Also scan nameplates (nameplate1 through nameplate40)
+    if not unit then
+        for i = 1, 40 do
+            local testUnit = "nameplate" .. i
+            if UnitGUID(testUnit) == targetGUID then
+                unit = testUnit
+                break
+            end
         end
     end
 

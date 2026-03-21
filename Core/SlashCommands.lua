@@ -36,6 +36,8 @@ function addon.SlashCommands:HandleCommand(msg)
             selfScanner:ScanEquipment()
             addon:Print("Rescan complete.")
         end
+    elseif cmd == "statkeys" then
+        self:DumpStatKeys()
     elseif cmd == "diag" then
         self:RunDiagnostic()
     elseif cmd == "calibrate" then
@@ -292,12 +294,63 @@ function addon.SlashCommands:RunCalibration()
     addon:DiagPrint("Run /tgs log to view details, or /reload + check SavedVariables")
 end
 
+function addon.SlashCommands:DumpStatKeys()
+    addon:DiagPrint("--- StatKey Audit: All Equipped Items ---")
+
+    local unmappedAll = {}  -- { [key] = { count, exampleValue, exampleSlot } }
+    local totalItems = 0
+    local totalKeys = 0
+    local mappedKeys = 0
+
+    for _, slotID in ipairs(C.EQUIP_SLOTS) do
+        local link = GetInventoryItemLink("player", slotID)
+        if link then
+            totalItems = totalItems + 1
+            local slotName = C.SLOT_NAMES[slotID] or ("Slot " .. slotID)
+            local rawStats = {}
+            GetItemStats(link, rawStats)
+
+            for key, value in pairs(rawStats) do
+                totalKeys = totalKeys + 1
+                if C.STAT_REVERSE[key] then
+                    mappedKeys = mappedKeys + 1
+                else
+                    addon:Log("DIAG", "UNMAPPED | " .. slotName .. " | " .. tostring(key) .. " = " .. tostring(value) .. " | " .. link)
+                    if not unmappedAll[key] then
+                        unmappedAll[key] = { count = 0, exampleValue = value, exampleSlot = slotName }
+                    end
+                    unmappedAll[key].count = unmappedAll[key].count + 1
+                end
+            end
+        end
+    end
+
+    -- Summary
+    addon:DiagPrint("Scanned " .. totalItems .. " items, " .. totalKeys .. " stat keys total.")
+    addon:DiagPrint("Mapped: " .. mappedKeys .. " | Unmapped: " .. (totalKeys - mappedKeys))
+
+    local unmappedCount = 0
+    for key, info in pairs(unmappedAll) do
+        unmappedCount = unmappedCount + 1
+        addon:DiagPrint("  |cffff4444" .. key .. "|r — seen " .. info.count .. "x (e.g., " .. info.exampleSlot .. " = " .. info.exampleValue .. ")")
+    end
+
+    if unmappedCount == 0 then
+        addon:DiagPrint("|cff00ff00All stat keys are mapped.|r")
+    else
+        addon:DiagPrint(unmappedCount .. " unique unmapped key(s). Check /tgs log for per-item details.")
+    end
+
+    addon:DiagPrint("--- End StatKey Audit ---")
+end
+
 function addon.SlashCommands:ShowHelp()
     addon:Print("Commands:")
     addon:Print("  |cff00ff00/tgs|r — Show your TrueGearScore")
     addon:Print("  |cff00ff00/tgs breakdown|r — Per-slot score breakdown")
     addon:Print("  |cff00ff00/tgs spec|r — Show detected spec")
     addon:Print("  |cff00ff00/tgs rescan|r — Force gear rescan")
+    addon:Print("  |cff00ff00/tgs statkeys|r — Audit GetItemStats keys for unmapped entries")
     addon:Print("  |cff00ff00/tgs diag|r — Run diagnostic (logs to SavedVariables)")
     addon:Print("  |cff00ff00/tgs log [n]|r — Show recent log entries")
     addon:Print("  |cff00ff00/tgs clearlog|r — Clear log")

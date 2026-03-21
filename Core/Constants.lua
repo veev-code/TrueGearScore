@@ -103,13 +103,21 @@ end
 
 -- TBC-specific stat mappings
 -- Spell damage → SPELL_POWER (for DPS casters)
+-- GetItemStats() returns _SHORT suffix keys; also map without suffix as fallback
+C.STAT_REVERSE["ITEM_MOD_SPELL_DAMAGE_DONE_SHORT"] = "SPELL_POWER"
 C.STAT_REVERSE["ITEM_MOD_SPELL_DAMAGE_DONE"] = "SPELL_POWER"
 -- Spell healing → HEAL_POWER (separate weight for healers)
+C.STAT_REVERSE["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = "HEAL_POWER"
 C.STAT_REVERSE["ITEM_MOD_SPELL_HEALING_DONE"] = "HEAL_POWER"
 -- MP5
 C.STAT_REVERSE["ITEM_MOD_POWER_REGEN0_SHORT"] = "MP5"
 -- Armor (useful for tanks)
 C.STAT_REVERSE["RESISTANCE0_NAME"] = "ARMOR"
+-- TBC uses separate melee/ranged/feral AP keys on many items instead of generic AP.
+-- These all map to ATTACK_POWER for scoring (spec weights handle the value).
+C.STAT_REVERSE["ITEM_MOD_MELEE_ATTACK_POWER_SHORT"] = "ATTACK_POWER"
+C.STAT_REVERSE["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = "ATTACK_POWER"
+C.STAT_REVERSE["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = "ATTACK_POWER"
 -- Also try the retail-style keys in case some items use them
 C.STAT_REVERSE["ITEM_MOD_SPELL_POWER_SHORT"] = "SPELL_POWER"
 C.STAT_REVERSE["ITEM_MOD_MANA_REGENERATION_SHORT"] = "MP5"
