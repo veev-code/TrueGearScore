@@ -304,13 +304,15 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1, ...)
                 selfScanner:ScanEquipment()
             end
 
-            -- Log score on login (diagnostic, not chat spam)
+            -- Log score on login
             C_Timer.After(0.5, function()
                 local selfScanner = addon:GetModule("SelfScanner")
                 if selfScanner and selfScanner.currentScore then
                     addon:DebugPrint("Login score: " .. selfScanner.currentScore)
                 end
             end)
+
+            -- Calibration available via /tgs calibrate
         end)
 
         self:UnregisterEvent("PLAYER_LOGIN")

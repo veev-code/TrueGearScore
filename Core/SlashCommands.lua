@@ -193,8 +193,7 @@ function addon.SlashCommands:RunCalibration()
         return
     end
 
-    addon:DiagPrint("=== CALIBRATION: Reference BIS Sets ===")
-    addon:DiagPrint("Scoring base items only (no gems/enchants/procs)")
+    addon:DiagPrint("=== CALIBRATION: All Reference BIS Sets ===")
 
     -- Request all items first to ensure they're cached
     local allItemIDs = {}
@@ -204,7 +203,6 @@ function addon.SlashCommands:RunCalibration()
         end
     end
 
-    -- Pre-request all items
     local uncached = 0
     for itemID in pairs(allItemIDs) do
         local name = GetItemInfo(itemID)
@@ -215,59 +213,83 @@ function addon.SlashCommands:RunCalibration()
     end
 
     if uncached > 0 then
-        addon:DiagPrint("Note: " .. uncached .. " items not yet cached — scoring what we can, skipping missing.")
+        addon:DiagPrint("Note: " .. uncached .. " items not yet cached — scoring what we can.")
     end
 
-    -- Score each set using base stats only (item link built from ID, no enchant/gems)
-    local orderedSets = {
-        "PRIEST_HEAL_HEROIC_BLUES",
-        "PRIEST_HEAL_PRERAID",
-        "PRIEST_HEAL_P1",
-        "PRIEST_HEAL_P2",
-        "PRIEST_HEAL_P3",
-        "PRIEST_HEAL_P4",
-        "PRIEST_HEAL_P5",
-    }
+    -- Score ALL reference sets, track P1 base scores per spec for normalization
+    local p1BaseBySpec = {}  -- { [specKey] = baseOnlyRaw }
+    local allResults = {}    -- { { setKey, name, spec, baseRaw, fullRaw } }
 
-    for _, setKey in ipairs(orderedSets) do
-        local setData = sets[setKey]
-        if setData then
-            local specKey = setData.spec
-            local equippedItems = {}
-            local missingItems = {}
+    for setKey, setData in pairs(sets) do
+        local specKey = setData.spec
+        local equippedItems = {}
+        local missing = 0
 
-            for slotID, itemID in pairs(setData.items) do
-                -- Build a clean item link (no enchant, no gems) from itemID
-                local _, itemLink = GetItemInfo(itemID)
-                if itemLink then
-                    equippedItems[slotID] = itemLink
-                else
-                    missingItems[#missingItems + 1] = itemID
-                end
-            end
-
-            if #missingItems > 0 then
-                addon:DiagPrint(setData.name .. ": SKIPPED (" .. #missingItems .. " items not cached)")
+        for slotID, itemID in pairs(setData.items) do
+            local _, itemLink = GetItemInfo(itemID)
+            if itemLink then
+                equippedItems[slotID] = itemLink
             else
-                local result = addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
-                addon:DiagPrint(setData.name)
-                addon:DiagPrint("  Base score: " .. result.baseOnlyScore .. " (raw " .. result.baseOnlyRaw .. ")")
-                addon:DiagPrint("  Full score: " .. result.totalScore .. " (raw " .. result.rawScore .. ")")
+                missing = missing + 1
+            end
+        end
 
-                -- Per-slot breakdown (log only, not chat)
-                for _, slotID in ipairs(C.EQUIP_SLOTS) do
-                    local slotScore = result.perSlot[slotID]
-                    if slotScore and slotScore > 0 then
-                        local name = C.SLOT_NAMES[slotID] or ("Slot " .. slotID)
-                        addon:Log("DIAG", "    " .. name .. ": " .. slotScore)
-                    end
-                end
+        if missing > 0 then
+            addon:Log("DIAG", setData.name .. ": SKIPPED (" .. missing .. " uncached)")
+        else
+            -- Score WITHOUT spec scale (raw weights only) to get uncalibrated base
+            local origScale = addon.StatWeights.SPEC_SCALE[specKey]
+            addon.StatWeights.SPEC_SCALE[specKey] = 1.0
+            local result = addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
+            addon.StatWeights.SPEC_SCALE[specKey] = origScale
+
+            allResults[#allResults + 1] = {
+                setKey = setKey,
+                name = setData.name,
+                spec = specKey,
+                baseRaw = result.baseOnlyRaw,
+                fullRaw = result.rawScore,
+            }
+
+            addon:Log("DIAG", setData.name .. " [" .. specKey .. "] base=" .. result.baseOnlyRaw .. " full=" .. result.rawScore)
+
+            -- Track P1 sets for calibration anchor
+            if setKey:match("_P1$") then
+                p1BaseBySpec[specKey] = result.baseOnlyRaw
             end
         end
     end
 
+    -- Compute SPEC_SCALE: normalize all P1 base scores to PRIEST_DISC P1 target
+    local target = p1BaseBySpec["PRIEST_DISC"] or 1740
+    addon:DiagPrint("Calibration target (PRIEST_DISC P1 base): " .. target)
+    addon:DiagPrint("")
+    addon:DiagPrint("=== SPEC_SCALE factors (paste into StatWeights.lua) ===")
+
+    local scaleOutput = {}
+    for specKey, p1Base in pairs(p1BaseBySpec) do
+        local scale = target / p1Base
+        scaleOutput[#scaleOutput + 1] = { spec = specKey, scale = scale, p1Base = p1Base }
+    end
+
+    -- Sort by spec name for readability
+    table.sort(scaleOutput, function(a, b) return a.spec < b.spec end)
+
+    for _, entry in ipairs(scaleOutput) do
+        local scaleStr = string.format("%.3f", entry.scale)
+        addon:DiagPrint("  [\"" .. entry.spec .. "\"] = " .. scaleStr .. ",  -- P1 base=" .. entry.p1Base)
+    end
+
+    -- Also show all set scores for verification
+    addon:DiagPrint("")
+    addon:DiagPrint("=== All set scores (raw, before SPEC_SCALE) ===")
+    table.sort(allResults, function(a, b) return a.spec < b.spec or (a.spec == b.spec and a.baseRaw < b.baseRaw) end)
+    for _, r in ipairs(allResults) do
+        addon:Log("DIAG", r.spec .. " | " .. r.name .. " | base=" .. r.baseRaw .. " full=" .. r.fullRaw)
+    end
+
     addon:DiagPrint("=== CALIBRATION COMPLETE ===")
-    addon:DiagPrint("Note: Scores are base-only (items from GetItemInfo have no gems/enchants)")
+    addon:DiagPrint("Run /tgs log to view details, or /reload + check SavedVariables")
 end
 
 function addon.SlashCommands:ShowHelp()

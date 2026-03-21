@@ -161,14 +161,33 @@ end
 ---------------------------------------------------------------------------
 
 function M:OnInspectReady(guid)
-    -- Anniversary Edition may pass guid or nil
-    if guid and self.inspectGUID and guid ~= self.inspectGUID then
-        -- Not our inspect, ignore
+    if not self.inspecting then return end
+
+    -- Anniversary Edition may pass various arg types for guid
+    -- Accept the event if we're actively inspecting
+    local targetGUID = self.inspectGUID
+    if not targetGUID then
+        self.inspecting = false
+        self:ProcessQueue()
         return
     end
 
-    local unit = self.inspectUnit
-    if not unit or not UnitIsPlayer(unit) then
+    addon:DebugPrint("InspectHandler: INSPECT_READY, targetGUID=" .. tostring(targetGUID))
+
+    -- Find the unit token for this GUID — "mouseover" may have changed
+    local unit = nil
+    for _, testUnit in ipairs({"target", "mouseover", "focus", "party1", "party2", "party3", "party4",
+        "raid1","raid2","raid3","raid4","raid5","raid6","raid7","raid8","raid9","raid10",
+        "raid11","raid12","raid13","raid14","raid15","raid16","raid17","raid18","raid19","raid20",
+        "raid21","raid22","raid23","raid24","raid25"}) do
+        if UnitGUID(testUnit) == targetGUID then
+            unit = testUnit
+            break
+        end
+    end
+
+    if not unit then
+        addon:DebugPrint("InspectHandler: Could not find unit for GUID " .. targetGUID)
         self.inspecting = false
         self.inspectUnit = nil
         self.inspectGUID = nil
@@ -176,16 +195,7 @@ function M:OnInspectReady(guid)
         return
     end
 
-    local actualGUID = UnitGUID(unit)
-    if not actualGUID then
-        self.inspecting = false
-        self.inspectUnit = nil
-        self.inspectGUID = nil
-        self:ProcessQueue()
-        return
-    end
-
-    addon:DebugPrint("InspectHandler: INSPECT_READY for " .. tostring(actualGUID))
+    addon:DebugPrint("InspectHandler: Found unit=" .. unit .. " for GUID=" .. targetGUID)
 
     -- Capture full item links (with gems/enchants!)
     local equippedItems = {}
@@ -198,17 +208,17 @@ function M:OnInspectReady(guid)
         end
     end
 
-    addon:DebugPrint("InspectHandler: Captured " .. itemCount .. " items")
+    addon:Log("DIAG", "InspectHandler: Captured " .. itemCount .. " items from " .. unit)
 
     if itemCount > 0 then
         -- Detect their spec
-        local specKey = self:DetectInspectSpec(unit, actualGUID)
+        local specKey = self:DetectInspectSpec(unit, targetGUID)
 
         -- Score them
         local result = addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
 
         -- Cache the result
-        addon.ScoreCache:Set(actualGUID, {
+        addon.ScoreCache:Set(targetGUID, {
             score = result.totalScore,
             perSlot = result.perSlot,
             source = "inspect",
@@ -216,10 +226,12 @@ function M:OnInspectReady(guid)
             baseScore = result.baseOnlyScore,
         })
 
-        addon:DebugPrint("InspectHandler: Scored " .. result.totalScore .. " for " .. tostring(specKey))
+        addon:Log("DIAG", "InspectHandler: Scored " .. result.totalScore .. " for " .. tostring(specKey) .. " (raw=" .. result.rawScore .. " base=" .. result.baseOnlyRaw .. ")")
 
         -- Fire callbacks
-        self:FireCallbacks(actualGUID, result.totalScore)
+        self:FireCallbacks(targetGUID, result.totalScore)
+    else
+        addon:DebugPrint("InspectHandler: No items captured! GetInventoryItemLink returned nil for all slots")
     end
 
     -- Reset state and process next in queue

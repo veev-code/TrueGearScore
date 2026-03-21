@@ -680,11 +680,67 @@ addon.StatWeights.SPECS = {
 }
 
 ---------------------------------------------------------------------------
+-- Per-spec calibration scale factors
+-- Ensures cross-class score parity: a Kara-geared mage scores the same
+-- as a Kara-geared priest with equivalent quality gear.
+-- Computed from reference BIS sets: each spec's P1 base score is scaled
+-- to match the calibration target (Priest Disc P1 base ≈ 1740).
+-- Run /tgs calibrate in-game to recompute these.
+---------------------------------------------------------------------------
+
+addon.StatWeights.SPEC_SCALE = {
+    -- Computed from /tgs calibrate: each spec's P1 BIS base score normalized
+    -- to PRIEST_DISC P1 base (1741). Run /tgs calibrate to recompute.
+    -- Healers/tanks have low scale (their gear has many weighted stats).
+    -- DPS specs have high scale (gear concentrates into fewer stats).
+
+    -- Healers
+    ["PRIEST_DISC"]     = 1.000,  -- P1 base=1741 (anchor)
+    ["PRIEST_HOLY"]     = 1.000,  -- same gear as Disc, similar weights
+    ["DRUID_RESTO"]     = 0.979,  -- P1 base=1778
+    ["PALADIN_HOLY"]    = 1.279,  -- P1 base=1361
+    ["SHAMAN_RESTO"]    = 1.325,  -- P1 base=1314
+
+    -- Tanks
+    ["WARRIOR_PROT"]    = 1.114,  -- P1 base=1563
+    ["PALADIN_PROT"]    = 1.200,  -- estimated (no P1 ref set scored; between Holy and Warrior)
+    ["DRUID_FERAL_BEAR"]= 1.100,  -- estimated (bear gear similar stat spread to plate tanks)
+
+    -- Melee DPS
+    ["HUNTER_BM"]       = 3.414,  -- P1 base=510
+    ["HUNTER_MM"]       = 3.414,  -- same gear as BM
+    ["HUNTER_SURV"]     = 3.414,  -- same gear as BM
+    ["ROGUE_COMBAT"]    = 3.575,  -- P1 base=487
+    ["ROGUE_ASSASSIN"]  = 3.575,  -- same gear type
+    ["ROGUE_SUBTLETY"]  = 3.575,  -- same gear type
+    ["DRUID_FERAL"]     = 3.878,  -- P1 base=449
+    ["PALADIN_RET"]     = 4.693,  -- P1 base=371
+    ["SHAMAN_ENH"]      = 4.877,  -- P1 base=357
+    ["WARRIOR_ARMS"]    = 5.182,  -- same gear as Fury
+    ["WARRIOR_FURY"]    = 5.182,  -- P1 base=336
+
+    -- Caster DPS
+    ["DRUID_BALANCE"]   = 3.605,  -- P1 base=483
+    ["MAGE_FIRE"]       = 4.408,  -- P1 base=395
+    ["MAGE_ARCANE"]     = 4.408,  -- same gear type as Fire
+    ["MAGE_FROST"]      = 4.408,  -- same gear type as Fire
+    ["WARLOCK_DESTRO"]  = 4.558,  -- P1 base=382
+    ["WARLOCK_AFFLIC"]  = 4.558,  -- same gear type
+    ["WARLOCK_DEMO"]    = 4.558,  -- same gear type
+    ["PRIEST_SHADOW"]   = 4.000,  -- estimated (shadow priest gear is caster DPS cloth)
+    ["SHAMAN_ELE"]      = 4.500,  -- estimated (12.9x was broken; use caster DPS range)
+}
+
+---------------------------------------------------------------------------
 -- API
 ---------------------------------------------------------------------------
 
 function addon.StatWeights:GetSpecWeights(specKey)
     return self.SPECS[specKey]
+end
+
+function addon.StatWeights:GetSpecScale(specKey)
+    return self.SPEC_SCALE[specKey] or 1.0
 end
 
 function addon.StatWeights:GetSpecCap(specKey, statName)

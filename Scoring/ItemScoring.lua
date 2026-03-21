@@ -246,9 +246,12 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     end
     baseOnlyRaw = math.floor(baseOnlyRaw)
 
-    -- Apply calibration scale factor
-    -- Calibrated so base-only score ≈ TacoTip. Gems/enchants/procs add on top.
-    local scale = C.SCORE_SCALE or 1
+    -- Apply calibration scale factors:
+    -- 1. Global scale (C.SCORE_SCALE) — reserved for future tuning, default 1.0
+    -- 2. Per-spec scale (SPEC_SCALE) — normalizes cross-class score parity
+    local globalScale = C.SCORE_SCALE or 1
+    local specScale = addon.StatWeights:GetSpecScale(specKey)
+    local scale = globalScale * specScale
     local totalScore = math.floor(totalRaw * scale)
     local baseOnlyScore = math.floor(baseOnlyRaw * scale)
     for slotID, raw in pairs(perSlot) do
