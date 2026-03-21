@@ -64,6 +64,8 @@ function addon.ItemScoring:GetBaseStats(itemLink)
         local canonical = STAT_REVERSE[itemModKey]
         if canonical then
             stats[canonical] = (stats[canonical] or 0) + value
+        else
+            addon:DebugPrint("GetBaseStats: unmapped key '" .. tostring(itemModKey) .. "' = " .. tostring(value) .. " on " .. tostring(itemLink))
         end
     end
     return stats

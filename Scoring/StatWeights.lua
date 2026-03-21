@@ -691,6 +691,8 @@ addon.StatWeights.SPECS = {
 addon.StatWeights.SPEC_SCALE = {
     -- Computed from /tgs calibrate: each spec's P1 BIS base score normalized
     -- to PRIEST_DISC P1 base (1741). Run /tgs calibrate to recompute.
+    -- IMPORTANT: Recalibrate after any stat mapping changes in Constants.lua!
+    -- (e.g., adding ITEM_MOD_SPELL_POWER mapping changes caster raw scores)
     -- Healers/tanks have low scale (their gear has many weighted stats).
     -- DPS specs have high scale (gear concentrates into fewer stats).
 

@@ -119,8 +119,12 @@ C.STAT_REVERSE["ITEM_MOD_MELEE_ATTACK_POWER_SHORT"] = "ATTACK_POWER"
 C.STAT_REVERSE["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = "ATTACK_POWER"
 C.STAT_REVERSE["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = "ATTACK_POWER"
 -- Also try the retail-style keys in case some items use them
+-- Anniversary Edition may return ITEM_MOD_SPELL_POWER instead of ITEM_MOD_SPELL_DAMAGE_DONE
+-- (confirmed by RXPGuides addon which handles both keys)
 C.STAT_REVERSE["ITEM_MOD_SPELL_POWER_SHORT"] = "SPELL_POWER"
+C.STAT_REVERSE["ITEM_MOD_SPELL_POWER"] = "SPELL_POWER"
 C.STAT_REVERSE["ITEM_MOD_MANA_REGENERATION_SHORT"] = "MP5"
+C.STAT_REVERSE["ITEM_MOD_MANA_REGENERATION"] = "MP5"
 
 ---------------------------------------------------------------------------
 -- Spec detection: class + talent tree index => spec key
