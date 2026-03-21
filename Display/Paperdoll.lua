@@ -16,11 +16,14 @@ local FONT = "Fonts\\FRIZQT__.TTF"
 local LABEL_SIZE = 10
 local VALUE_SIZE = 10
 
--- Positioning: BOTTOMLEFT of PaperDollFrame (mirrors TacoTip layout)
-local GS_LABEL_X, GS_LABEL_Y = 72, 248
-local GS_VALUE_X, GS_VALUE_Y = 72, 260
-local ILVL_LABEL_X, ILVL_LABEL_Y = 270, 248
-local ILVL_VALUE_X, ILVL_VALUE_Y = 270, 260
+-- Positioning: anchored to CharacterModelFrame bottom area
+-- TacoTip uses BOTTOMLEFT of PaperDollFrame at y=248/260, but this
+-- places text in the middle of the frame. Instead, anchor to the model
+-- frame's bottom edge where TacoTip actually renders.
+local GS_LABEL_X, GS_LABEL_Y = 10, 50
+local GS_VALUE_X, GS_VALUE_Y = 10, 36
+local ILVL_LABEL_X, ILVL_LABEL_Y = 140, 50
+local ILVL_VALUE_X, ILVL_VALUE_Y = 140, 36
 
 ---------------------------------------------------------------------------
 -- Lifecycle
@@ -66,32 +69,32 @@ end
 function M:EnsureDisplay()
     if self.gsValue then return end
 
-    local parent = PaperDollFrame or CharacterFrame
+    local anchor = CharacterModelFrame or PaperDollFrame or CharacterFrame
 
     -- GearScore label ("TrueGearScore")
-    self.gsLabel = parent:CreateFontString(nil, "OVERLAY")
+    self.gsLabel = anchor:CreateFontString(nil, "OVERLAY")
     self.gsLabel:SetFont(FONT, LABEL_SIZE)
-    self.gsLabel:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", GS_LABEL_X, GS_LABEL_Y)
+    self.gsLabel:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", GS_LABEL_X, GS_LABEL_Y)
     self.gsLabel:SetText("TrueGearScore")
     self.gsLabel:SetTextColor(0.53, 0.53, 0.53, 1)  -- Grey label
 
     -- GearScore value
-    self.gsValue = parent:CreateFontString(nil, "OVERLAY")
+    self.gsValue = anchor:CreateFontString(nil, "OVERLAY")
     self.gsValue:SetFont(FONT, VALUE_SIZE)
-    self.gsValue:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", GS_VALUE_X, GS_VALUE_Y)
+    self.gsValue:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", GS_VALUE_X, GS_VALUE_Y)
     self.gsValue:SetText("0")
 
     -- iLvl label
-    self.ilvlLabel = parent:CreateFontString(nil, "OVERLAY")
+    self.ilvlLabel = anchor:CreateFontString(nil, "OVERLAY")
     self.ilvlLabel:SetFont(FONT, LABEL_SIZE)
-    self.ilvlLabel:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", ILVL_LABEL_X, ILVL_LABEL_Y)
+    self.ilvlLabel:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", ILVL_LABEL_X, ILVL_LABEL_Y)
     self.ilvlLabel:SetText("iLvl")
     self.ilvlLabel:SetTextColor(0.53, 0.53, 0.53, 1)
 
     -- iLvl value
-    self.ilvlValue = parent:CreateFontString(nil, "OVERLAY")
+    self.ilvlValue = anchor:CreateFontString(nil, "OVERLAY")
     self.ilvlValue:SetFont(FONT, VALUE_SIZE)
-    self.ilvlValue:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", ILVL_VALUE_X, ILVL_VALUE_Y)
+    self.ilvlValue:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", ILVL_VALUE_X, ILVL_VALUE_Y)
     self.ilvlValue:SetText("0")
 end
 
