@@ -162,6 +162,12 @@ function M:QueueInspect(unit, guid)
         if entry.guid == guid then return end
     end
 
+    -- Enforce max queue size to prevent unbounded growth in large raids
+    if #self.inspectQueue >= 100 then
+        addon:DebugPrint("InspectHandler: Queue full (100), dropping " .. guid)
+        return
+    end
+
     self.inspectQueue[#self.inspectQueue + 1] = { unit = unit, guid = guid }
     self:ProcessQueue()
 end
@@ -237,12 +243,17 @@ end
 function M:OnInspectReady(guid)
     if not self.inspecting then return end
 
-    -- Anniversary Edition may pass various arg types for guid
-    -- Accept the event if we're actively inspecting
     local targetGUID = self.inspectGUID
     if not targetGUID then
         self.inspecting = false
         self:ProcessQueue()
+        return
+    end
+
+    -- Validate the fired event matches our expected target (if GUID provided)
+    if guid and guid ~= "" and guid ~= targetGUID then
+        addon:DebugPrint("InspectHandler: INSPECT_READY GUID mismatch. Expected " .. targetGUID .. ", got " .. tostring(guid))
+        -- Not our inspect — ignore and keep waiting
         return
     end
 

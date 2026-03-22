@@ -25,15 +25,21 @@ M.effectiveWeights = {}
 function M:Initialize()
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    eventFrame:RegisterEvent("PLAYER_LOGIN")
     eventFrame:SetScript("OnEvent", function(_, event, slotID)
         if event == "PLAYER_EQUIPMENT_CHANGED" then
             -- Debounce: cancel previous timer so rapid gear swaps collapse into one scan
             if self.equipChangeTimer then
                 self.equipChangeTimer:Cancel()
             end
-            self.equipChangeTimer = C_Timer.After(0.3, function()
+            self.equipChangeTimer = C_Timer.After(0.5, function()
                 self:ScanEquipment()
                 self.equipChangeTimer = nil
+            end)
+        elseif event == "PLAYER_LOGIN" then
+            -- Delay initial scan to let equipment data load from server
+            C_Timer.After(1, function()
+                self:ScanEquipment()
             end)
         end
     end)
@@ -63,46 +69,49 @@ function M:ScanEquipment()
         self.effectiveWeights = {}
         self.breakdown = nil
         addon:DebugPrint("SelfScanner: no items equipped")
-        return
+        -- Fall through to notify display modules
+    else
+        local result = addon.ItemScoring:ScoreCharacter(items)
+
+        -- Validate scoring result
+        if type(result) ~= "table" then
+            addon:DebugPrint("SelfScanner: ERROR — ScoreCharacter returned " .. type(result) .. " instead of table")
+            self.currentScore = 0
+            self.perSlotScores = {}
+            self.effectiveWeights = {}
+            self.breakdown = nil
+            -- Fall through to notify display modules
+        else
+            self.currentScore = result.totalScore
+            self.resolvedSpec = result.specKey  -- Resolved sub-spec (e.g., DRUID_FERAL_CAT vs DRUID_FERAL_BEAR)
+            self.perSlotScores = result.perSlot
+            self.perSlotDetails = result.perSlotDetails
+            self.effectiveWeights = result.effectiveWeights
+            self.rawScore = result.rawScore
+            self.baseOnlyRaw = result.baseOnlyRaw
+            self.baseOnlyScore = result.baseOnlyScore
+            self.breakdown = result.breakdown
+            self.efficiency = result.efficiency
+
+            -- Cache self score so display modules can use ScoreCache uniformly
+            addon.ScoreCache:Set(addon.playerGUID, {
+                score = self.currentScore,
+                source = "self",
+                timestamp = GetTime(),
+                efficiency = self.efficiency,
+            })
+
+            addon:DebugPrint("SelfScanner: score updated to " .. self.currentScore .. " eff=" .. tostring(self.efficiency) .. "%")
+        end
     end
 
-    local result = addon.ItemScoring:ScoreCharacter(items)
-
-    -- Validate scoring result
-    if type(result) ~= "table" then
-        addon:DebugPrint("SelfScanner: ERROR — ScoreCharacter returned " .. type(result) .. " instead of table")
-        self.currentScore = 0
-        self.perSlotScores = {}
-        self.effectiveWeights = {}
-        self.breakdown = nil
-        return
-    end
-
-    self.currentScore = result.totalScore
-    self.resolvedSpec = result.specKey  -- Resolved sub-spec (e.g., DRUID_FERAL_CAT vs DRUID_FERAL_BEAR)
-    self.perSlotScores = result.perSlot
-    self.perSlotDetails = result.perSlotDetails
-    self.effectiveWeights = result.effectiveWeights
-    self.rawScore = result.rawScore
-    self.baseOnlyRaw = result.baseOnlyRaw
-    self.baseOnlyScore = result.baseOnlyScore
-    self.breakdown = result.breakdown
-    self.efficiency = result.efficiency
-
-    -- Cache self score so display modules can use ScoreCache uniformly
-    addon.ScoreCache:Set(addon.playerGUID, {
-        score = self.currentScore,
-        source = "self",
-        timestamp = GetTime(),
-        efficiency = self.efficiency,
-    })
-
-    addon:DebugPrint("SelfScanner: score updated to " .. self.currentScore .. " eff=" .. tostring(self.efficiency) .. "%")
-
-    -- Notify display modules
+    -- Always notify display modules (even on error/empty, so they can update)
     for _, module in pairs(addon.modules) do
         if module.OnScoreUpdated then
-            module:OnScoreUpdated(self.currentScore)
+            local ok, err = pcall(module.OnScoreUpdated, module, self.currentScore or 0)
+            if not ok then
+                addon:DebugPrint("SelfScanner: OnScoreUpdated error in module: " .. tostring(err))
+            end
         end
     end
 end

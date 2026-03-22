@@ -38,9 +38,12 @@ function M:Initialize()
     eventFrame:RegisterEvent("GROUP_JOINED")
     eventFrame:SetScript("OnEvent", function(_, event)
         if event == "PLAYER_ENTERING_WORLD" then
-            -- Delay to let score settle after login/reload
+            -- Delay to let SelfScanner run its initial scan first
             C_Timer.After(5, function()
-                M:BroadcastScore()
+                local selfScanner = addon:GetModule("SelfScanner")
+                if selfScanner and selfScanner.currentScore and selfScanner.currentScore > 0 then
+                    M:BroadcastScore()
+                end
             end)
         elseif event == "GROUP_JOINED" then
             C_Timer.After(2, function()
@@ -123,6 +126,12 @@ function M:OnCommReceived(prefix, message, distribution, sender)
     local success, payload = AceSerializer:Deserialize(message)
     if not success or type(payload) ~= "table" then
         addon:DebugPrint("AddonChannel: failed to deserialize from " .. tostring(sender))
+        return
+    end
+
+    -- Validate protocol version (reject incompatible versions)
+    if payload.version and payload.version ~= PROTOCOL_VERSION then
+        addon:DebugPrint("AddonChannel: version mismatch from " .. tostring(sender) .. " (got " .. tostring(payload.version) .. ", expected " .. PROTOCOL_VERSION .. ")")
         return
     end
 

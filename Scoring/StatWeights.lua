@@ -319,7 +319,10 @@ addon.StatWeights.SPECS = {
             CRIT_RATING  = 0.39,  -- less crit synergy than Holy (no Surge of Light)
             STAMINA      = 0.08,
         },
-        caps = {},
+        caps = {
+            -- Caster base 16% hit cap = 202 rating. Disc has no hit talents.
+            HIT_RATING = { softCap = 202, hardCap = 202, overCapWeight = 0.0 },
+        },
     },
 
     -- Holy Priest: CoH / Greater Heal focused. Spirit exceptionally strong:
@@ -339,7 +342,10 @@ addon.StatWeights.SPECS = {
             MP5          = 0.47,  -- flat regen, weaker than Spirit for Holy
             STAMINA      = 0.08,
         },
-        caps = {},
+        caps = {
+            -- Caster base 16% hit cap = 202 rating. Holy has no hit talents.
+            HIT_RATING = { softCap = 202, hardCap = 202, overCapWeight = 0.0 },
+        },
     },
 
     -- Shadow Priest: DoTs (SW:P, VT) can't crit and don't scale with haste in TBC.

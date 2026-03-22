@@ -82,8 +82,8 @@ function M:OnTooltipSetItem(tooltip)
         -- Fallback: use raw spec weights if SelfScanner hasn't run yet
         if addon.playerSpec and addon.StatWeights then
             local specData = addon.StatWeights:GetSpecWeights(addon.playerSpec)
-            if specData then
-                effectiveWeights = specData
+            if specData and specData.weights then
+                effectiveWeights = specData.weights
             end
         end
     end

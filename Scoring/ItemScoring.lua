@@ -577,13 +577,51 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
         perSlot[slotID] = math.floor(raw * scale)
     end
 
-    -- Gear efficiency: how much of the item potential has been realized
-    -- via gems, enchants, and procs. Potential ≈ baseOnly * 1.30 (full
-    -- gems + enchants typically add ~30% over base stats alone).
+    -- Gear optimization: count filled gem sockets and enchanted slots
+    -- vs total available. 100% = every socket gemmed, every slot enchanted.
+    -- This is a concrete, verifiable metric — not an estimate.
+    local totalSockets = 0
+    local filledSockets = 0
+    local enchantableSlots = 0
+    local enchantedSlots = 0
+
+    -- Enchantable slot IDs (slots that can have a permanent enchant in TBC)
+    local ENCHANTABLE = { [1]=true, [3]=true, [5]=true, [7]=true, [8]=true,
+        [9]=true, [10]=true, [15]=true, [16]=true, [17]=true, [18]=true }
+
+    for slotID, itemLink in pairs(equippedItems) do
+        local parsed = self:ParseItemLink(itemLink)
+        if parsed then
+            -- Count gem sockets: check how many sockets the item has via clean link
+            local cleanLink = self:BuildCleanItemLink(itemLink)
+            if cleanLink then
+                local layout = self:GetSocketLayout(cleanLink)
+                local slotSockets = (layout.red or 0) + (layout.yellow or 0) + (layout.blue or 0) + (layout.meta or 0)
+                totalSockets = totalSockets + slotSockets
+
+                -- Count filled sockets
+                for _, gemID in ipairs(parsed.gems) do
+                    if gemID > 0 then
+                        filledSockets = filledSockets + 1
+                    end
+                end
+            end
+
+            -- Count enchants
+            if ENCHANTABLE[slotID] then
+                enchantableSlots = enchantableSlots + 1
+                if parsed.enchantID > 0 then
+                    enchantedSlots = enchantedSlots + 1
+                end
+            end
+        end
+    end
+
+    local totalSlots = totalSockets + enchantableSlots
+    local filledSlots = filledSockets + enchantedSlots
     local efficiency = nil
-    if baseOnlyScore > 0 then
-        local potentialScore = math.floor(baseOnlyScore * 1.30)
-        efficiency = math.min(100, math.floor(totalScore / potentialScore * 100 + 0.5))
+    if totalSlots > 0 then
+        efficiency = math.floor(filledSlots / totalSlots * 100 + 0.5)
     end
 
     addon:DebugPrint("ScoreCharacter: raw=" .. totalRaw .. " baseOnly=" .. baseOnlyRaw .. " scaled=" .. totalScore .. " baseScaled=" .. baseOnlyScore .. " eff=" .. tostring(efficiency) .. "% (x" .. scale .. ") spec=" .. specKey)
