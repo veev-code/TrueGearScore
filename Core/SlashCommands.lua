@@ -297,6 +297,85 @@ function addon.SlashCommands:RunCalibration()
         addon:Log("DIAG", r.spec .. " | " .. r.name .. " | base=" .. r.baseRaw .. " full=" .. r.fullRaw)
     end
 
+    ---------------------------------------------------------------------------
+    -- PVP_SPEC_SCALE calibration: S3 PvP BIS ≈ P3/BT/Hyjal PvE BIS
+    ---------------------------------------------------------------------------
+    -- For each spec with both a _PVP_S3 and _P3 reference set:
+    --   1. Score the PvP set with PvP weights, SPEC_SCALE=1, no dampening (raw)
+    --   2. Get the P3 PvE score (already scaled by SPEC_SCALE)
+    --   3. PVP_SPEC_SCALE = P3_PvE_score / PvP_S3_raw
+    -- This ensures S3 PvP gear scores the same as T6/BT/Hyjal PvE gear.
+    ---------------------------------------------------------------------------
+
+    -- Collect P3 PvE scaled scores and PVP_S3 raw PvP scores per spec
+    local p3PveScaledBySpec = {}  -- { [specKey] = scaled P3 PvE score }
+    local pvpS3RawBySpec = {}     -- { [specKey] = raw PvP S3 score (PvP weights, scale=1, no dampening) }
+
+    for setKey, setData in pairs(sets) do
+        local specKey = setData.spec
+        local equippedItems = {}
+        local missing = 0
+
+        for slotID, itemID in pairs(setData.items) do
+            local _, itemLink = GetItemInfo(itemID)
+            if itemLink then
+                equippedItems[slotID] = itemLink
+            else
+                missing = missing + 1
+            end
+        end
+
+        if missing > 0 then
+            -- skip incomplete sets
+        elseif setKey:match("_P3$") then
+            -- Score P3 PvE set WITH SPEC_SCALE (the calibrated PvE score)
+            local result = addon.ItemScoring:ScoreCharacter(equippedItems, specKey, "pve")
+            p3PveScaledBySpec[specKey] = result.totalScore
+        elseif setKey:match("_PVP_S3$") then
+            -- Score PvP S3 set with PvP weights but NO PVP_SPEC_SCALE and NO dampening
+            -- Temporarily set PVP_SPEC_SCALE to 1.0 and bypass dampening
+            local origPvpScale = addon.StatWeights.PVP_SPEC_SCALE[specKey]
+            local origDampening = C.PVP_SCORE_DAMPENING
+            addon.StatWeights.PVP_SPEC_SCALE[specKey] = 1.0
+            C.PVP_SCORE_DAMPENING = 1.0
+            local result = addon.ItemScoring:ScoreCharacter(equippedItems, specKey, "pvp")
+            addon.StatWeights.PVP_SPEC_SCALE[specKey] = origPvpScale
+            C.PVP_SCORE_DAMPENING = origDampening
+            pvpS3RawBySpec[specKey] = result.totalScore
+        end
+    end
+
+    -- Compute and output PVP_SPEC_SCALE
+    local pvpScaleOutput = {}
+    for specKey, pvpRaw in pairs(pvpS3RawBySpec) do
+        local pveTarget = p3PveScaledBySpec[specKey]
+        if pveTarget and pvpRaw > 0 then
+            local pvpScale = pveTarget / pvpRaw
+            pvpScaleOutput[#pvpScaleOutput + 1] = {
+                spec = specKey,
+                scale = pvpScale,
+                pvpRaw = pvpRaw,
+                pveTarget = pveTarget,
+            }
+        else
+            addon:Log("DIAG", "PVP_SPEC_SCALE: " .. specKey .. " — missing P3 PvE set or zero PvP score, skipped")
+        end
+    end
+
+    if #pvpScaleOutput > 0 then
+        table.sort(pvpScaleOutput, function(a, b) return a.spec < b.spec end)
+        addon:DiagPrint("")
+        addon:DiagPrint("=== PVP_SPEC_SCALE factors (S3 PvP → P3/BT PvE target) ===")
+        addon:DiagPrint("-- Paste into StatWeights.lua PVP_SPEC_SCALE table")
+        for _, entry in ipairs(pvpScaleOutput) do
+            local scaleStr = string.format("%.3f", entry.scale)
+            addon:DiagPrint("  PVP_SPEC_SCALE[\"" .. entry.spec .. "\"] = " .. scaleStr .. ",  -- S3 raw=" .. entry.pvpRaw .. ", P3 PvE target=" .. entry.pveTarget)
+        end
+    else
+        addon:DiagPrint("")
+        addon:DiagPrint("PVP_SPEC_SCALE: No specs with both _PVP_S3 and _P3 reference sets found.")
+    end
+
     addon:DiagPrint("=== CALIBRATION COMPLETE ===")
     addon:DiagPrint("Run /tgs log to view details, or /reload + check SavedVariables")
 end

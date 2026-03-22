@@ -60,13 +60,12 @@ C.CONTENT_TIERS = {
 -- Reserved for future global tuning if needed (1.0 = no adjustment).
 C.SCORE_SCALE = 1.0
 
--- PvP score dampening: applied on top of SPEC_SCALE for PvP scoring.
--- PvP gear has ~30% of its stat budget in resilience. PvP weights value
--- resilience at ~0.70, while PvE weights give it 0. This means PvP weights
--- "find" value in ~30% more of the item's stat budget than PvE weights do,
--- inflating PvP scores by ~21% (30% * 0.70). Dampening of 0.83 (≈ 1/1.21)
--- compensates, so a full S3 PvP player scores similarly to a full T6 PvE player.
-C.PVP_SCORE_DAMPENING = 0.83
+-- PvP score dampening: legacy constant, now 1.0 (no-op).
+-- Resilience inflation is handled by PVP_SPEC_SCALE in StatWeights.lua,
+-- which is calibrated so S3 PvP BIS ≈ P3/BT/Hyjal PvE BIS per spec.
+-- Kept at 1.0 rather than removed to avoid breaking the multiplication
+-- in ItemScoring:ScoreCharacter.
+C.PVP_SCORE_DAMPENING = 1.0
 
 ---------------------------------------------------------------------------
 -- Equipment slots (skip slot 4 = shirt)

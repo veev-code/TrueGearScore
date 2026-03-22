@@ -1346,8 +1346,11 @@ addon.StatWeights.PVP_SPECS = {
 ---------------------------------------------------------------------------
 
 addon.StatWeights.PVP_SPEC_SCALE = {
-    -- Mirrors PvE SPEC_SCALE values. Recalibrate with /tgs calibrate if
-    -- PvP weights change significantly from PvE ratios.
+    -- Calibrated so S3 PvP BIS scores ≈ P3/BT/Hyjal PvE BIS scores.
+    -- Formula: PVP_SPEC_SCALE[spec] = P3_PvE_scaled_score / S3_PvP_raw_score
+    -- Run /tgs calibrate in-game to recompute after PvP weight changes.
+    -- Current values are STALE (copied from PvE SPEC_SCALE) — update after
+    -- running calibration with _PVP_S3 reference sets.
 
     -- Healers
     ["PRIEST_DISC"]     = 1.000,
@@ -1408,7 +1411,8 @@ function addon.StatWeights:GetSpecPvPWeights(specKey)
 end
 
 function addon.StatWeights:GetSpecPvPScale(specKey)
-    -- PVP_SPEC_SCALE now mirrors PvE SPEC_SCALE (same cross-class normalization).
+    -- PVP_SPEC_SCALE is calibrated so S3 PvP BIS ≈ P3/BT/Hyjal PvE BIS.
+    -- Computed via /tgs calibrate: PVP_SPEC_SCALE = P3_PvE_scaled / S3_PvP_raw.
     -- Falls back to PvE SPEC_SCALE if a spec is missing from PVP_SPEC_SCALE.
     return self.PVP_SPEC_SCALE[specKey] or self.SPEC_SCALE[specKey] or 1.0
 end
