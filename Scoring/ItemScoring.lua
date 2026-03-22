@@ -734,7 +734,7 @@ function addon.ItemScoring:ScoreCharacterBestMode(equippedItems, specKey)
         totalResilience = totalResilience + (stats.RESILIENCE or 0)
     end
 
-    if totalResilience >= 100 then
+    if totalResilience >= 150 then
         local pvpResult = self:ScoreCharacter(equippedItems, bestSpec, "pvp")
         if pvpResult.totalScore > bestResult.totalScore then
             addon:DebugPrint("ScoreCharacterBestMode: PvP wins (" .. pvpResult.totalScore .. " > " .. bestResult.totalScore .. ") resil=" .. totalResilience)
