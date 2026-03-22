@@ -688,29 +688,50 @@ end
 -- @param specKey        Player spec key. If nil, uses addon.playerSpec.
 -- @return table         Same as ScoreCharacter, with mode = "pve" or "pvp"
 function addon.ItemScoring:ScoreCharacterBestMode(equippedItems, specKey)
-    -- First check if the gear actually has resilience. PvP weights boost
-    -- stamina significantly (0.30-0.50 vs 0.04-0.08 PvE), which makes PvP
-    -- weights score higher on ANY gear — even full PvE sets. We only consider
-    -- PvP mode if the gear has meaningful resilience (indicating actual PvP gear).
+    -- Score with the detected spec first
+    local bestResult = self:ScoreCharacter(equippedItems, specKey, "pve")
+    local bestSpec = specKey
+
+    -- Try ALL specs for this class — the gear might not match the detected spec.
+    -- Example: Holy Paladin wearing Prot gear for off-tanking. Their Holy spec
+    -- scores terribly on tank stats, but PALADIN_PROT weights score correctly.
+    -- The gear self-selects the most appropriate spec.
+    local _, class = nil, nil
+    if specKey then
+        -- Extract class from spec key (e.g., "PALADIN_HOLY" → "PALADIN")
+        class = specKey:match("^([A-Z]+)_")
+    end
+
+    if class and C.SPEC_MAP[class] then
+        for _, candidateSpec in ipairs(C.SPEC_MAP[class]) do
+            if candidateSpec ~= specKey then
+                local candidateResult = self:ScoreCharacter(equippedItems, candidateSpec, "pve")
+                if type(candidateResult) == "table" and candidateResult.totalScore > bestResult.totalScore then
+                    bestResult = candidateResult
+                    bestSpec = candidateSpec
+                end
+            end
+        end
+    end
+
+    if bestSpec ~= specKey then
+        addon:DebugPrint("ScoreCharacterBestMode: Gear chose " .. bestSpec .. " over detected " .. specKey .. " (" .. bestResult.totalScore .. ")")
+    end
+
+    -- Check PvP mode only if gear has meaningful resilience (≥50 rating ≈ 2+ PvP pieces)
     local totalResilience = 0
     for _, itemLink in pairs(equippedItems) do
         local stats = self:GetBaseStats(itemLink)
         totalResilience = totalResilience + (stats.RESILIENCE or 0)
     end
 
-    -- Require at least 50 resilience rating (~2 PvP pieces) to consider PvP mode
-    if totalResilience < 50 then
-        local pveResult = self:ScoreCharacter(equippedItems, specKey, "pve")
-        return pveResult
+    if totalResilience >= 50 then
+        local pvpResult = self:ScoreCharacter(equippedItems, bestSpec, "pvp")
+        if pvpResult.totalScore > bestResult.totalScore then
+            addon:DebugPrint("ScoreCharacterBestMode: PvP wins (" .. pvpResult.totalScore .. " > " .. bestResult.totalScore .. ") resil=" .. totalResilience)
+            return pvpResult
+        end
     end
 
-    local pveResult = self:ScoreCharacter(equippedItems, specKey, "pve")
-    local pvpResult = self:ScoreCharacter(equippedItems, specKey, "pvp")
-
-    if pvpResult.totalScore > pveResult.totalScore then
-        addon:DebugPrint("ScoreCharacterBestMode: PvP wins (" .. pvpResult.totalScore .. " > " .. pveResult.totalScore .. ") resil=" .. totalResilience)
-        return pvpResult
-    end
-    addon:DebugPrint("ScoreCharacterBestMode: PvE wins (" .. pveResult.totalScore .. " >= " .. pvpResult.totalScore .. ") resil=" .. totalResilience)
-    return pveResult
+    return bestResult
 end
