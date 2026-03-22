@@ -184,9 +184,18 @@ function addon:DetectSpec()
     local class = self.playerClass
     if not class then return end
 
+    -- Get the ACTIVE talent group (dual spec support)
+    -- GetActiveTalentGroup(isInspect, isPet): false, false = self, not pet
+    local activeGroup = 1
+    if GetActiveTalentGroup then
+        activeGroup = GetActiveTalentGroup(false, false) or 1
+    end
+
+    -- Read talent points for the active group
     local points = {}
     for i = 1, GetNumTalentTabs() do
-        local _, _, pointsSpent = GetTalentTabInfo(i)
+        -- GetTalentTabInfo(tabIndex, isInspect, isPet, talentGroup)
+        local _, _, pointsSpent = GetTalentTabInfo(i, false, false, activeGroup)
         points[i] = tonumber(pointsSpent) or 0
     end
 
@@ -200,7 +209,7 @@ function addon:DetectSpec()
 
     local specMap = C.SPEC_MAP[class]
     self.playerSpec = specMap and specMap[maxTree] or (class .. "_UNKNOWN")
-    self:DebugPrint("Detected spec: " .. self.playerSpec)
+    self:DebugPrint("Detected spec: " .. self.playerSpec .. " (group=" .. activeGroup .. " talents=" .. (points[1] or 0) .. "/" .. (points[2] or 0) .. "/" .. (points[3] or 0) .. ")")
 end
 
 ---------------------------------------------------------------------------
@@ -212,6 +221,7 @@ local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:RegisterEvent("CHARACTER_POINTS_CHANGED")
+eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
 local GetMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
 
@@ -267,7 +277,7 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1, ...)
 
         self:UnregisterEvent("PLAYER_LOGIN")
 
-    elseif event == "CHARACTER_POINTS_CHANGED" then
+    elseif event == "CHARACTER_POINTS_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
         addon:DetectSpec()
         -- Rescan since spec change affects weights
         local selfScanner = addon:GetModule("SelfScanner")
