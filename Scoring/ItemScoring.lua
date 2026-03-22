@@ -692,42 +692,28 @@ function addon.ItemScoring:ScoreCharacterBestMode(equippedItems, specKey)
     local bestResult = self:ScoreCharacter(equippedItems, specKey, "pve")
     local bestSpec = specKey
 
-    -- Only try cross-role specs for the class. Same-role specs (e.g., BM vs
-    -- Surv Hunter) should never override — they share similar gear and the
-    -- detected spec is correct. Cross-role overrides catch cases like a Holy
-    -- Paladin wearing Prot gear for off-tanking.
-    local SPEC_ROLE = {
-        WARRIOR_ARMS = "mdps", WARRIOR_FURY = "mdps", WARRIOR_PROT = "tank",
-        PALADIN_HOLY = "healer", PALADIN_PROT = "tank", PALADIN_RET = "mdps",
-        HUNTER_BM = "rdps", HUNTER_MM = "rdps", HUNTER_SURV = "rdps",
-        ROGUE_COMBAT = "mdps", ROGUE_ASSASSIN = "mdps", ROGUE_SUBTLETY = "mdps",
-        PRIEST_DISC = "healer", PRIEST_HOLY = "healer", PRIEST_SHADOW = "cdps",
-        SHAMAN_ELE = "cdps", SHAMAN_ENH = "mdps", SHAMAN_RESTO = "healer",
-        MAGE_ARCANE = "cdps", MAGE_FIRE = "cdps", MAGE_FROST = "cdps",
-        WARLOCK_AFFLIC = "cdps", WARLOCK_DEMO = "cdps", WARLOCK_DESTRO = "cdps",
-        DRUID_BALANCE = "cdps", DRUID_FERAL = "mdps", DRUID_FERAL_CAT = "mdps",
-        DRUID_FERAL_BEAR = "tank", DRUID_RESTO = "healer",
-    }
-
-    local detectedRole = SPEC_ROLE[specKey]
+    -- Try ALL specs for this class, pick whichever the gear scores highest
+    -- RAW (before SPEC_SCALE). This handles all cases uniformly:
+    -- - Dual spec (Arms warrior in prot gear)
+    -- - Off-role gear (Holy paladin tanking)
+    -- - Self or inspected players (same logic)
+    -- RAW comparison avoids SPEC_SCALE distortion (DPS 3x vs Tank 1x).
     local class = specKey and specKey:match("^([A-Z]+)_")
 
-    if class and C.SPEC_MAP[class] and detectedRole then
+    if class and C.SPEC_MAP[class] then
         for _, candidateSpec in ipairs(C.SPEC_MAP[class]) do
-            local candidateRole = SPEC_ROLE[candidateSpec]
-            -- Only try specs from a DIFFERENT role
-            if candidateSpec ~= specKey and candidateRole and candidateRole ~= detectedRole then
+            if candidateSpec ~= specKey then
                 local candidateResult = self:ScoreCharacter(equippedItems, candidateSpec, "pve")
-                -- Compare RAW scores (not scaled) to decide which spec matches
-                -- the gear. SPEC_SCALE amplifies DPS specs 3x, which makes even
-                -- poor DPS scores beat good tank scores in scaled comparison.
                 if type(candidateResult) == "table" and candidateResult.rawScore > bestResult.rawScore then
                     bestResult = candidateResult
                     bestSpec = candidateSpec
-                    addon:DebugPrint("ScoreCharacterBestMode: Cross-role override — " .. bestSpec .. " (" .. candidateRole .. ") raw=" .. candidateResult.rawScore .. " over " .. specKey .. " (" .. detectedRole .. ") raw=" .. bestResult.rawScore)
                 end
             end
         end
+    end
+
+    if bestSpec ~= specKey then
+        addon:DebugPrint("ScoreCharacterBestMode: Gear chose " .. bestSpec .. " (raw=" .. bestResult.rawScore .. ") over detected " .. specKey .. " (raw=" .. self:ScoreCharacter(equippedItems, specKey, "pve").rawScore .. ")")
     end
 
     -- Check PvP mode only if gear has meaningful resilience (≥50 rating ≈ 2+ PvP pieces)
