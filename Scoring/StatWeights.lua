@@ -697,40 +697,40 @@ addon.StatWeights.SPEC_SCALE = {
     -- DPS specs have high scale (gear concentrates into fewer stats).
 
     -- Healers
-    ["PRIEST_DISC"]     = 1.000,  -- P1 base=1741 (anchor)
-    ["PRIEST_HOLY"]     = 1.000,  -- same gear as Disc, similar weights
-    ["DRUID_RESTO"]     = 0.979,  -- P1 base=1778
-    ["PALADIN_HOLY"]    = 1.279,  -- P1 base=1361
-    ["SHAMAN_RESTO"]    = 1.325,  -- P1 base=1314
+    ["PRIEST_DISC"]     = 1.000,  -- P1 base=1750 (anchor)
+    ["PRIEST_HOLY"]     = 1.000,  -- same gear as Disc
+    ["DRUID_RESTO"]     = 0.984,  -- P1 base=1778
+    ["PALADIN_HOLY"]    = 1.202,  -- P1 base=1456
+    ["SHAMAN_RESTO"]    = 1.312,  -- P1 base=1334
 
     -- Tanks
-    ["WARRIOR_PROT"]    = 1.114,  -- P1 base=1563
-    ["PALADIN_PROT"]    = 1.200,  -- estimated (no P1 ref set scored; between Holy and Warrior)
-    ["DRUID_FERAL_BEAR"]= 1.100,  -- estimated (bear gear similar stat spread to plate tanks)
+    ["WARRIOR_PROT"]    = 1.000,  -- P1 base=1750
+    ["PALADIN_PROT"]    = 1.100,  -- estimated
+    ["DRUID_FERAL_BEAR"]= 1.050,  -- estimated
 
     -- Melee DPS
-    ["HUNTER_BM"]       = 3.414,  -- P1 base=510
-    ["HUNTER_MM"]       = 3.414,  -- same gear as BM
-    ["HUNTER_SURV"]     = 3.414,  -- same gear as BM
-    ["ROGUE_COMBAT"]    = 3.575,  -- P1 base=487
-    ["ROGUE_ASSASSIN"]  = 3.575,  -- same gear type
-    ["ROGUE_SUBTLETY"]  = 3.575,  -- same gear type
-    ["DRUID_FERAL"]     = 3.878,  -- P1 base=449
-    ["PALADIN_RET"]     = 4.693,  -- P1 base=371
-    ["SHAMAN_ENH"]      = 4.877,  -- P1 base=357
-    ["WARRIOR_ARMS"]    = 5.182,  -- same gear as Fury
-    ["WARRIOR_FURY"]    = 5.182,  -- P1 base=336
+    ["ROGUE_COMBAT"]    = 3.125,  -- P1 base=560
+    ["ROGUE_ASSASSIN"]  = 3.125,  -- same gear type
+    ["ROGUE_SUBTLETY"]  = 3.125,  -- same gear type
+    ["WARRIOR_FURY"]    = 3.043,  -- P1 base=575
+    ["WARRIOR_ARMS"]    = 3.043,  -- same gear type
+    ["PALADIN_RET"]     = 3.165,  -- P1 base=553
+    ["SHAMAN_ENH"]      = 3.327,  -- P1 base=526
+    ["HUNTER_BM"]       = 2.796,  -- P1 base=626
+    ["HUNTER_MM"]       = 2.796,  -- same gear type
+    ["HUNTER_SURV"]     = 2.796,  -- same gear type
+    ["DRUID_FERAL"]     = 2.091,  -- P1 base=837
 
     -- Caster DPS
-    ["DRUID_BALANCE"]   = 3.605,  -- P1 base=483
-    ["MAGE_FIRE"]       = 4.408,  -- P1 base=395
-    ["MAGE_ARCANE"]     = 4.408,  -- same gear type as Fire
-    ["MAGE_FROST"]      = 4.408,  -- same gear type as Fire
-    ["WARLOCK_DESTRO"]  = 4.558,  -- P1 base=382
-    ["WARLOCK_AFFLIC"]  = 4.558,  -- same gear type
-    ["WARLOCK_DEMO"]    = 4.558,  -- same gear type
-    ["PRIEST_SHADOW"]   = 4.000,  -- estimated (shadow priest gear is caster DPS cloth)
-    ["SHAMAN_ELE"]      = 4.500,  -- estimated (12.9x was broken; use caster DPS range)
+    ["MAGE_FIRE"]       = 1.581,  -- P1 base=1107
+    ["MAGE_ARCANE"]     = 1.581,  -- same gear type
+    ["MAGE_FROST"]      = 1.581,  -- same gear type
+    ["DRUID_BALANCE"]   = 1.597,  -- P1 base=1096
+    ["WARLOCK_DESTRO"]  = 1.634,  -- P1 base=1071
+    ["WARLOCK_AFFLIC"]  = 1.634,  -- same gear type
+    ["WARLOCK_DEMO"]    = 1.634,  -- same gear type
+    ["SHAMAN_ELE"]      = 2.163,  -- P1 base=809
+    ["PRIEST_SHADOW"]   = 1.600,  -- estimated (caster DPS cloth)
 }
 
 ---------------------------------------------------------------------------
