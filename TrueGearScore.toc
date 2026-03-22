@@ -41,6 +41,10 @@ Display\Paperdoll.lua
 Display\UnitTooltip.lua
 Display\InspectFrame.lua
 Display\LFGIntegration.lua
+Display\ItemTooltip.lua
 
 # Communication
 Communication\AddonChannel.lua
+
+# UI
+UI\Options.lua

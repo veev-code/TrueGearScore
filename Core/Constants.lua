@@ -176,7 +176,9 @@ C.DEFAULTS = {
     profile = {
         enabled = true,
         showPaperdoll = true,
+        showUnitTooltip = true,
         showItemTooltip = false,
+        showInspectFrame = true,
         debugMode = false,
     },
 }

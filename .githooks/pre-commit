@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# TrueGearScore pre-commit hook
+# Validates gem, enchant, and proc databases before allowing a commit.
+#
+# To enable this hook, run from the addon root:
+#   git config core.hooksPath .githooks
+#
+# Requires Python 3.6+.
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+VALIDATOR="$SCRIPT_DIR/Tools/validate_data.py"
+
+if [ ! -f "$VALIDATOR" ]; then
+    echo "WARNING: validate_data.py not found at $VALIDATOR — skipping validation"
+    exit 0
+fi
+
+# Only run if any data file is staged
+DATA_FILES="Data/GemDatabase.lua Data/EnchantDatabase.lua Data/ProcDatabase.lua"
+STAGED=$(git diff --cached --name-only 2>/dev/null || true)
+
+RUN_VALIDATION=false
+for f in $DATA_FILES; do
+    if echo "$STAGED" | grep -q "$f"; then
+        RUN_VALIDATION=true
+        break
+    fi
+done
+
+if [ "$RUN_VALIDATION" = false ]; then
+    exit 0
+fi
+
+echo "Running TrueGearScore data validation..."
+
+# Try python3 first, fall back to python
+if command -v python3 &>/dev/null; then
+    python3 "$VALIDATOR" --verbose
+else
+    python "$VALIDATOR" --verbose
+fi

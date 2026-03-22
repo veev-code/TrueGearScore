@@ -46,6 +46,11 @@ function addon.SlashCommands:HandleCommand(msg)
         addon:PrintRecentLog(tonumber(args[2]) or 30)
     elseif cmd == "clearlog" then
         addon:ClearLog()
+    elseif cmd == "config" or cmd == "options" then
+        local options = addon:GetModule("Options")
+        if options then
+            options:Open()
+        end
     elseif cmd == "report" then
         self:ReportScore(args[2])
     else
@@ -392,6 +397,7 @@ function addon.SlashCommands:ShowHelp()
     addon:Print("  |cff00ff00/tgs diag|r — Run diagnostic (logs to SavedVariables)")
     addon:Print("  |cff00ff00/tgs log [n]|r — Show recent log entries")
     addon:Print("  |cff00ff00/tgs clearlog|r — Clear log")
+    addon:Print("  |cff00ff00/tgs config|r — Open options panel")
     addon:Print("  |cff00ff00/tgs debug|r — Toggle debug mode")
     addon:Print("  |cff00ff00/tgs help|r — This message")
 end
