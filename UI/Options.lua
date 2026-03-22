@@ -12,6 +12,7 @@ addon:RegisterModule("Options", M)
 
 local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+local AceDBOptions = LibStub("AceDBOptions-3.0", true)
 
 ---------------------------------------------------------------------------
 -- Options table
@@ -163,4 +164,10 @@ end
 function M:Initialize()
     AceConfig:RegisterOptionsTable("TrueGearScore", GetOptionsTable)
     AceConfigDialog:AddToBlizOptions("TrueGearScore", "TrueGearScore")
+
+    -- Add profiles tab (AceDBOptions)
+    if AceDBOptions and addon.db then
+        AceConfig:RegisterOptionsTable("TrueGearScore_Profiles", AceDBOptions:GetOptionsTable(addon.db))
+        AceConfigDialog:AddToBlizOptions("TrueGearScore_Profiles", "Profiles", "TrueGearScore")
+    end
 end
