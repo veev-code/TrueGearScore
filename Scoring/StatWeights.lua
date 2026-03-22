@@ -1346,47 +1346,46 @@ addon.StatWeights.PVP_SPECS = {
 ---------------------------------------------------------------------------
 
 addon.StatWeights.PVP_SPEC_SCALE = {
-    -- Calibrated so S3 PvP BIS scores ≈ P3/BT/Hyjal PvE BIS scores.
+    -- Data-driven: S3 PvP BIS normalized against P3/BT/Hyjal PvE BIS.
     -- Formula: PVP_SPEC_SCALE[spec] = P3_PvE_scaled_score / S3_PvP_raw_score
-    -- Run /tgs calibrate in-game to recompute after PvP weight changes.
-    -- Current values are STALE (copied from PvE SPEC_SCALE) — update after
-    -- running calibration with _PVP_S3 reference sets.
+    -- Run /tgs calibrate (debug mode) to recompute after PvP weight changes.
 
     -- Healers
-    ["PRIEST_DISC"]     = 1.000,
-    ["PRIEST_HOLY"]     = 0.946,
-    ["DRUID_RESTO"]     = 0.984,
-    ["PALADIN_HOLY"]    = 1.202,
-    ["SHAMAN_RESTO"]    = 1.312,
+    ["PRIEST_DISC"]     = 1.173,  -- S3 raw=1919, P3 target=2251
+    ["PRIEST_HOLY"]     = 1.134,  -- S3 raw=2001, P3 target=2269
+    ["DRUID_RESTO"]     = 1.377,  -- S3 raw=1683, P3 target=2317
+    ["PALADIN_HOLY"]    = 1.347,  -- S3 raw=1788, P3 target=2409
+    ["SHAMAN_RESTO"]    = 1.706,  -- S3 raw=1432, P3 target=2443
 
     -- Tanks
-    ["WARRIOR_PROT"]    = 1.000,
-    ["PALADIN_PROT"]    = 0.957,
-    ["DRUID_FERAL_BEAR"]= 2.273,
+    ["WARRIOR_PROT"]    = 1.018,  -- S3 raw=2141, P3 target=2180
+    ["PALADIN_PROT"]    = 1.180,  -- S3 raw=2050, P3 target=2418
+    ["DRUID_FERAL_BEAR"]= 1.578,  -- uses PvE scale (no PvP bear reference set)
+    ["DRUID_FERAL"]     = 2.091,  -- legacy key, uses cat PvE scale
 
     -- Melee DPS
-    ["ROGUE_COMBAT"]    = 3.125,
-    ["ROGUE_ASSASSIN"]  = 3.119,
-    ["ROGUE_SUBTLETY"]  = 3.125,
-    ["WARRIOR_FURY"]    = 3.043,
-    ["WARRIOR_ARMS"]    = 3.076,
-    ["PALADIN_RET"]     = 3.165,
-    ["SHAMAN_ENH"]      = 3.327,
-    ["HUNTER_BM"]       = 2.796,
-    ["HUNTER_MM"]       = 2.511,
-    ["HUNTER_SURV"]     = 3.493,
-    ["DRUID_FERAL_CAT"] = 2.273,
+    ["ROGUE_COMBAT"]    = 2.822,  -- S3 raw=1111, P3 target=3135
+    ["ROGUE_ASSASSIN"]  = 2.597,  -- S3 raw=1090, P3 target=2831
+    ["ROGUE_SUBTLETY"]  = 2.822,  -- no P3 PvE set; use Combat value
+    ["WARRIOR_FURY"]    = 2.189,  -- S3 raw=1089, P3 target=2384
+    ["WARRIOR_ARMS"]    = 2.100,  -- S3 raw=1064, P3 target=2234
+    ["PALADIN_RET"]     = 2.882,  -- S3 raw=814, P3 target=2346
+    ["SHAMAN_ENH"]      = 2.652,  -- S3 raw=919, P3 target=2437
+    ["HUNTER_BM"]       = 2.796,  -- S3 raw=1106, P3 target=3092
+    ["HUNTER_MM"]       = 2.487,  -- S3 raw=1120, P3 target=2786
+    ["HUNTER_SURV"]     = 3.099,  -- S3 raw=1103, P3 target=3418
+    ["DRUID_FERAL_CAT"] = 2.091,  -- uses PvE scale (no separate PvP cat set)
 
     -- Caster DPS
-    ["MAGE_FIRE"]       = 1.581,
-    ["MAGE_ARCANE"]     = 1.823,
-    ["MAGE_FROST"]      = 1.670,
-    ["DRUID_BALANCE"]   = 1.597,
-    ["WARLOCK_DESTRO"]  = 1.634,
-    ["WARLOCK_AFFLIC"]  = 1.902,
-    ["WARLOCK_DEMO"]    = 1.823,
-    ["SHAMAN_ELE"]      = 2.163,
-    ["PRIEST_SHADOW"]   = 1.757,
+    ["MAGE_FIRE"]       = 1.574,  -- S3 raw=1301, P3 target=2048
+    ["MAGE_ARCANE"]     = 1.904,  -- S3 raw=1200, P3 target=2285
+    ["MAGE_FROST"]      = 1.845,  -- S3 raw=1285, P3 target=2371
+    ["DRUID_BALANCE"]   = 2.135,  -- S3 raw=1042, P3 target=2225
+    ["WARLOCK_DESTRO"]  = 1.626,  -- S3 raw=1239, P3 target=2015
+    ["WARLOCK_AFFLIC"]  = 1.671,  -- S3 raw=1218, P3 target=2035
+    ["WARLOCK_DEMO"]    = 1.672,  -- S3 raw=1236, P3 target=2066
+    ["SHAMAN_ELE"]      = 2.206,  -- S3 raw=1243, P3 target=2742
+    ["PRIEST_SHADOW"]   = 1.690,  -- S3 raw=1205, P3 target=2037
 }
 
 ---------------------------------------------------------------------------
