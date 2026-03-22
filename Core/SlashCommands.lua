@@ -46,6 +46,8 @@ function addon.SlashCommands:HandleCommand(msg)
         addon:PrintRecentLog(tonumber(args[2]) or 30)
     elseif cmd == "clearlog" then
         addon:ClearLog()
+    elseif cmd == "report" then
+        self:ReportScore(args[2])
     else
         addon:Print("Unknown command: " .. cmd .. ". Type |cff00ff00/tgs help|r for a list.")
     end
@@ -344,9 +346,45 @@ function addon.SlashCommands:DumpStatKeys()
     addon:DiagPrint("--- End StatKey Audit ---")
 end
 
+function addon.SlashCommands:ReportScore(channelArg)
+    local selfScanner = addon:GetModule("SelfScanner")
+    if not selfScanner or not selfScanner.currentScore then
+        addon:Print("No score available yet. Try |cff00ff00/tgs rescan|r first.")
+        return
+    end
+
+    local score = selfScanner.currentScore
+    local label = addon.ScoreColors:GetBracketLabel(score)
+
+    -- Determine chat channel
+    local channel
+    if channelArg then
+        local arg = channelArg:upper()
+        if arg == "PARTY" or arg == "RAID" or arg == "GUILD" or arg == "SAY" then
+            channel = arg
+        else
+            addon:Print("Invalid channel: " .. channelArg .. ". Use: party, raid, guild, say")
+            return
+        end
+    else
+        -- Auto-detect
+        if IsInRaid() then
+            channel = "RAID"
+        elseif IsInGroup() then
+            channel = "PARTY"
+        else
+            channel = "GUILD"
+        end
+    end
+
+    SendChatMessage("TrueGearScore: " .. score .. " (" .. label .. ")", channel)
+    addon:Print("Score reported to " .. channel)
+end
+
 function addon.SlashCommands:ShowHelp()
     addon:Print("Commands:")
     addon:Print("  |cff00ff00/tgs|r — Show your TrueGearScore")
+    addon:Print("  |cff00ff00/tgs report [channel]|r — Share score to chat (party/raid/guild/say)")
     addon:Print("  |cff00ff00/tgs breakdown|r — Per-slot score breakdown")
     addon:Print("  |cff00ff00/tgs spec|r — Show detected spec")
     addon:Print("  |cff00ff00/tgs rescan|r — Force gear rescan")

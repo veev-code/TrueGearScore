@@ -21,5 +21,7 @@
     <Include file="AceDBOptions-3.0\AceDBOptions-3.0.xml"/>
     <Include file="AceGUI-3.0\AceGUI-3.0.xml"/>
     <Include file="AceConfig-3.0\AceConfig-3.0.xml"/>
+    <Include file="AceComm-3.0\AceComm-3.0.xml"/>
+    <Include file="AceSerializer-3.0\AceSerializer-3.0.xml"/>
 
 </Ui>

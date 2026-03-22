@@ -40,3 +40,6 @@ Display\ScoreColors.lua
 Display\Paperdoll.lua
 Display\UnitTooltip.lua
 Display\InspectFrame.lua
+
+# Communication
+Communication\AddonChannel.lua
