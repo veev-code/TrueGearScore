@@ -126,6 +126,29 @@ C.STAT_REVERSE["ITEM_MOD_SPELL_POWER"] = "SPELL_POWER"
 C.STAT_REVERSE["ITEM_MOD_MANA_REGENERATION_SHORT"] = "MP5"
 C.STAT_REVERSE["ITEM_MOD_MANA_REGENERATION"] = "MP5"
 
+-- Anniversary Edition returns MANY keys without _SHORT suffix.
+-- Also uses separate spell hit/crit keys from melee hit/crit.
+-- Map ALL variants to canonical names.
+
+-- Hit rating: melee, spell, and no-suffix variants
+C.STAT_REVERSE["ITEM_MOD_HIT_RATING"] = "HIT_RATING"
+C.STAT_REVERSE["ITEM_MOD_HIT_SPELL_RATING"] = "HIT_RATING"  -- spell hit = same rating at 70
+
+-- Crit rating: melee, spell, and no-suffix variants
+C.STAT_REVERSE["ITEM_MOD_CRIT_RATING"] = "CRIT_RATING"
+C.STAT_REVERSE["ITEM_MOD_CRIT_SPELL_RATING"] = "CRIT_RATING"  -- spell crit = same rating at 70
+
+-- Defense, dodge, parry, block, expertise, resilience (no-suffix variants)
+C.STAT_REVERSE["ITEM_MOD_DEFENSE_SKILL_RATING"] = "DEFENSE"
+C.STAT_REVERSE["ITEM_MOD_DODGE_RATING"] = "DODGE"
+C.STAT_REVERSE["ITEM_MOD_PARRY_RATING"] = "PARRY"
+C.STAT_REVERSE["ITEM_MOD_BLOCK_RATING"] = "BLOCK_RATING"
+C.STAT_REVERSE["ITEM_MOD_EXPERTISE_RATING"] = "EXPERTISE"
+C.STAT_REVERSE["ITEM_MOD_RESILIENCE_RATING"] = "RESILIENCE"
+
+-- Weapon DPS (not directly a stat weight, but track it to avoid "unmapped" noise)
+-- C.STAT_REVERSE["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = "WEAPON_DPS"
+
 ---------------------------------------------------------------------------
 -- Spec detection: class + talent tree index => spec key
 ---------------------------------------------------------------------------

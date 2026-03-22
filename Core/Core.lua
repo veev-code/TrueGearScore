@@ -304,15 +304,29 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1, ...)
                 selfScanner:ScanEquipment()
             end
 
-            -- Log score on login
+            -- Auto-run diagnostics on login
             C_Timer.After(0.5, function()
-                local selfScanner = addon:GetModule("SelfScanner")
-                if selfScanner and selfScanner.currentScore then
-                    addon:DebugPrint("Login score: " .. selfScanner.currentScore)
-                end
+                -- Enable debug temporarily for unmapped key detection
+                local wasDebug = addon.db.profile.debugMode
+                addon.db.profile.debugMode = true
+
+                -- Print score
+                addon.SlashCommands:PrintScore()
+
+                -- Dump stat keys to find unmapped
+                addon.SlashCommands:DumpStatKeys()
+
+                -- Restore debug mode
+                addon.db.profile.debugMode = wasDebug
             end)
 
-            -- Calibration available via /tgs calibrate
+            -- Auto-run calibration (with retry for item caching)
+            C_Timer.After(5, function()
+                addon.SlashCommands:RunCalibration()
+                C_Timer.After(10, function()
+                    addon.SlashCommands:RunCalibration()
+                end)
+            end)
         end)
 
         self:UnregisterEvent("PLAYER_LOGIN")
