@@ -718,10 +718,13 @@ function addon.ItemScoring:ScoreCharacterBestMode(equippedItems, specKey)
             -- Only try specs from a DIFFERENT role
             if candidateSpec ~= specKey and candidateRole and candidateRole ~= detectedRole then
                 local candidateResult = self:ScoreCharacter(equippedItems, candidateSpec, "pve")
-                if type(candidateResult) == "table" and candidateResult.totalScore > bestResult.totalScore then
+                -- Compare RAW scores (not scaled) to decide which spec matches
+                -- the gear. SPEC_SCALE amplifies DPS specs 3x, which makes even
+                -- poor DPS scores beat good tank scores in scaled comparison.
+                if type(candidateResult) == "table" and candidateResult.rawScore > bestResult.rawScore then
                     bestResult = candidateResult
                     bestSpec = candidateSpec
-                    addon:DebugPrint("ScoreCharacterBestMode: Cross-role override — " .. bestSpec .. " (" .. candidateRole .. ") over " .. specKey .. " (" .. detectedRole .. ")")
+                    addon:DebugPrint("ScoreCharacterBestMode: Cross-role override — " .. bestSpec .. " (" .. candidateRole .. ") raw=" .. candidateResult.rawScore .. " over " .. specKey .. " (" .. detectedRole .. ") raw=" .. bestResult.rawScore)
                 end
             end
         end
