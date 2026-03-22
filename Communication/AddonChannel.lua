@@ -19,6 +19,9 @@ local SCORE_UPDATE_DELAY = 2   -- seconds to debounce OnScoreUpdated
 local AceComm = LibStub("AceComm-3.0")
 local AceSerializer = LibStub("AceSerializer-3.0")
 
+-- Embed AceComm into the module so SendCommMessage/RegisterComm work as methods
+AceComm:Embed(M)
+
 -- State
 local lastBroadcastTime = 0
 local scoreUpdateTimer = nil
@@ -28,7 +31,7 @@ local scoreUpdateTimer = nil
 ---------------------------------------------------------------------------
 
 function M:Initialize()
-    AceComm.RegisterComm(self, COMM_PREFIX, function(prefix, message, distribution, sender)
+    self:RegisterComm(COMM_PREFIX, function(prefix, message, distribution, sender)
         M:OnCommReceived(prefix, message, distribution, sender)
     end)
 
@@ -101,15 +104,15 @@ function M:BroadcastScore()
 
     -- Send to each channel the player is in (stagger to avoid burst)
     if IsInGuild() then
-        AceComm:SendCommMessage(COMM_PREFIX, serialized, "GUILD", nil, "BULK")
+        M:SendCommMessage(COMM_PREFIX, serialized, "GUILD", nil, "BULK")
     end
     -- Stagger group broadcast to avoid burst when also sending to guild
     local groupDelay = IsInGuild() and 0.1 or 0
     local function SendGroupBroadcast()
         if IsInRaid() then
-            AceComm:SendCommMessage(COMM_PREFIX, serialized, "RAID", nil, "NORMAL")
+            M:SendCommMessage(COMM_PREFIX, serialized, "RAID", nil, "NORMAL")
         elseif IsInGroup() then
-            AceComm:SendCommMessage(COMM_PREFIX, serialized, "PARTY", nil, "NORMAL")
+            M:SendCommMessage(COMM_PREFIX, serialized, "PARTY", nil, "NORMAL")
         end
     end
     if groupDelay > 0 then

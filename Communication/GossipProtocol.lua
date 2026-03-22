@@ -15,6 +15,9 @@ local C = addon.Constants
 local AceComm = LibStub("AceComm-3.0")
 local AceSerializer = LibStub("AceSerializer-3.0")
 
+-- Embed AceComm into the module so SendCommMessage/RegisterComm work as methods
+AceComm:Embed(M)
+
 local QUERY_PREFIX = "TGSQ"
 local RESPONSE_PREFIX = "TGSR"
 local PROTOCOL_VERSION = 1
@@ -58,10 +61,10 @@ end
 ---------------------------------------------------------------------------
 
 function M:Initialize()
-    AceComm.RegisterComm(self, QUERY_PREFIX, function(prefix, message, distribution, sender)
+    self:RegisterComm( QUERY_PREFIX, function(prefix, message, distribution, sender)
         M:OnQueryReceived(prefix, message, distribution, sender)
     end)
-    AceComm.RegisterComm(self, RESPONSE_PREFIX, function(prefix, message, distribution, sender)
+    self:RegisterComm( RESPONSE_PREFIX, function(prefix, message, distribution, sender)
         M:OnResponseReceived(prefix, message, distribution, sender)
     end)
 
@@ -115,12 +118,12 @@ function M:QueryScore(guid)
 
     -- Broadcast query to available channels
     if IsInGuild() then
-        AceComm:SendCommMessage(QUERY_PREFIX, serialized, "GUILD", nil, "BULK")
+        M:SendCommMessage(QUERY_PREFIX, serialized, "GUILD", nil, "BULK")
     end
     if IsInRaid() then
-        AceComm:SendCommMessage(QUERY_PREFIX, serialized, "RAID", nil, "BULK")
+        M:SendCommMessage(QUERY_PREFIX, serialized, "RAID", nil, "BULK")
     elseif IsInGroup() then
-        AceComm:SendCommMessage(QUERY_PREFIX, serialized, "PARTY", nil, "BULK")
+        M:SendCommMessage(QUERY_PREFIX, serialized, "PARTY", nil, "BULK")
     end
 
     addon:DebugPrint("GossipProtocol: queried score for " .. guid)
@@ -173,7 +176,7 @@ function M:OnQueryReceived(prefix, message, distribution, sender)
     RecordResponseSent()
 
     -- Respond on same channel we received on
-    AceComm:SendCommMessage(RESPONSE_PREFIX, serialized, distribution, nil, "BULK")
+    M:SendCommMessage(RESPONSE_PREFIX, serialized, distribution, nil, "BULK")
 
     addon:DebugPrint("GossipProtocol: responded with score " .. cached.score .. " for " .. guid .. " to " .. distribution)
 end
