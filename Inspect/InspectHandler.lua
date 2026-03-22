@@ -300,6 +300,8 @@ function M:OnInspectReady(guid)
             source = "inspect",
             specKey = specKey,
             baseScore = result.baseOnlyScore,
+            breakdown = result.breakdown,
+            efficiency = result.efficiency,
         })
 
         addon:Log("DIAG", "InspectHandler: Scored " .. result.totalScore .. " for " .. tostring(specKey) .. " (raw=" .. result.rawScore .. " base=" .. result.baseOnlyRaw .. ")")

@@ -48,3 +48,16 @@ function addon.ScoreColors:GetBracketLabel(score)
     end
     return "Trash"
 end
+
+--- Get the content readiness tier for a score (e.g., "Kara-ready", "SSC/TK-ready").
+-- @param score  Numeric score
+-- @return string|nil  Content tier label, or nil if below all tiers
+function addon.ScoreColors:GetContentTier(score)
+    score = score or 0
+    for _, tier in ipairs(C.CONTENT_TIERS) do
+        if score >= tier.threshold then
+            return tier.label
+        end
+    end
+    return nil
+end

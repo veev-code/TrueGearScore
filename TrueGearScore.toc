@@ -46,6 +46,7 @@ Display\ItemTooltip.lua
 
 # Communication
 Communication\AddonChannel.lua
+Communication\GossipProtocol.lua
 
 # UI
 UI\Options.lua

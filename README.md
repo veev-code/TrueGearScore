@@ -10,9 +10,9 @@ GearScore has been one of the most divisive addons in WoW's history. The concept
 
 **It ignores everything that matters.** Classic GearScore uses an `item level × rarity` formula. That's it. It doesn't look at gems, enchants, stat caps, proc effects, or set bonuses. A player in full epics with empty sockets and no enchants scores identically to one who spent thousands of gold optimizing every slot. The enchant scoring feature, added late in development, [never actually worked](https://github.com/Arcitec/GearScoreLite_Reborn).
 
-**It penalizes BiS items.** Some of the best items in the game have low item levels. Dragonspine Trophy, Darkmoon Card: Greatness, class relics and librams — all genuine best-in-slot picks that GearScore undervalues because it only sees ilvl. Players avoid equipping their best gear because it *lowers* their score. That's a system working against itself.
+**It penalizes BiS items.** Some of the best items in the game have low item levels. Dragonspine Trophy, Darkmoon Card: Greatness, class relics and librams — all genuine best-in-slot picks that GearScore undervalues because it only sees ilvl. Players avoid equipping their best gear because it *lowers* their score.
 
-**It has no concept of spec.** A frost mage in fire gear, a holy paladin wearing ret pieces, a warrior with a spell power trinket — all invisible to the formula. The addon's own creator admitted he "dropped any hope of determining if a player was using the correct stats" after dual spec was added.
+**It has no concept of spec.** A frost mage in fire gear, a holy paladin wearing ret pieces, a warrior with a spell power trinket — all invisible to the formula. The addon's own creator admitted he "dropped any hope of determining if a player was using the correct stats" after dual spec was added. Wrong-spec gear inflates the score, so players game the system by equipping whatever has the highest ilvl regardless of whether the stats are useful.
 
 **It doesn't understand stat caps.** Stacking 300 hit rating when you only need 142? GearScore counts every point at full value. Players can increase their score through upgrades that actively *hurt* their performance.
 
@@ -40,7 +40,7 @@ The scoring formula isn't `ilvl × rarity`. It's:
 Score = Σ (stat_value × spec_weight) across all stat sources, for all equipped items
 ```
 
-Each of the 27 class/specs has its own weight table sourced from established community simulations and theorycrafting (ClassicSim, WoWSims, class Discord pins, Elitist Jerks archives). Agility is worth more to a Combat Rogue than a Holy Paladin. Spell power matters for a Shadow Priest but not a Fury Warrior. The score reflects what the stats *mean* for the character wearing them.
+Each of the 27 class/specs has its own weight table sourced from established community simulations and theorycrafting (ClassicSim, WoWSims, class Discord pins, Elitist Jerks archives). Agility is worth more to a Combat Rogue than a Holy Paladin. Spell power matters for a Shadow Priest but not a Fury Warrior. The score reflects what the stats *mean* for the character wearing them. This also eliminates spec-gaming — a warrior equipping a spell power trinket to inflate ilvl gets near-zero credit for those stats under TrueGearScore.
 
 ### Gems and enchants count
 
@@ -52,7 +52,7 @@ Hit rating past cap is nearly worthless. Expertise past the dodge cap is wasted.
 
 ### Proc effects and trinkets are valued
 
-Dragonspine Trophy isn't a low-ilvl blue to TrueGearScore. It's scored based on its average proc uptime converted to equivalent stat budget (~40 haste rating average). Twelve raid trinkets and proc items are currently valued, with coverage expanding to heroic dungeon trinkets, badge items, weapon procs, and on-use effects.
+Dragonspine Trophy isn't a low-ilvl blue to TrueGearScore. It's scored based on its average proc uptime converted to equivalent stat budget (~40 haste rating average). BiS items score like BiS regardless of their item level — players never have to choose between equipping their best gear and having a good score. Twelve raid trinkets and proc items are currently valued, with coverage expanding to heroic dungeon trinkets, badge items, weapon procs, and on-use effects.
 
 ### PvE and PvP are scored separately
 
@@ -70,9 +70,9 @@ Stat weights are hardcoded. There are no user-configurable weight overrides for 
 
 TrueGearScore scores any player you can inspect — no addon required on their end. It captures full item links (with gems and enchants) directly from the inspect API. Players who also run TGS share scores instantly via addon messaging, no inspect range needed.
 
-## What TrueGearScore Can't Fix
+## A Tool, Not a Verdict
 
-Honesty about limitations:
+Gear score is a tool. TrueGearScore does its best to make that tool *accurate* — reflecting actual character power, accounting for the things traditional GearScore ignores, and making it hard to game. But what people do with the number is up to them.
 
 **Score is not skill.** A perfectly geared player who stands in fire will wipe your raid. TrueGearScore measures gear optimization, not encounter awareness, rotation execution, or cooldown management. It's one signal among many — treat it that way.
 

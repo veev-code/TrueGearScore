@@ -31,6 +31,21 @@ C.SCORE_BRACKETS = {
 -- Expansion-wide theoretical max (full Sunwell BIS, perfect gems/enchants, all specs)
 C.MAX_PLAUSIBLE_SCORE = 3500
 
+---------------------------------------------------------------------------
+-- Content readiness tiers
+-- Floor thresholds based on reference BIS calibration (base score, no gems/enchants).
+-- With gems/enchants, players score above these floors into the tier.
+-- Ordered descending so first match wins.
+---------------------------------------------------------------------------
+
+C.CONTENT_TIERS = {
+    { threshold = 2258, label = "Sunwell-ready" },
+    { threshold = 2077, label = "BT/Hyjal-ready" },
+    { threshold = 1930, label = "SSC/TK-ready" },
+    { threshold = 1740, label = "Kara-ready" },
+    { threshold = 1085, label = "Heroic-ready" },
+}
+
 -- Calibration scale factor: raw score × SCALE = displayed score
 -- Weights in StatWeights.lua are pre-calibrated so base items ≈ TacoTip GearScore.
 -- This scale factor is reserved for future global tuning if needed.

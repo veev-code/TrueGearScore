@@ -325,7 +325,6 @@ These features don't improve scoring accuracy — they address the *social* prob
 | **Score breakdown tooltip** | `Display/UnitTooltip.lua`, `Display/InspectFrame.lua` | ItemScoring | M |
 | **Missing potential indicator** | `Scoring/ItemScoring.lua`, `Display/UnitTooltip.lua` | GemDB, EnchantDB | M |
 | **Content readiness labels** | `Core/Constants.lua`, `Display/ScoreColors.lua`, `Display/UnitTooltip.lua` | None | S |
-| **Spec-mismatch warning** | `Scoring/ItemScoring.lua`, `Display/UnitTooltip.lua` | StatWeights | M |
 | **Per-item upgrade indicator** | `Display/ItemTooltip.lua` (new) | ItemScoring, SelfScanner | M |
 
 **Score breakdown tooltip** (Shift-hover or config toggle)
@@ -338,15 +337,11 @@ These features don't improve scoring accuracy — they address the *social* prob
 
 **Content readiness labels**
 - Problem: Score numbers are meaningless without context. Players set absurd thresholds (900+ GS for Molten Core) because they don't know what the numbers mean.
-- Solution: Map score ranges to content tiers and show them as labels: "Heroic-ready", "Kara-ready", "SSC/TK-ready", "BT/Hyjal-ready", "Sunwell-ready". Based on reference BiS sets — P1 BiS = floor of next tier's "ready" label. This gives the number meaning and pushes back against arbitrarily inflated requirements. If someone demands "Sunwell-ready" for Karazhan, the label makes the absurdity visible.
-
-**Spec-mismatch warning**
-- Problem: Players equip wrong-spec high-ilvl gear to inflate traditional GearScore. TrueGearScore already handles this via stat weights (wrong-spec stats get near-zero weight), but doesn't surface the *reason* visibly.
-- Solution: When >20% of a character's stat budget comes from off-spec stats (e.g., a warrior with spell power, a healer stacking hit), show a warning icon or text on the tooltip. This makes gear-gaming visible without penalizing legitimate hybrid builds (e.g., a balance druid with some spirit gear).
+- Solution: Augment the numeric score with a content-tier label: "Heroic-ready", "Kara-ready", "SSC/TK-ready", "BT/Hyjal-ready", "Sunwell-ready". Based on reference BiS sets — P1 BiS = floor of next tier's "ready" label. The number stays front and center; the label adds context. If someone demands "Sunwell-ready" for Karazhan, the label makes the absurdity visible.
 
 **Per-item upgrade indicator** (Item tooltip, default off)
-- Problem: Players avoid equipping BiS items because they lower traditional GearScore.
-- Solution: On item tooltips, show the TrueGearScore delta: "Equipping this: +45 TGS" or "-12 TGS". Players can see at a glance whether an item is actually an upgrade *for their spec*, regardless of ilvl or rarity color. Low-ilvl BiS items like DST would show a positive delta, reinforcing the correct decision.
+- Problem: Players want to quickly evaluate whether a drop is an upgrade without doing mental math on stat weights.
+- Solution: On item tooltips, show the TrueGearScore delta vs. currently equipped item: "Equipping this: +45 TGS" or "-12 TGS". Factors in spec weights, cap state, gems, and enchants on both items. Useful for loot decisions in real time.
 
 ### Pre-Release Cleanup (before any public release)
 

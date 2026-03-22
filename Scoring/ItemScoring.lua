@@ -193,12 +193,21 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     local statTotals = {}
     local itemStats = {}       -- Cache per-item full stats for pass 2
     local itemBaseStats = {}   -- Cache per-item base-only stats (no gems/enchants/procs)
+    local itemGemStats = {}    -- Cache per-item gem stats for breakdown
+    local itemEnchantStats = {} -- Cache per-item enchant stats for breakdown
+    local itemProcStats = {}   -- Cache per-item proc stats for breakdown
 
     for slotID, itemLink in pairs(equippedItems) do
         local stats = self:GetItemTotalStats(itemLink)
         local baseStats = self:GetBaseStats(itemLink)
+        local parsed = self:ParseItemLink(itemLink)
         itemStats[slotID] = stats
         itemBaseStats[slotID] = baseStats
+        if parsed then
+            itemGemStats[slotID] = self:GetGemStats(parsed.gems)
+            itemEnchantStats[slotID] = self:GetEnchantStats(parsed.enchantID)
+            itemProcStats[slotID] = self:GetProcStats(parsed.itemID)
+        end
         for stat, value in pairs(stats) do
             statTotals[stat] = (statTotals[stat] or 0) + value
         end
@@ -293,6 +302,34 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     end
     baseOnlyRaw = math.floor(baseOnlyRaw)
 
+    -- Compute per-category breakdown (gems, enchants, procs scored separately)
+    local gemScoreRaw = 0
+    local enchantScoreRaw = 0
+    local procScoreRaw = 0
+    for slotID, _ in pairs(equippedItems) do
+        local gs = itemGemStats[slotID]
+        if gs then
+            for stat, value in pairs(gs) do
+                local weight = effectiveWeights[stat] or 0
+                gemScoreRaw = gemScoreRaw + (value * weight)
+            end
+        end
+        local es = itemEnchantStats[slotID]
+        if es then
+            for stat, value in pairs(es) do
+                local weight = effectiveWeights[stat] or 0
+                enchantScoreRaw = enchantScoreRaw + (value * weight)
+            end
+        end
+        local ps = itemProcStats[slotID]
+        if ps then
+            for stat, value in pairs(ps) do
+                local weight = effectiveWeights[stat] or 0
+                procScoreRaw = procScoreRaw + (value * weight)
+            end
+        end
+    end
+
     -- Apply calibration scale factors:
     -- 1. Global scale (C.SCORE_SCALE) — reserved for future tuning, default 1.0
     -- 2. Per-spec scale (SPEC_SCALE) — normalizes cross-class score parity
@@ -305,7 +342,22 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
         perSlot[slotID] = math.floor(raw * scale)
     end
 
-    addon:DebugPrint("ScoreCharacter: raw=" .. totalRaw .. " baseOnly=" .. baseOnlyRaw .. " scaled=" .. totalScore .. " baseScaled=" .. baseOnlyScore .. " (x" .. scale .. ") spec=" .. specKey)
+    -- Gear efficiency: how much of the item potential has been realized
+    -- via gems, enchants, and procs. Potential ≈ baseOnly * 1.30 (full
+    -- gems + enchants typically add ~30% over base stats alone).
+    local efficiency = nil
+    if baseOnlyScore > 0 then
+        local potentialScore = math.floor(baseOnlyScore * 1.30)
+        efficiency = math.min(100, math.floor(totalScore / potentialScore * 100 + 0.5))
+    end
+
+    addon:DebugPrint("ScoreCharacter: raw=" .. totalRaw .. " baseOnly=" .. baseOnlyRaw .. " scaled=" .. totalScore .. " baseScaled=" .. baseOnlyScore .. " eff=" .. tostring(efficiency) .. "% (x" .. scale .. ") spec=" .. specKey)
+
+    local scaledSetBonus = math.floor(setBonusScore * scale)
+    local scaledGems = math.floor(math.max(0, gemScoreRaw) * scale)
+    local scaledEnchants = math.floor(math.max(0, enchantScoreRaw) * scale)
+    local scaledProcs = math.floor(math.max(0, procScoreRaw) * scale)
+    local scaledBase = totalScore - scaledGems - scaledEnchants - scaledProcs - scaledSetBonus
 
     return {
         totalScore = totalScore,
@@ -315,7 +367,15 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
         rawScore = totalRaw,
         baseOnlyRaw = baseOnlyRaw,
         baseOnlyScore = baseOnlyScore,
-        setBonusScore = math.floor(setBonusScore * scale),
+        setBonusScore = scaledSetBonus,
         setBonusDetails = setBonusDetails,
+        efficiency = efficiency,
+        breakdown = {
+            base = scaledBase,
+            gems = scaledGems,
+            enchants = scaledEnchants,
+            procs = scaledProcs,
+            setBonuses = scaledSetBonus,
+        },
     }
 end

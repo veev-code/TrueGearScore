@@ -57,6 +57,7 @@ function M:ScanEquipment()
         self.currentScore = 0
         self.perSlotScores = {}
         self.effectiveWeights = {}
+        self.breakdown = nil
         addon:DebugPrint("SelfScanner: no items equipped")
         return
     end
@@ -69,8 +70,10 @@ function M:ScanEquipment()
     self.rawScore = result.rawScore
     self.baseOnlyRaw = result.baseOnlyRaw
     self.baseOnlyScore = result.baseOnlyScore
+    self.breakdown = result.breakdown
+    self.efficiency = result.efficiency
 
-    addon:DebugPrint("SelfScanner: score updated to " .. self.currentScore)
+    addon:DebugPrint("SelfScanner: score updated to " .. self.currentScore .. " eff=" .. tostring(self.efficiency) .. "%")
 
     -- Notify display modules
     for _, module in pairs(addon.modules) do

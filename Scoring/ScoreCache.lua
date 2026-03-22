@@ -8,7 +8,7 @@
 local _, addon = ...
 addon.ScoreCache = {}
 
-local cache = {}  -- { [guid] = { score, perSlot, timestamp, source, specKey } }
+local cache = {}  -- { [guid] = { score, perSlot, timestamp, source, specKey, efficiency } }
 local DEFAULT_TTL = 300  -- 5 minutes
 
 ---------------------------------------------------------------------------
@@ -17,7 +17,7 @@ local DEFAULT_TTL = 300  -- 5 minutes
 
 --- Get a cached score for a player GUID.
 -- @param guid  Player GUID
--- @return table or nil  { score, perSlot, timestamp, source, specKey }
+-- @return table or nil  { score, perSlot, timestamp, source, specKey, efficiency }
 function addon.ScoreCache:Get(guid)
     local entry = cache[guid]
     if not entry then return nil end
@@ -34,13 +34,20 @@ end
 --- Store a score in the cache.
 -- @param guid    Player GUID
 -- @param data    Table with: score (number), perSlot (table, optional), source (string), specKey (string, optional)
+-- Source priority: inspect > broadcast > gossip
+local SOURCE_PRIORITY = { inspect = 3, broadcast = 2, gossip = 1 }
+
 function addon.ScoreCache:Set(guid, data)
-    -- Don't overwrite inspect data with broadcast data
+    -- Don't overwrite higher-priority data with lower-priority data
     local existing = cache[guid]
-    if existing and existing.source == "inspect" and data.source == "broadcast" then
-        -- Only overwrite if existing is expired
-        if (GetTime() - existing.timestamp) <= DEFAULT_TTL then
-            return
+    if existing then
+        local existingPrio = SOURCE_PRIORITY[existing.source] or 0
+        local newPrio = SOURCE_PRIORITY[data.source] or 0
+        if newPrio < existingPrio then
+            -- Only overwrite if existing is expired
+            if (GetTime() - existing.timestamp) <= DEFAULT_TTL then
+                return
+            end
         end
     end
 
@@ -51,6 +58,8 @@ function addon.ScoreCache:Set(guid, data)
         source = data.source or "unknown",
         specKey = data.specKey,
         baseScore = data.baseScore,
+        breakdown = data.breakdown,
+        efficiency = data.efficiency,
     }
 end
 
