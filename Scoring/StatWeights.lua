@@ -747,26 +747,26 @@ addon.StatWeights.SPEC_SCALE = {
 
     -- Melee DPS
     ["ROGUE_COMBAT"]    = 3.120,  -- P1 base=561
-    ["ROGUE_ASSASSIN"]  = 3.119,  -- P1 base=561
-    ["ROGUE_SUBTLETY"]  = 3.030,  -- P1 base=578
+    ["ROGUE_ASSASSIN"]  = 3.120,  -- normalized to Combat (same leather gear)
+    ["ROGUE_SUBTLETY"]  = 3.120,  -- normalized to Combat (same leather gear)
     ["WARRIOR_FURY"]    = 3.041,  -- P1 base=575
-    ["WARRIOR_ARMS"]    = 3.074,  -- P1 base=569
+    ["WARRIOR_ARMS"]    = 3.041,  -- normalized to Fury (same plate DPS gear)
     ["PALADIN_RET"]     = 3.161,  -- P1 base=554
     ["SHAMAN_ENH"]      = 3.321,  -- P1 base=527
     ["HUNTER_BM"]       = 2.793,  -- P1 base=627
-    ["HUNTER_MM"]       = 2.509,  -- P1 base=698
-    ["HUNTER_SURV"]     = 3.488,  -- P1 base=502
+    ["HUNTER_MM"]       = 2.793,  -- normalized to BM (same mail gear)
+    ["HUNTER_SURV"]     = 2.793,  -- normalized to BM (same mail gear)
     ["DRUID_FERAL"]     = 2.091,  -- P1 base=837 (cat DPS, legacy key)
     ["DRUID_FERAL_CAT"] = 2.091,  -- P1 base=837
 
     -- Caster DPS
     ["MAGE_FIRE"]       = 1.581,  -- P1 base=1107
-    ["MAGE_ARCANE"]     = 1.822,  -- P1 base=960
-    ["MAGE_FROST"]      = 1.669,  -- P1 base=1049
+    ["MAGE_ARCANE"]     = 1.581,  -- normalized to Fire (same cloth gear)
+    ["MAGE_FROST"]      = 1.581,  -- normalized to Fire (same cloth gear)
     ["DRUID_BALANCE"]   = 1.596,  -- P1 base=1096
     ["WARLOCK_DESTRO"]  = 1.633,  -- P1 base=1071
-    ["WARLOCK_AFFLIC"]  = 1.900,  -- P1 base=921
-    ["WARLOCK_DEMO"]    = 1.822,  -- P1 base=961
+    ["WARLOCK_AFFLIC"]  = 1.633,  -- normalized to Destro (same cloth gear)
+    ["WARLOCK_DEMO"]    = 1.633,  -- normalized to Destro (same cloth gear)
     ["SHAMAN_ELE"]      = 2.161,  -- P1 base=810
     ["PRIEST_SHADOW"]   = 1.756,  -- P1 base=997
 }
