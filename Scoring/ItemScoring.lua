@@ -569,6 +569,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey, mode)
     -- Apply calibration scale factors:
     -- 1. Global scale (C.SCORE_SCALE) — reserved for future tuning, default 1.0
     -- 2. Per-spec scale (SPEC_SCALE) — normalizes cross-class score parity
+    -- 3. PvP dampening (C.PVP_SCORE_DAMPENING) — compensates for resilience inflation
     local globalScale = C.SCORE_SCALE or 1
     local specScale
     if mode == "pvp" then
@@ -577,6 +578,9 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey, mode)
         specScale = addon.StatWeights:GetSpecScale(specKey)
     end
     local scale = globalScale * specScale
+    if mode == "pvp" then
+        scale = scale * (C.PVP_SCORE_DAMPENING or 1)
+    end
     -- Single floor at the end: totalScore is the only place we truncate to integer.
     -- Per-slot values are floored individually for display (integer requirement)
     -- but their raw unrounded values were summed into totalRaw above.

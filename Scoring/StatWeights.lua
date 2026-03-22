@@ -1335,47 +1335,54 @@ addon.StatWeights.PVP_SPECS = {
 
 ---------------------------------------------------------------------------
 -- PvP per-spec calibration scale factors
--- Starting at 1.0 for all specs since we don't have PvP reference sets.
--- PvP scoring is less calibration-sensitive than PvE because there's no
--- single "BIS" benchmark — gear choices depend on comp and bracket.
+-- Mirrors PvE SPEC_SCALE: the scale normalizes cross-class stat budgets
+-- by armor type, which is the same in PvE and PvP. Without this, PvP
+-- scores for melee DPS (high PvE scale ~3.0) would be ~3x lower than
+-- casters (low PvE scale ~1.5), creating nonsensical cross-class comparisons.
+--
+-- PvP reference sets (S3 Vengeful BIS) in ReferenceSets.lua can be used
+-- with /tgs calibrate to verify these values produce correct normalization.
 ---------------------------------------------------------------------------
 
 addon.StatWeights.PVP_SPEC_SCALE = {
+    -- Mirrors PvE SPEC_SCALE values. Recalibrate with /tgs calibrate if
+    -- PvP weights change significantly from PvE ratios.
+
     -- Healers
-    ["PRIEST_DISC"]     = 1.0,
-    ["PRIEST_HOLY"]     = 1.0,
-    ["DRUID_RESTO"]     = 1.0,
-    ["PALADIN_HOLY"]    = 1.0,
-    ["SHAMAN_RESTO"]    = 1.0,
+    ["PRIEST_DISC"]     = 1.000,
+    ["PRIEST_HOLY"]     = 0.946,
+    ["DRUID_RESTO"]     = 0.984,
+    ["PALADIN_HOLY"]    = 1.202,
+    ["SHAMAN_RESTO"]    = 1.312,
 
     -- Tanks
-    ["WARRIOR_PROT"]    = 1.0,
-    ["PALADIN_PROT"]    = 1.0,
-    ["DRUID_FERAL_BEAR"]= 1.0,
+    ["WARRIOR_PROT"]    = 1.000,
+    ["PALADIN_PROT"]    = 0.957,
+    ["DRUID_FERAL_BEAR"]= 2.273,
 
     -- Melee DPS
-    ["ROGUE_COMBAT"]    = 1.0,
-    ["ROGUE_ASSASSIN"]  = 1.0,
-    ["ROGUE_SUBTLETY"]  = 1.0,
-    ["WARRIOR_FURY"]    = 1.0,
-    ["WARRIOR_ARMS"]    = 1.0,
-    ["PALADIN_RET"]     = 1.0,
-    ["SHAMAN_ENH"]      = 1.0,
-    ["HUNTER_BM"]       = 1.0,
-    ["HUNTER_MM"]       = 1.0,
-    ["HUNTER_SURV"]     = 1.0,
-    ["DRUID_FERAL_CAT"] = 1.0,
+    ["ROGUE_COMBAT"]    = 3.125,
+    ["ROGUE_ASSASSIN"]  = 3.119,
+    ["ROGUE_SUBTLETY"]  = 3.125,
+    ["WARRIOR_FURY"]    = 3.043,
+    ["WARRIOR_ARMS"]    = 3.076,
+    ["PALADIN_RET"]     = 3.165,
+    ["SHAMAN_ENH"]      = 3.327,
+    ["HUNTER_BM"]       = 2.796,
+    ["HUNTER_MM"]       = 2.511,
+    ["HUNTER_SURV"]     = 3.493,
+    ["DRUID_FERAL_CAT"] = 2.273,
 
     -- Caster DPS
-    ["MAGE_FIRE"]       = 1.0,
-    ["MAGE_ARCANE"]     = 1.0,
-    ["MAGE_FROST"]      = 1.0,
-    ["DRUID_BALANCE"]   = 1.0,
-    ["WARLOCK_DESTRO"]  = 1.0,
-    ["WARLOCK_AFFLIC"]  = 1.0,
-    ["WARLOCK_DEMO"]    = 1.0,
-    ["SHAMAN_ELE"]      = 1.0,
-    ["PRIEST_SHADOW"]   = 1.0,
+    ["MAGE_FIRE"]       = 1.581,
+    ["MAGE_ARCANE"]     = 1.823,
+    ["MAGE_FROST"]      = 1.670,
+    ["DRUID_BALANCE"]   = 1.597,
+    ["WARLOCK_DESTRO"]  = 1.634,
+    ["WARLOCK_AFFLIC"]  = 1.902,
+    ["WARLOCK_DEMO"]    = 1.823,
+    ["SHAMAN_ELE"]      = 2.163,
+    ["PRIEST_SHADOW"]   = 1.757,
 }
 
 ---------------------------------------------------------------------------
@@ -1400,9 +1407,7 @@ function addon.StatWeights:GetSpecPvPWeights(specKey)
 end
 
 function addon.StatWeights:GetSpecPvPScale(specKey)
-    -- Use PvE SPEC_SCALE for PvP too — the scale normalizes cross-class
-    -- stat budgets by armor type, which is the same in PvE and PvP.
-    -- Using 1.0 for PvP makes PvP scores ~3x lower than PvE, so PvE
-    -- always wins the "best mode" comparison even for full PvP gear.
-    return self.SPEC_SCALE[specKey] or 1.0
+    -- PVP_SPEC_SCALE now mirrors PvE SPEC_SCALE (same cross-class normalization).
+    -- Falls back to PvE SPEC_SCALE if a spec is missing from PVP_SPEC_SCALE.
+    return self.PVP_SPEC_SCALE[specKey] or self.SPEC_SCALE[specKey] or 1.0
 end

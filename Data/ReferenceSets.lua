@@ -3471,4 +3471,145 @@ addon.ReferenceSets = {
             [18] = 34196,  -- Golden Bow of Quel'Thalas
         },
     },
+
+    ---------------------------------------------------------------------------
+    -- PvP Reference Sets (S3 Vengeful Gladiator BIS)
+    -- Used for PvP score calibration: full S3 arena set + honor off-pieces.
+    -- Sources: Icy Veins TBC PvP guides, Wowhead TBC item database.
+    -- S3 (Vengeful) ilvl 141-146 ≈ T6 PvE tier.
+    ---------------------------------------------------------------------------
+
+    -- Arms Warrior S3 PvP BIS
+    -- Full Vengeful Plate set + Vindicator's off-pieces + Stormherald
+    -- Source: Icy Veins Arms Warrior PvP Gear Guide
+    WARRIOR_ARMS_PVP_S3 = {
+        name = "Warrior Arms S3 PvP BIS",
+        spec = "WARRIOR_ARMS",
+        items = {
+            [1]  = 33730,  -- Vengeful Gladiator's Plate Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33732,  -- Vengeful Gladiator's Plate Shoulders
+            [5]  = 33728,  -- Vengeful Gladiator's Plate Chestpiece
+            [6]  = 33811,  -- Vindicator's Plate Belt
+            [7]  = 33731,  -- Vengeful Gladiator's Plate Legguards
+            [8]  = 33812,  -- Vindicator's Plate Greaves
+            [9]  = 33813,  -- Vindicator's Plate Bracers
+            [10] = 33729,  -- Vengeful Gladiator's Plate Gauntlets
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 30344,  -- Medallion of the Horde (Warrior)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 28442,  -- Stormherald (crafted 2H mace)
+            [18] = 33765,  -- Vengeful Gladiator's War Edge
+        },
+    },
+
+    -- Subtlety Rogue S3 PvP BIS
+    -- Full Vengeful Leather set + Vindicator's off-pieces + arena weapons
+    -- Source: Icy Veins Rogue PvP Gear Guide
+    ROGUE_SUBTLETY_PVP_S3 = {
+        name = "Rogue Subtlety S3 PvP BIS",
+        spec = "ROGUE_SUBTLETY",
+        items = {
+            [1]  = 33701,  -- Vengeful Gladiator's Leather Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33703,  -- Vengeful Gladiator's Leather Spaulders
+            [5]  = 33704,  -- Vengeful Gladiator's Leather Tunic
+            [6]  = 33891,  -- Vindicator's Leather Belt
+            [7]  = 33702,  -- Vengeful Gladiator's Leather Legguards
+            [8]  = 33892,  -- Vindicator's Leather Boots
+            [9]  = 33881,  -- Vindicator's Dragonhide Bracers
+            [10] = 33700,  -- Vengeful Gladiator's Leather Gloves
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 28239,  -- Medallion of the Horde (Rogue)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33762,  -- Vengeful Gladiator's Slicer (MH sword)
+            [17] = 33756,  -- Vengeful Gladiator's Shiv (OH dagger)
+            [18] = 33765,  -- Vengeful Gladiator's War Edge
+        },
+    },
+
+    -- Frost Mage S3 PvP BIS
+    -- Full Vengeful Silk set + Vindicator's off-pieces + arena weapons
+    -- Source: Icy Veins Mage PvP Gear Guide, Wowhead
+    MAGE_FROST_PVP_S3 = {
+        name = "Mage Frost S3 PvP BIS",
+        spec = "MAGE_FROST",
+        items = {
+            [1]  = 33758,  -- Vengeful Gladiator's Silk Cowl
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33757,  -- Vengeful Gladiator's Silk Amice
+            [5]  = 33760,  -- Vengeful Gladiator's Silk Raiment
+            [6]  = 33912,  -- Vindicator's Silk Belt
+            [7]  = 33761,  -- Vengeful Gladiator's Silk Trousers
+            [8]  = 33914,  -- Vindicator's Silk Footguards
+            [9]  = 33913,  -- Vindicator's Silk Cuffs
+            [10] = 33759,  -- Vengeful Gladiator's Silk Handguards
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28242,  -- Medallion of the Horde (Mage)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33763,  -- Vengeful Gladiator's Spellblade
+            [17] = 33681,  -- Vengeful Gladiator's Endgame
+            [18] = 34066,  -- Vengeful Gladiator's Piercing Touch
+        },
+    },
+
+    -- Discipline Priest S3 PvP BIS
+    -- Full Vengeful Mooncloth set + Vindicator's off-pieces + arena weapons
+    -- Source: Icy Veins Discipline Priest PvP Gear Guide
+    PRIEST_DISC_PVP_S3 = {
+        name = "Priest Disc S3 PvP BIS",
+        spec = "PRIEST_DISC",
+        items = {
+            [1]  = 33718,  -- Vengeful Gladiator's Mooncloth Hood
+            [2]  = 33922,  -- Vindicator's Pendant of Salvation
+            [3]  = 33720,  -- Vengeful Gladiator's Mooncloth Mantle
+            [5]  = 33721,  -- Vengeful Gladiator's Mooncloth Robe
+            [6]  = 33900,  -- Vindicator's Mooncloth Belt
+            [7]  = 33719,  -- Vengeful Gladiator's Mooncloth Leggings
+            [8]  = 33902,  -- Vindicator's Mooncloth Slippers
+            [9]  = 33901,  -- Vindicator's Mooncloth Cuffs
+            [10] = 33717,  -- Vengeful Gladiator's Mooncloth Gloves
+            [11] = 33918,  -- Vindicator's Band of Salvation
+            [12] = 33064,  -- Veteran's Band of Salvation
+            [13] = 30665,  -- Earring of Soulful Meditation (BT)
+            [14] = 28240,  -- Medallion of the Horde (Priest)
+            [15] = 33333,  -- Kharmaa's Shroud of Hope
+            [16] = 33743,  -- Vengeful Gladiator's Salvation (mace)
+            [17] = 33736,  -- Vengeful Gladiator's Reprieve (offhand)
+            [18] = 34059,  -- Vengeful Gladiator's Baton of Light (wand)
+        },
+    },
+
+    -- Affliction Warlock S3 PvP BIS
+    -- Full Vengeful Dreadweave set + Vindicator's off-pieces + arena weapons
+    -- Source: Icy Veins Warlock PvP Gear Guide, Wowhead
+    WARLOCK_AFFLIC_PVP_S3 = {
+        name = "Warlock Affliction S3 PvP BIS",
+        spec = "WARLOCK_AFFLIC",
+        items = {
+            [1]  = 33677,  -- Vengeful Gladiator's Dreadweave Hood
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33679,  -- Vengeful Gladiator's Dreadweave Mantle
+            [5]  = 33680,  -- Vengeful Gladiator's Dreadweave Robe
+            [6]  = 33882,  -- Vindicator's Dreadweave Belt
+            [7]  = 33678,  -- Vengeful Gladiator's Dreadweave Leggings
+            [8]  = 33884,  -- Vindicator's Dreadweave Stalkers
+            [9]  = 33883,  -- Vindicator's Dreadweave Cuffs
+            [10] = 33676,  -- Vengeful Gladiator's Dreadweave Gloves
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28243,  -- Medallion of the Horde (Warlock)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33763,  -- Vengeful Gladiator's Spellblade
+            [17] = 34033,  -- Vengeful Gladiator's Grimoire
+            [18] = 33764,  -- Vengeful Gladiator's Touch of Defeat
+        },
+    },
 }

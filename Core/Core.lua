@@ -253,6 +253,16 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1, ...)
             end
         end)
 
+        -- Auto-calibrate SPEC_SCALE from reference BIS sets on every login.
+        -- Items need caching time, so run with delay + retry.
+        -- Results logged to SavedVariables (requires /tgs debug to see in chat).
+        C_Timer.After(5, function()
+            addon.SlashCommands:RunCalibration()
+            C_Timer.After(10, function()
+                addon.SlashCommands:RunCalibration()
+            end)
+        end)
+
         self:UnregisterEvent("PLAYER_LOGIN")
 
     elseif event == "CHARACTER_POINTS_CHANGED" then
