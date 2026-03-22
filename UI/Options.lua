@@ -94,7 +94,7 @@ local function GetOptionsTable()
                         get = function() return addon.db.profile.showInspectFrame end,
                         set = function(_, val)
                             addon.db.profile.showInspectFrame = val
-                            M:RefreshModule("InspectFrameDisplay")
+                            M:RefreshModule("InspectFrame")
                         end,
                     },
                     showLFGIntegration = {

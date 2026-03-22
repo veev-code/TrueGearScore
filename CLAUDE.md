@@ -214,6 +214,7 @@ Uses WoW's internal stat keys from `GetItemStats()`:
 - Data files are pure Lua tables — easy to diff, review, and community-contribute
 - No hardcoded English strings in scoring logic
 - Score numbers are always integers (floored)
+- **Localization**: The addon must WORK correctly on all WoW client localizations (enUS, deDE, frFR, esES, ruRU, koKR, zhCN, zhTW, etc.) even if UI text/labels haven't been customized per locale. This means: never match against English tooltip text or spell names in logic paths; use WoW API return values (item IDs, stat keys, spell IDs, numeric values) and localized global strings (e.g., `ITEM_SOCKET_BONUS`) instead. Socket bonus detection uses `GetItemStats()` differential, not tooltip parsing. Display strings shown to users (labels, bracket names) are English-only for now but must never appear in logic/scoring code paths.
 
 ## Release Pipeline
 

@@ -9,6 +9,16 @@ addon.ScoreColors = {}
 
 local C = addon.Constants
 
+-- Validate bracket sort order at load time (brackets must be descending by threshold)
+do
+    local brackets = C.SCORE_BRACKETS
+    for i = 2, #brackets do
+        assert(brackets[i - 1].threshold >= brackets[i].threshold,
+            "SCORE_BRACKETS must be sorted descending by threshold: " ..
+            brackets[i - 1].threshold .. " < " .. brackets[i].threshold)
+    end
+end
+
 --- Get the RGB color for a score based on bracket thresholds.
 -- Brackets are walked in descending order (highest threshold first).
 -- @param score  Numeric score
@@ -20,7 +30,10 @@ function addon.ScoreColors:GetColor(score)
             return bracket.color[1], bracket.color[2], bracket.color[3]
         end
     end
-    return 0.62, 0.62, 0.62  -- Fallback grey
+    -- Lowest bracket has threshold=0, so this is unreachable in practice.
+    -- Return the lowest bracket's color for safety.
+    local last = C.SCORE_BRACKETS[#C.SCORE_BRACKETS]
+    return last.color[1], last.color[2], last.color[3]
 end
 
 --- Get a WoW escape-coded colored string for a score.
@@ -46,7 +59,8 @@ function addon.ScoreColors:GetBracketLabel(score)
             return bracket.label
         end
     end
-    return "Trash"
+    -- Lowest bracket has threshold=0, so this is unreachable in practice.
+    return C.SCORE_BRACKETS[#C.SCORE_BRACKETS].label
 end
 
 --- Check if a tooltip already contains a TrueGearScore line.

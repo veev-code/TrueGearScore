@@ -372,13 +372,16 @@ function addon.SlashCommands:ReportScore(channelArg)
             return
         end
     else
-        -- Auto-detect
+        -- Auto-detect based on current group status
         if IsInRaid() then
             channel = "RAID"
         elseif IsInGroup() then
             channel = "PARTY"
-        else
+        elseif IsInGuild() then
             channel = "GUILD"
+        else
+            addon:Print("Not in a guild or group. Specify channel: |cff00ff00/tgs report <party|raid|guild|say>|r")
+            return
         end
     end
 

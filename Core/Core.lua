@@ -138,6 +138,45 @@ function addon:DiagPrint(msg)
 end
 
 ---------------------------------------------------------------------------
+-- Shared display utilities (used by Paperdoll and InspectFrame)
+---------------------------------------------------------------------------
+
+--- Compute average item level for a given unit.
+-- @param unit  Unit token (e.g., "player", "target")
+-- @return number  Average item level (floored integer), or 0 if no items
+function addon:ComputeAverageItemLevel(unit)
+    local totalIlvl = 0
+    local count = 0
+    for _, slotID in ipairs(C.EQUIP_SLOTS) do
+        local itemLink = GetInventoryItemLink(unit, slotID)
+        if itemLink then
+            local _, _, _, itemLevel = GetItemInfo(itemLink)
+            if itemLevel and itemLevel > 0 then
+                totalIlvl = totalIlvl + itemLevel
+                count = count + 1
+            end
+        end
+    end
+    if count > 0 then
+        return math.floor(totalIlvl / count)
+    end
+    return 0
+end
+
+--- Hide TacoTip GearScore frames by prefix (e.g., "Personal" or "Inspect").
+-- @param prefix  Frame name prefix: "Personal" for paperdoll, "Inspect" for inspect frame
+function addon:HideTacoTipFrames(prefix)
+    local gs = _G[prefix .. "GearScore"]
+    if gs then gs:Hide(); gs:SetText("") end
+    local gsText = _G[prefix .. "GearScoreText"]
+    if gsText then gsText:Hide(); gsText:SetText("") end
+    local ilvl = _G[prefix .. "AvgItemLvl"]
+    if ilvl then ilvl:Hide(); ilvl:SetText("") end
+    local ilvlText = _G[prefix .. "AvgItemLvlText"]
+    if ilvlText then ilvlText:Hide(); ilvlText:SetText("") end
+end
+
+---------------------------------------------------------------------------
 -- Spec detection via talent tree inspection
 ---------------------------------------------------------------------------
 

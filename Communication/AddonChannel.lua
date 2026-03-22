@@ -99,14 +99,23 @@ function M:BroadcastScore()
 
     lastBroadcastTime = now
 
-    -- Send to each channel the player is in
+    -- Send to each channel the player is in (stagger to avoid burst)
     if IsInGuild() then
-        AceComm:SendCommMessage(COMM_PREFIX, serialized, "GUILD", nil, "NORMAL")
+        AceComm:SendCommMessage(COMM_PREFIX, serialized, "GUILD", nil, "BULK")
     end
-    if IsInRaid() then
-        AceComm:SendCommMessage(COMM_PREFIX, serialized, "RAID", nil, "NORMAL")
-    elseif IsInGroup() then
-        AceComm:SendCommMessage(COMM_PREFIX, serialized, "PARTY", nil, "NORMAL")
+    -- Stagger group broadcast to avoid burst when also sending to guild
+    local groupDelay = IsInGuild() and 0.1 or 0
+    local function SendGroupBroadcast()
+        if IsInRaid() then
+            AceComm:SendCommMessage(COMM_PREFIX, serialized, "RAID", nil, "NORMAL")
+        elseif IsInGroup() then
+            AceComm:SendCommMessage(COMM_PREFIX, serialized, "PARTY", nil, "NORMAL")
+        end
+    end
+    if groupDelay > 0 then
+        C_Timer.After(groupDelay, SendGroupBroadcast)
+    else
+        SendGroupBroadcast()
     end
 
     addon:DebugPrint("AddonChannel: broadcast score " .. score)
@@ -147,7 +156,8 @@ function M:OnCommReceived(prefix, message, distribution, sender)
     if not addon.ScoreValidation:ValidateScore(score, sender) then return end
 
     -- Anti-fake: detect rapid score changes (>500 in <1 minute)
-    -- Still store it (might be legitimate respec/gear swap), but the log flags it
+    -- Broadcast is from the player directly (more trusted than gossip), so we still
+    -- store it — might be a legitimate respec/gear swap. GossipProtocol rejects these.
     addon.ScoreValidation:IsSuspiciousChange(guid, score, sender)
 
     -- Record in score history for change detection

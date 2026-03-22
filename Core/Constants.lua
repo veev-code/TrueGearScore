@@ -12,6 +12,10 @@ C.BRACKET_SIZE = 400
 -- Seconds to wait after PLAYER_LOGIN before initial self-scan (lets equipment data load)
 C.INITIAL_SCAN_DELAY = 1
 
+-- Gear efficiency: full gems + enchants typically add ~30% over base item stats.
+-- Used by ItemScoring to compute the "potential score" for efficiency percentage.
+C.EFFICIENCY_POTENTIAL_MULTIPLIER = 1.30
+
 -- WarcraftLogs-inspired color scheme.
 -- Thresholds calibrated against reference gear sets:
 --   Blue entry  = full ilvl 115 blues, no gems/enchants (score 1085)

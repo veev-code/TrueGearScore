@@ -140,6 +140,9 @@ function M:OnQueryReceived(prefix, message, distribution, sender)
     local success, payload = AceSerializer:Deserialize(message)
     if not success or type(payload) ~= "table" then return end
 
+    -- Validate protocol version
+    if payload.version and payload.version ~= PROTOCOL_VERSION then return end
+
     local guid = payload.guid
     if not guid or type(guid) ~= "string" then return end
 
@@ -188,6 +191,9 @@ function M:OnResponseReceived(prefix, message, distribution, sender)
 
     local success, payload = AceSerializer:Deserialize(message)
     if not success or type(payload) ~= "table" then return end
+
+    -- Validate protocol version
+    if payload.version and payload.version ~= PROTOCOL_VERSION then return end
 
     local guid = payload.guid
     local score = tonumber(payload.score)

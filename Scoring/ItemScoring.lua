@@ -21,41 +21,10 @@ local STAT_REVERSE = C.STAT_REVERSE
 -- Socket bonus detection via tooltip scanning
 ---------------------------------------------------------------------------
 
--- Hidden tooltip for scanning socket bonus text (created on first use)
-local scanTooltip
-
--- Map tooltip stat names to canonical stat keys for socket bonus parsing.
--- NOTE: These are English stat names as they appear in tooltip text.
--- Non-English clients will need a localized version of this table.
-local BONUS_STAT_MAP = {
-    ["Strength"]       = "STRENGTH",
-    ["Agility"]        = "AGILITY",
-    ["Stamina"]        = "STAMINA",
-    ["Intellect"]      = "INTELLECT",
-    ["Spirit"]         = "SPIRIT",
-    ["Spell Damage"]   = "SPELL_POWER",
-    ["Spell Power"]    = "SPELL_POWER",
-    ["Healing"]        = "HEAL_POWER",
-    ["Attack Power"]   = "ATTACK_POWER",
-    ["Hit Rating"]     = "HIT_RATING",
-    ["Critical Strike Rating"] = "CRIT_RATING",
-    ["Crit Rating"]    = "CRIT_RATING",
-    ["Haste Rating"]   = "HASTE_RATING",
-    ["Defense Rating"] = "DEFENSE",
-    ["Dodge Rating"]   = "DODGE",
-    ["Parry Rating"]   = "PARRY",
-    ["Resilience Rating"] = "RESILIENCE",
-    ["Resilience"]     = "RESILIENCE",
-    ["Block Rating"]   = "BLOCK_RATING",
-    ["Block Value"]    = "BLOCK_VALUE",
-    ["Expertise Rating"] = "EXPERTISE",
-    ["Spell Penetration"] = "SPELL_PEN",
-    ["Mana every 5 Sec."] = "MP5",
-    ["Mana every 5 sec."] = "MP5",
-    ["mana per 5 sec."]   = "MP5",
-    ["mana per 5 Sec."]   = "MP5",
-    ["Spell Damage and Healing"] = "SPELL_POWER",
-}
+-- Socket bonus detection uses GetItemStats() differential rather than
+-- tooltip text parsing — this is localization-safe. When all sockets
+-- are matched, GetItemStats() on the full link includes the socket bonus
+-- stats. We compare against the clean (no-gem) link to extract the bonus.
 
 --- Build a "clean" item link with gem slots zeroed out.
 -- Used to detect socket layout via GetItemStats() on the ungemmed item.
@@ -159,53 +128,10 @@ local function AreSocketsMatched(gems, socketLayout)
     return true
 end
 
---- Scan tooltip for socket bonus stats.
--- Creates a hidden tooltip, sets the item, and scans for the "Socket Bonus:" line.
--- Parses the stat name and value from the bonus text.
--- @param itemLink  Full item link
--- @return table    { STAT_NAME = value, ... } or empty table if no bonus found
-local function ParseSocketBonusFromTooltip(itemLink)
-    -- Create hidden scan tooltip on first use
-    if not scanTooltip then
-        scanTooltip = CreateFrame("GameTooltip", "TGSScanTooltip", nil, "GameTooltipTemplate")
-        scanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
-    end
-
-    scanTooltip:ClearLines()
-    scanTooltip:SetHyperlink(itemLink)
-
-    local stats = {}
-    local numLines = scanTooltip:NumLines()
-
-    for i = 1, numLines do
-        local line = _G["TGSScanTooltipTextLeft" .. i]
-        if line then
-            local text = line:GetText()
-            if text and text:match("Socket Bonus:") then
-                -- Extract all +N Stat patterns from the bonus line
-                local bonusText = text:match("Socket Bonus:%s*(.*)")
-                if bonusText then
-                    -- Match patterns like "+4 Intellect", "+3 Spell Damage"
-                    for val, statName in bonusText:gmatch("%+(%d+)%s+([%a%s%.]+)") do
-                        -- Trim trailing whitespace/punctuation
-                        statName = statName:match("^(.-)%s*$")
-                        local canonical = BONUS_STAT_MAP[statName]
-                        if canonical then
-                            stats[canonical] = (stats[canonical] or 0) + tonumber(val)
-                        else
-                            addon:DebugPrint("ParseSocketBonus: unmapped bonus stat '" .. statName .. "' = " .. val .. " on " .. tostring(itemLink))
-                        end
-                    end
-                end
-                break  -- Only one socket bonus line per item
-            end
-        end
-    end
-
-    return stats
-end
-
 --- Get socket bonus stats for an item if the bonus is active (all sockets matched).
+-- Uses a localization-safe approach: compares GetItemStats() on the full link
+-- (which includes socket bonus when active) against a clean link (gems zeroed out,
+-- no socket bonus). The difference is the socket bonus stats.
 -- @param itemLink  Full item link
 -- @param gems      Array of gem IDs from ParseItemLink
 -- @return table    { STAT_NAME = value, ... } or empty table
@@ -218,8 +144,56 @@ function addon.ItemScoring:GetSocketBonusStats(itemLink, gems)
         return {}  -- Bonus inactive
     end
 
-    -- Bonus is active — parse the stats from tooltip
-    return ParseSocketBonusFromTooltip(itemLink)
+    -- Socket bonus is active. Extract it by comparing GetItemStats() on the
+    -- original link (includes socket bonus) vs clean link (no gems → no bonus).
+    -- We strip gem stats from the difference to isolate the bonus.
+    local fullStats = {}
+    GetItemStats(itemLink, fullStats)
+
+    local cleanLink = BuildCleanItemLink(itemLink)
+    local cleanStats = {}
+    GetItemStats(cleanLink, cleanStats)
+
+    local bonusStats = {}
+    for key, fullValue in pairs(fullStats) do
+        -- Skip socket keys and gem-contributed stats
+        if not key:match("^EMPTY_SOCKET") then
+            local cleanValue = cleanStats[key] or 0
+            local diff = fullValue - cleanValue
+            if diff > 0 then
+                -- This difference includes gem stats + socket bonus.
+                -- We need to subtract the gem contributions to get just the bonus.
+                -- Since GetItemTotalStats already handles gems separately, we just
+                -- need the "extra" stats that appear on the full link but not base+gems.
+                local canonical = STAT_REVERSE[key]
+                if canonical then
+                    bonusStats[canonical] = diff
+                end
+            end
+        end
+    end
+
+    -- Subtract gem stat contributions from the difference to isolate socket bonus
+    local db = addon.GemDatabase
+    if db then
+        for _, gemID in ipairs(gems) do
+            if gemID and gemID > 0 then
+                local gemData = db[gemID]
+                if gemData then
+                    for stat, value in pairs(gemData) do
+                        if not stat:match("^_") and bonusStats[stat] then
+                            bonusStats[stat] = bonusStats[stat] - value
+                            if bonusStats[stat] <= 0 then
+                                bonusStats[stat] = nil
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return bonusStats
 end
 
 ---------------------------------------------------------------------------
@@ -293,6 +267,8 @@ function addon.ItemScoring:GetGemStats(gems)
                         stats[stat] = (stats[stat] or 0) + value
                     end
                 end
+            else
+                addon:DebugPrint("GetGemStats: unknown gem ID " .. gemID .. " — stats not scored")
             end
         end
     end
@@ -306,7 +282,12 @@ function addon.ItemScoring:GetEnchantStats(enchantID)
     if not enchantID or enchantID == 0 then return {} end
     local db = addon.EnchantDatabase
     if not db then return {} end
-    return db[enchantID] or {}
+    local data = db[enchantID]
+    if not data then
+        addon:DebugPrint("GetEnchantStats: unknown enchant ID " .. enchantID .. " — stats not scored")
+        return {}
+    end
+    return data
 end
 
 --- Get equivalent stat contributions from item procs/equip effects.
@@ -360,6 +341,22 @@ function addon.ItemScoring:GetItemTotalStats(itemLink)
 end
 
 ---------------------------------------------------------------------------
+-- Shared stat scoring helper
+---------------------------------------------------------------------------
+
+--- Sum weighted stat values for a stat table.
+-- @param stats              { STAT_NAME = value, ... }
+-- @param effectiveWeights   { STAT_NAME = weight, ... }
+-- @return number            Raw (unrounded) weighted sum
+local function ScoreStats(stats, effectiveWeights)
+    local score = 0
+    for stat, value in pairs(stats) do
+        score = score + (value * (effectiveWeights[stat] or 0))
+    end
+    return score
+end
+
+---------------------------------------------------------------------------
 -- Score a single item with pre-computed effective weights
 ---------------------------------------------------------------------------
 
@@ -369,14 +366,7 @@ end
 -- @return number           Integer score for this item
 function addon.ItemScoring:ScoreItem(itemLink, effectiveWeights)
     local stats = self:GetItemTotalStats(itemLink)
-    local score = 0
-
-    for stat, value in pairs(stats) do
-        local weight = effectiveWeights[stat] or 0
-        score = score + (value * weight)
-    end
-
-    return math.max(0, math.floor(score))
+    return math.max(0, math.floor(ScoreStats(stats, effectiveWeights)))
 end
 
 ---------------------------------------------------------------------------
@@ -398,6 +388,12 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     -- Score with both weight tables and use whichever the gear scores higher with.
     -- This lets the gear self-select: tank gear → bear, DPS gear → cat.
     if specKey == "DRUID_FERAL" then
+        local catData = addon.StatWeights:GetSpecWeights("DRUID_FERAL_CAT")
+        local bearData = addon.StatWeights:GetSpecWeights("DRUID_FERAL_BEAR")
+        if not catData and not bearData then
+            addon:DebugPrint("ScoreCharacter: no weights for DRUID_FERAL_CAT or DRUID_FERAL_BEAR")
+            return { totalScore = 0, perSlot = {}, effectiveWeights = {} }
+        end
         local catResult = self:ScoreCharacter(equippedItems, "DRUID_FERAL_CAT")
         local bearResult = self:ScoreCharacter(equippedItems, "DRUID_FERAL_BEAR")
         if bearResult.totalScore > catResult.totalScore then
@@ -413,6 +409,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     end
 
     -- Pass 1: Sum raw stats across all items (full: base+gems+enchants+procs)
+    -- Each source is collected individually for the per-category breakdown.
     local statTotals = {}
     local itemStats = {}       -- Cache per-item full stats for pass 2
     local itemBaseStats = {}   -- Cache per-item base-only stats (no gems/enchants/procs)
@@ -422,17 +419,43 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     local itemSocketBonusStats = {} -- Cache per-item socket bonus stats for breakdown
 
     for slotID, itemLink in pairs(equippedItems) do
-        local stats = self:GetItemTotalStats(itemLink)
-        local baseStats = self:GetBaseStats(itemLink)
         local parsed = self:ParseItemLink(itemLink)
-        itemStats[slotID] = stats
+
+        -- Collect each stat source individually (avoids redundant GetBaseStats call)
+        local baseStats = self:GetBaseStats(itemLink)
         itemBaseStats[slotID] = baseStats
+
+        local gemStats, enchantStats, procStats, socketBonusStats = {}, {}, {}, {}
         if parsed then
-            itemGemStats[slotID] = self:GetGemStats(parsed.gems)
-            itemEnchantStats[slotID] = self:GetEnchantStats(parsed.enchantID)
-            itemProcStats[slotID] = self:GetProcStats(parsed.itemID)
-            itemSocketBonusStats[slotID] = self:GetSocketBonusStats(itemLink, parsed.gems)
+            gemStats = self:GetGemStats(parsed.gems)
+            enchantStats = self:GetEnchantStats(parsed.enchantID)
+            procStats = self:GetProcStats(parsed.itemID)
+            socketBonusStats = self:GetSocketBonusStats(itemLink, parsed.gems)
         end
+        itemGemStats[slotID] = gemStats
+        itemEnchantStats[slotID] = enchantStats
+        itemProcStats[slotID] = procStats
+        itemSocketBonusStats[slotID] = socketBonusStats
+
+        -- Build full stats by merging all sources
+        local stats = {}
+        for stat, value in pairs(baseStats) do
+            stats[stat] = (stats[stat] or 0) + value
+        end
+        for stat, value in pairs(gemStats) do
+            stats[stat] = (stats[stat] or 0) + value
+        end
+        for stat, value in pairs(enchantStats) do
+            stats[stat] = (stats[stat] or 0) + value
+        end
+        for stat, value in pairs(procStats) do
+            stats[stat] = (stats[stat] or 0) + value
+        end
+        for stat, value in pairs(socketBonusStats) do
+            stats[stat] = (stats[stat] or 0) + value
+        end
+        itemStats[slotID] = stats
+
         for stat, value in pairs(stats) do
             statTotals[stat] = (statTotals[stat] or 0) + value
         end
@@ -491,12 +514,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
             if setData and setData.bonuses then
                 for threshold, bonusStats in pairs(setData.bonuses) do
                     if count >= threshold then
-                        local bonusScore = 0
-                        for stat, value in pairs(bonusStats) do
-                            local weight = effectiveWeights[stat] or 0
-                            bonusScore = bonusScore + (value * weight)
-                        end
-                        bonusScore = math.max(0, bonusScore)
+                        local bonusScore = math.max(0, ScoreStats(bonusStats, effectiveWeights))
                         if bonusScore > 0 then
                             setBonusScore = setBonusScore + bonusScore
                             setBonusDetails[#setBonusDetails + 1] = {
@@ -518,12 +536,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     -- Compute base-only score (what TacoTip roughly measures — no gems/enchants/procs)
     local baseOnlyRaw = 0
     for slotID, baseStats in pairs(itemBaseStats) do
-        local slotBase = 0
-        for stat, value in pairs(baseStats) do
-            local weight = effectiveWeights[stat] or 0
-            slotBase = slotBase + (value * weight)
-        end
-        baseOnlyRaw = baseOnlyRaw + math.max(0, slotBase)
+        baseOnlyRaw = baseOnlyRaw + math.max(0, ScoreStats(baseStats, effectiveWeights))
     end
 
     -- Compute per-category breakdown (gems, enchants, procs, socket bonuses scored separately)
@@ -532,33 +545,17 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     local procScoreRaw = 0
     local socketBonusScoreRaw = 0
     for slotID, _ in pairs(equippedItems) do
-        local gs = itemGemStats[slotID]
-        if gs then
-            for stat, value in pairs(gs) do
-                local weight = effectiveWeights[stat] or 0
-                gemScoreRaw = gemScoreRaw + (value * weight)
-            end
+        if itemGemStats[slotID] then
+            gemScoreRaw = gemScoreRaw + ScoreStats(itemGemStats[slotID], effectiveWeights)
         end
-        local es = itemEnchantStats[slotID]
-        if es then
-            for stat, value in pairs(es) do
-                local weight = effectiveWeights[stat] or 0
-                enchantScoreRaw = enchantScoreRaw + (value * weight)
-            end
+        if itemEnchantStats[slotID] then
+            enchantScoreRaw = enchantScoreRaw + ScoreStats(itemEnchantStats[slotID], effectiveWeights)
         end
-        local ps = itemProcStats[slotID]
-        if ps then
-            for stat, value in pairs(ps) do
-                local weight = effectiveWeights[stat] or 0
-                procScoreRaw = procScoreRaw + (value * weight)
-            end
+        if itemProcStats[slotID] then
+            procScoreRaw = procScoreRaw + ScoreStats(itemProcStats[slotID], effectiveWeights)
         end
-        local sbs = itemSocketBonusStats[slotID]
-        if sbs then
-            for stat, value in pairs(sbs) do
-                local weight = effectiveWeights[stat] or 0
-                socketBonusScoreRaw = socketBonusScoreRaw + (value * weight)
-            end
+        if itemSocketBonusStats[slotID] then
+            socketBonusScoreRaw = socketBonusScoreRaw + ScoreStats(itemSocketBonusStats[slotID], effectiveWeights)
         end
     end
 
@@ -593,10 +590,11 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
         local parsed = self:ParseItemLink(itemLink)
         if parsed then
             -- Count gem sockets: check how many sockets the item has via clean link
-            local cleanLink = self:BuildCleanItemLink(itemLink)
+            local cleanLink = BuildCleanItemLink(itemLink)
             if cleanLink then
-                local layout = self:GetSocketLayout(cleanLink)
-                local slotSockets = (layout.red or 0) + (layout.yellow or 0) + (layout.blue or 0) + (layout.meta or 0)
+                local layout = GetSocketLayout(cleanLink)
+                if not layout then layout = {} end
+                local slotSockets = (layout.RED or 0) + (layout.YELLOW or 0) + (layout.BLUE or 0) + (layout.META or 0)
                 totalSockets = totalSockets + slotSockets
 
                 -- Count filled sockets

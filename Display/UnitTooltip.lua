@@ -17,15 +17,13 @@ addon:RegisterModule("UnitTooltip", M)
 ---------------------------------------------------------------------------
 
 function M:Initialize()
-    self.enabled = addon.db.profile.showUnitTooltip
-
     GameTooltip:HookScript("OnTooltipSetUnit", function(tooltip)
         self:OnTooltipSetUnit(tooltip)
     end)
 end
 
 function M:Refresh()
-    self.enabled = addon.db.profile.showUnitTooltip
+    -- No cached state to update; reads addon.db.profile directly
 end
 
 ---------------------------------------------------------------------------
@@ -33,7 +31,7 @@ end
 ---------------------------------------------------------------------------
 
 function M:OnTooltipSetUnit(tooltip)
-    if not self.enabled then return end
+    if not addon.db.profile.showUnitTooltip then return end
 
     local _, unit = tooltip:GetUnit()
     if not unit or not UnitIsPlayer(unit) then return end

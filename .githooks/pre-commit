@@ -19,7 +19,7 @@ if [ ! -f "$VALIDATOR" ]; then
 fi
 
 # Only run if any data file is staged
-DATA_FILES="Data/GemDatabase.lua Data/EnchantDatabase.lua Data/ProcDatabase.lua"
+DATA_FILES="Data/GemDatabase.lua Data/EnchantDatabase.lua Data/ProcDatabase.lua Data/SetBonusDatabase.lua"
 STAGED=$(git diff --cached --name-only 2>/dev/null || true)
 
 RUN_VALIDATION=false

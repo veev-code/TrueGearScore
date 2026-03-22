@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 TrueGearScore Data Validator
-Validates GemDatabase.lua, EnchantDatabase.lua, and ProcDatabase.lua for:
+Validates GemDatabase.lua, EnchantDatabase.lua, ProcDatabase.lua, and SetBonusDatabase.lua for:
   - Duplicate IDs within each database
   - Invalid stat key names
   - Non-positive stat values
@@ -165,6 +165,79 @@ def validate_database(filepath, db_name, id_range=None, verbose=False):
 
 
 # ---------------------------------------------------------------------------
+# SetBonusDatabase validator
+# ---------------------------------------------------------------------------
+
+# Matches set entries: [12345] = { name = "...", bonuses = { ... } },
+SET_ENTRY_RE = re.compile(
+    r'^\s*\[(\d+)\]\s*=\s*\{',
+    re.MULTILINE
+)
+
+# Matches bonus threshold entries: [2] = { STAT = val }, or [4] = { STAT = val },
+BONUS_THRESHOLD_RE = re.compile(
+    r'\[([24])\]\s*=\s*\{([^}]*)\}'
+)
+
+
+def validate_set_bonus_database(filepath, verbose=False):
+    """Validate SetBonusDatabase.lua for duplicate IDs and invalid stat keys."""
+    errors = []
+    warnings = []
+    db_name = "SetBonusDatabase"
+
+    if not os.path.isfile(filepath):
+        errors.append(f"{db_name}: File not found: {filepath}")
+        return errors, warnings
+
+    with open(filepath, "r", encoding="utf-8") as f:
+        full_text = f.read()
+
+    # Find all set entries
+    seen_ids = {}
+    entry_count = 0
+
+    for match in SET_ENTRY_RE.finditer(full_text):
+        entry_id = int(match.group(1))
+        char_offset = match.start()
+        line_num = full_text[:char_offset].count("\n") + 1
+        entry_count += 1
+
+        if entry_id in seen_ids:
+            errors.append(
+                f"{db_name} line {line_num}: Duplicate setID [{entry_id}] "
+                f"(first seen at line {seen_ids[entry_id]})"
+            )
+        else:
+            seen_ids[entry_id] = line_num
+
+        # Find the bonuses within this entry (look ahead ~500 chars)
+        entry_text = full_text[match.start():match.start() + 500]
+        for bonus_match in BONUS_THRESHOLD_RE.finditer(entry_text):
+            stats_str = bonus_match.group(2)
+            for stat_match in STAT_RE.finditer(stats_str):
+                key = stat_match.group(1)
+                value = float(stat_match.group(2))
+                if key not in ALL_ALLOWED_KEYS:
+                    errors.append(
+                        f"{db_name} line {line_num}: [{entry_id}] unknown stat key '{key}'"
+                    )
+                if value <= 0:
+                    errors.append(
+                        f"{db_name} line {line_num}: [{entry_id}] stat '{key}' has "
+                        f"non-positive value {value}"
+                    )
+
+    if entry_count == 0:
+        errors.append(f"{db_name}: No entries found (parsing may have failed)")
+
+    if verbose:
+        print(f"  {db_name}: {entry_count} entries, {len(errors)} errors, {len(warnings)} warnings")
+
+    return errors, warnings
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -208,6 +281,14 @@ def main():
         data_dir / "ProcDatabase.lua",
         "ProcDatabase",
         id_range=None,  # proc IDs are item IDs, wide range
+        verbose=verbose,
+    )
+    all_errors.extend(errors)
+    all_warnings.extend(warnings)
+
+    # --- SetBonusDatabase ---
+    errors, warnings = validate_set_bonus_database(
+        data_dir / "SetBonusDatabase.lua",
         verbose=verbose,
     )
     all_errors.extend(errors)

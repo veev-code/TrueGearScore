@@ -56,17 +56,20 @@ function addon.ScoreCache:Set(guid, data)
     -- Enforce size cap before inserting
     if addon.ScoreCache:GetSize() >= MAX_CACHE_SIZE then
         addon.ScoreCache:Prune()
-        -- If still over after pruning expired entries, evict oldest
+        -- If still over after pruning expired entries, evict lowest-priority oldest entry
         if addon.ScoreCache:GetSize() >= MAX_CACHE_SIZE then
-            local oldestGUID, oldestTime = nil, math.huge
+            local evictGUID, evictPrio, evictTime = nil, math.huge, math.huge
             for g, entry in pairs(cache) do
-                if entry.timestamp < oldestTime then
-                    oldestGUID = g
-                    oldestTime = entry.timestamp
+                local prio = SOURCE_PRIORITY[entry.source] or 0
+                -- Prefer evicting lower priority; within same priority, evict oldest
+                if prio < evictPrio or (prio == evictPrio and entry.timestamp < evictTime) then
+                    evictGUID = g
+                    evictPrio = prio
+                    evictTime = entry.timestamp
                 end
             end
-            if oldestGUID then
-                cache[oldestGUID] = nil
+            if evictGUID then
+                cache[evictGUID] = nil
             end
         end
     end

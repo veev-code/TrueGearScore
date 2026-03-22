@@ -9,7 +9,7 @@ local _, addon = ...
 
 local M = {}
 M.addon = addon
-addon:RegisterModule("InspectFrameDisplay", M)
+addon:RegisterModule("InspectFrame", M)
 
 local C = addon.Constants
 local FONT = "Fonts\\FRIZQT__.TTF"
@@ -27,8 +27,6 @@ local ILVL_VALUE_X, ILVL_VALUE_Y = -12, 24
 ---------------------------------------------------------------------------
 
 function M:Initialize()
-    self.enabled = addon.db.profile.showInspectFrame
-
     -- InspectFrame may not exist yet (loaded on demand)
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("ADDON_LOADED")
@@ -46,7 +44,7 @@ function M:Initialize()
 end
 
 function M:Refresh()
-    self.enabled = addon.db.profile.showInspectFrame
+    -- No cached state to update; reads addon.db.profile directly
 end
 
 function M:HookInspectFrame()
@@ -68,23 +66,7 @@ end
 ---------------------------------------------------------------------------
 
 function M:HideTacoTipInspect()
-    -- TacoTip creates these on the inspect frame
-    if InspectGearScore then
-        InspectGearScore:Hide()
-        InspectGearScore:SetText("")
-    end
-    if InspectGearScoreText then
-        InspectGearScoreText:Hide()
-        InspectGearScoreText:SetText("")
-    end
-    if InspectAvgItemLvl then
-        InspectAvgItemLvl:Hide()
-        InspectAvgItemLvl:SetText("")
-    end
-    if InspectAvgItemLvlText then
-        InspectAvgItemLvlText:Hide()
-        InspectAvgItemLvlText:SetText("")
-    end
+    addon:HideTacoTipFrames("Inspect")
 end
 
 ---------------------------------------------------------------------------
@@ -92,7 +74,7 @@ end
 ---------------------------------------------------------------------------
 
 function M:OnInspectShow()
-    if not self.enabled then return end
+    if not addon.db.profile.showInspectFrame then return end
 
     self:EnsureDisplay()
     self:HideTacoTipInspect()
@@ -101,10 +83,25 @@ function M:OnInspectShow()
     if self.updateTimer1 then self.updateTimer1:Cancel(); self.updateTimer1 = nil end
     if self.updateTimer2 then self.updateTimer2:Cancel(); self.updateTimer2 = nil end
 
+    -- Capture the unit at show time to guard against rapid inspect switches
+    local showUnit = InspectFrame and InspectFrame.unit or "target"
+    local showGUID = UnitGUID(showUnit)
+
     -- Update with delays to let InspectHandler capture data
+    -- Each timer validates the inspect target hasn't changed
     self:UpdateScore()
-    self.updateTimer1 = C_Timer.NewTimer(0.5, function() self.updateTimer1 = nil; self:UpdateScore() end)
-    self.updateTimer2 = C_Timer.NewTimer(2, function() self.updateTimer2 = nil; self:UpdateScore() end)
+    self.updateTimer1 = C_Timer.NewTimer(0.5, function()
+        self.updateTimer1 = nil
+        if InspectFrame and InspectFrame:IsShown() and UnitGUID(InspectFrame.unit or "target") == showGUID then
+            self:UpdateScore()
+        end
+    end)
+    self.updateTimer2 = C_Timer.NewTimer(2, function()
+        self.updateTimer2 = nil
+        if InspectFrame and InspectFrame:IsShown() and UnitGUID(InspectFrame.unit or "target") == showGUID then
+            self:UpdateScore()
+        end
+    end)
 end
 
 function M:EnsureDisplay()
@@ -144,28 +141,11 @@ function M:EnsureDisplay()
 end
 
 ---------------------------------------------------------------------------
--- Compute average item level for inspected player
+-- Compute average item level for inspected player (delegates to shared utility)
 ---------------------------------------------------------------------------
 
 function M:ComputeInspectIlvl(unit)
-    local totalIlvl = 0
-    local count = 0
-
-    for _, slotID in ipairs(C.EQUIP_SLOTS) do
-        local itemLink = GetInventoryItemLink(unit, slotID)
-        if itemLink then
-            local _, _, _, itemLevel = GetItemInfo(itemLink)
-            if itemLevel and itemLevel > 0 then
-                totalIlvl = totalIlvl + itemLevel
-                count = count + 1
-            end
-        end
-    end
-
-    if count > 0 then
-        return math.floor(totalIlvl / count)
-    end
-    return 0
+    return addon:ComputeAverageItemLevel(unit)
 end
 
 ---------------------------------------------------------------------------

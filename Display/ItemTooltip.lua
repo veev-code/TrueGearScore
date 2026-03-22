@@ -46,15 +46,13 @@ local EQUIPLOC_TO_SLOT = {
 ---------------------------------------------------------------------------
 
 function M:Initialize()
-    self.enabled = addon.db.profile.showItemTooltip
-
     GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
         self:OnTooltipSetItem(tooltip)
     end)
 end
 
 function M:Refresh()
-    self.enabled = addon.db.profile.showItemTooltip
+    -- No cached state to update; reads addon.db.profile directly
 end
 
 ---------------------------------------------------------------------------
@@ -62,7 +60,7 @@ end
 ---------------------------------------------------------------------------
 
 function M:OnTooltipSetItem(tooltip)
-    if not self.enabled then return end
+    if not addon.db.profile.showItemTooltip then return end
 
     local _, itemLink = tooltip:GetItem()
     if not itemLink then return end

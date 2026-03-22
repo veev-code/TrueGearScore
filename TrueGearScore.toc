@@ -11,34 +11,34 @@
 ## X-Curse-Project-ID: 0
 ## X-Website: https://github.com/veev-code/TrueGearScore
 
-# Libraries
+# Libraries (must load first — no addon dependencies)
 Libs\embeds.xml
 
-# Core
+# Core infrastructure (no cross-dependencies; loaded before all modules)
 Core\Constants.lua
 Core\Core.lua
 Core\Database.lua
 Core\ScoreValidation.lua
 Core\SlashCommands.lua
 
-# Data
+# Data (pure tables — no dependencies beyond addon namespace)
 Data\GemDatabase.lua
 Data\EnchantDatabase.lua
 Data\ProcDatabase.lua
 Data\ReferenceSets.lua
 Data\SetBonusDatabase.lua
 
-# Scoring
+# Scoring engine (depends on Core + Data)
 Scoring\StatWeights.lua
 Scoring\CapEngine.lua
 Scoring\ItemScoring.lua
 Scoring\ScoreCache.lua
 
-# Inspect
+# Inspect (depends on Scoring)
 Inspect\SelfScanner.lua
 Inspect\InspectHandler.lua
 
-# Display
+# Display (depends on Scoring, Inspect, ScoreColors)
 Display\ScoreColors.lua
 Display\Paperdoll.lua
 Display\UnitTooltip.lua
@@ -46,9 +46,9 @@ Display\InspectFrame.lua
 Display\LFGIntegration.lua
 Display\ItemTooltip.lua
 
-# Communication
+# Communication (depends on Scoring, Inspect)
 Communication\AddonChannel.lua
 Communication\GossipProtocol.lua
 
-# UI
+# UI (depends on all modules for config bindings)
 UI\Options.lua

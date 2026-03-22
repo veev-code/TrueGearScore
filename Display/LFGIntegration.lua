@@ -16,8 +16,6 @@ addon:RegisterModule("LFGIntegration", M)
 ---------------------------------------------------------------------------
 
 function M:Initialize()
-    self.enabled = addon.db.profile.showLFGIntegration
-
     -- Soft dependency: only hook if LFGBB is loaded
     local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
     if not (IsAddOnLoaded and IsAddOnLoaded("LFGBulletinBoard")) then
@@ -32,7 +30,7 @@ function M:Initialize()
 end
 
 function M:Refresh()
-    self.enabled = addon.db.profile.showLFGIntegration
+    -- No cached state to update; reads addon.db.profile directly
 end
 
 ---------------------------------------------------------------------------
@@ -110,7 +108,7 @@ end
 ---------------------------------------------------------------------------
 
 function M:AppendScoreLine(tooltip, request)
-    if not self.enabled then return end
+    if not addon.db.profile.showLFGIntegration then return end
     if not request then return end
 
     -- Don't double-add
@@ -127,7 +125,12 @@ function M:AppendScoreLine(tooltip, request)
     end
 
     tooltip:AddLine("TrueGearScore: " .. sourceTag .. tostring(score), r, g, b)
-    tooltip:Show()  -- Resize tooltip to fit new line
+    -- Defer Show() to avoid re-entrancy inside the tooltip hook
+    C_Timer.After(0, function()
+        if tooltip:IsShown() then
+            tooltip:Show()  -- Resize tooltip to fit new line
+        end
+    end)
 end
 
 ---------------------------------------------------------------------------

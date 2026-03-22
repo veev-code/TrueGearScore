@@ -317,10 +317,27 @@ function M:OnInspectReady(guid)
 
     if itemCount > 0 then
         -- Detect their spec
+        self._dualSpecCandidates = nil
         local specKey = self:DetectInspectSpec(unit, targetGUID)
 
-        -- Score them
-        local result = addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
+        -- If dual spec detected, score with both and pick higher
+        local result
+        if self._dualSpecCandidates and #self._dualSpecCandidates >= 2 then
+            local result1 = addon.ItemScoring:ScoreCharacter(equippedItems, self._dualSpecCandidates[1])
+            local result2 = addon.ItemScoring:ScoreCharacter(equippedItems, self._dualSpecCandidates[2])
+            if type(result2) == "table" and type(result1) == "table" and result2.totalScore > result1.totalScore then
+                result = result2
+                specKey = self._dualSpecCandidates[2]
+                addon:Log("DIAG", "InspectHandler: Dual spec — gear chose " .. specKey .. " (" .. result2.totalScore .. " > " .. result1.totalScore .. ")")
+            else
+                result = result1
+                specKey = self._dualSpecCandidates[1]
+                addon:Log("DIAG", "InspectHandler: Dual spec — gear chose " .. specKey)
+            end
+            self._dualSpecCandidates = nil
+        else
+            result = addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
+        end
 
         -- Validate scoring result
         if type(result) ~= "table" then
@@ -367,12 +384,41 @@ function M:DetectInspectSpec(unit, guid)
 
     -- Try LibClassicInspector first (TacoTip bundles it, most reliable)
     local CI = LibStub and LibStub:GetLibrary("LibClassicInspector", true)
-    if CI and CI.GetSpecialization then
+    if CI and CI.GetSpecialization and CI.GetTalentPoints then
+        -- Check both talent groups (dual spec). LCI may report the inactive spec
+        -- as "active" in Anniversary Edition. We try both and let the gear decide.
+        local specMap = C.SPEC_MAP[class]
+        if specMap then
+            local specs = {}
+            for group = 1, 2 do
+                local specIndex = CI:GetSpecialization(guid, group)
+                if specIndex and specIndex > 0 then
+                    local specKey = specMap[specIndex]
+                    if specKey and not specs[specKey] then
+                        specs[specKey] = true
+                        specs[#specs + 1] = specKey
+                    end
+                end
+            end
+
+            if #specs == 1 then
+                -- Both groups have same spec (or only one group exists)
+                addon:Log("DIAG", "InspectHandler: Spec via LCI: " .. specs[1])
+                return specs[1]
+            elseif #specs >= 2 then
+                -- Dual spec with different specs — return both and let caller pick
+                -- Store the candidates; the scoring pipeline will try both and use higher
+                addon:Log("DIAG", "InspectHandler: Dual spec detected: " .. specs[1] .. " / " .. specs[2] .. " — gear will decide")
+                self._dualSpecCandidates = specs
+                return specs[1]  -- Return first; ScoreCharacter handles dual-spec via gear matching
+            end
+        end
+
+        -- Fallback: single spec lookup
         local specIndex = CI:GetSpecialization(guid)
         if specIndex and specIndex > 0 then
-            local specMap = C.SPEC_MAP[class]
             local specKey = specMap and specMap[specIndex] or (class .. "_UNKNOWN")
-            addon:Log("DIAG", "InspectHandler: Spec via LibClassicInspector: " .. specKey .. " (index=" .. specIndex .. ")")
+            addon:Log("DIAG", "InspectHandler: Spec via LCI (single): " .. specKey .. " (index=" .. specIndex .. ")")
             return specKey
         end
     end

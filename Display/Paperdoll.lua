@@ -29,11 +29,9 @@ local ILVL_VALUE_X, ILVL_VALUE_Y = -12, 24
 ---------------------------------------------------------------------------
 
 function M:Initialize()
-    self.enabled = addon.db.profile.showPaperdoll
-
     if PaperDollFrame then
         PaperDollFrame:HookScript("OnShow", function()
-            if not self.enabled then
+            if not addon.db.profile.showPaperdoll then
                 self:HideDisplay()
                 return
             end
@@ -49,22 +47,7 @@ end
 ---------------------------------------------------------------------------
 
 function M:HideTacoTip()
-    if PersonalGearScore then
-        PersonalGearScore:Hide()
-        PersonalGearScore:SetText("")
-    end
-    if PersonalGearScoreText then
-        PersonalGearScoreText:Hide()
-        PersonalGearScoreText:SetText("")
-    end
-    if PersonalAvgItemLvl then
-        PersonalAvgItemLvl:Hide()
-        PersonalAvgItemLvl:SetText("")
-    end
-    if PersonalAvgItemLvlText then
-        PersonalAvgItemLvlText:Hide()
-        PersonalAvgItemLvlText:SetText("")
-    end
+    addon:HideTacoTipFrames("Personal")
 end
 
 ---------------------------------------------------------------------------
@@ -106,28 +89,11 @@ function M:EnsureDisplay()
 end
 
 ---------------------------------------------------------------------------
--- Average item level computation
+-- Average item level computation (delegates to shared utility)
 ---------------------------------------------------------------------------
 
 function M:ComputeAverageItemLevel()
-    local totalIlvl = 0
-    local count = 0
-
-    for _, slotID in ipairs(C.EQUIP_SLOTS) do
-        local itemLink = GetInventoryItemLink("player", slotID)
-        if itemLink then
-            local _, _, _, itemLevel = GetItemInfo(itemLink)
-            if itemLevel and itemLevel > 0 then
-                totalIlvl = totalIlvl + itemLevel
-                count = count + 1
-            end
-        end
-    end
-
-    if count > 0 then
-        return math.floor(totalIlvl / count)
-    end
-    return 0
+    return addon:ComputeAverageItemLevel("player")
 end
 
 ---------------------------------------------------------------------------
@@ -150,7 +116,7 @@ end
 
 function M:UpdateScore()
     if not self.gsValue then return end
-    if not self.enabled then self:HideDisplay() return end
+    if not addon.db.profile.showPaperdoll then self:HideDisplay() return end
     self:ShowDisplay()
 
     local selfScanner = addon:GetModule("SelfScanner")
@@ -179,15 +145,14 @@ end
 
 --- Called by SelfScanner when score changes.
 function M:OnScoreUpdated(score)
-    if not self.enabled then return end
+    if not addon.db.profile.showPaperdoll then return end
     if CharacterFrame and CharacterFrame:IsShown() then
         self:UpdateScore()
     end
 end
 
 function M:Refresh()
-    self.enabled = addon.db.profile.showPaperdoll
-    if not self.enabled then
+    if not addon.db.profile.showPaperdoll then
         self:HideDisplay()
         return
     end
