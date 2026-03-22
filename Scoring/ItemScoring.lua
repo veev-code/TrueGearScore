@@ -376,36 +376,43 @@ end
 --- Score all equipped items for a character.
 -- @param equippedItems  Table of { [slotID] = itemLink, ... }
 -- @param specKey        Player spec key (e.g., "WARRIOR_ARMS"). If nil, uses addon.playerSpec.
--- @return table         { totalScore, perSlot = { [slotID] = score }, effectiveWeights = {} }
-function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
+-- @param mode           Scoring mode: "pve" (default) or "pvp"
+-- @return table         { totalScore, perSlot = { [slotID] = score }, effectiveWeights = {}, mode = "pve"/"pvp" }
+function addon.ItemScoring:ScoreCharacter(equippedItems, specKey, mode)
+    mode = mode or "pve"
     specKey = specKey or addon.playerSpec
     if not specKey then
         addon:DebugPrint("ScoreCharacter: no spec key available")
-        return { totalScore = 0, perSlot = {}, effectiveWeights = {} }
+        return { totalScore = 0, perSlot = {}, effectiveWeights = {}, mode = mode }
     end
 
     -- Feral druids have two roles (cat DPS / bear tank) under one talent tree.
     -- Score with both weight tables and use whichever the gear scores higher with.
     -- This lets the gear self-select: tank gear → bear, DPS gear → cat.
     if specKey == "DRUID_FERAL" then
-        local catData = addon.StatWeights:GetSpecWeights("DRUID_FERAL_CAT")
-        local bearData = addon.StatWeights:GetSpecWeights("DRUID_FERAL_BEAR")
+        local catData = (mode == "pvp") and addon.StatWeights:GetSpecPvPWeights("DRUID_FERAL_CAT") or addon.StatWeights:GetSpecWeights("DRUID_FERAL_CAT")
+        local bearData = (mode == "pvp") and addon.StatWeights:GetSpecPvPWeights("DRUID_FERAL_BEAR") or addon.StatWeights:GetSpecWeights("DRUID_FERAL_BEAR")
         if not catData and not bearData then
             addon:DebugPrint("ScoreCharacter: no weights for DRUID_FERAL_CAT or DRUID_FERAL_BEAR")
-            return { totalScore = 0, perSlot = {}, effectiveWeights = {} }
+            return { totalScore = 0, perSlot = {}, effectiveWeights = {}, mode = mode }
         end
-        local catResult = self:ScoreCharacter(equippedItems, "DRUID_FERAL_CAT")
-        local bearResult = self:ScoreCharacter(equippedItems, "DRUID_FERAL_BEAR")
+        local catResult = self:ScoreCharacter(equippedItems, "DRUID_FERAL_CAT", mode)
+        local bearResult = self:ScoreCharacter(equippedItems, "DRUID_FERAL_BEAR", mode)
         if bearResult.totalScore > catResult.totalScore then
             return bearResult
         end
         return catResult
     end
 
-    local specData = addon.StatWeights:GetSpecWeights(specKey)
+    local specData
+    if mode == "pvp" then
+        specData = addon.StatWeights:GetSpecPvPWeights(specKey)
+    else
+        specData = addon.StatWeights:GetSpecWeights(specKey)
+    end
     if not specData then
-        addon:DebugPrint("ScoreCharacter: no weights for spec " .. specKey)
-        return { totalScore = 0, perSlot = {}, effectiveWeights = {} }
+        addon:DebugPrint("ScoreCharacter: no weights for spec " .. specKey .. " mode=" .. mode)
+        return { totalScore = 0, perSlot = {}, effectiveWeights = {}, mode = mode }
     end
 
     -- Pass 1: Sum raw stats across all items (full: base+gems+enchants+procs)
@@ -462,7 +469,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     end
 
     -- Compute effective weights from totals (using full stats for cap awareness)
-    local effectiveWeights = addon.CapEngine:ComputeEffectiveWeights(statTotals, specKey)
+    local effectiveWeights = addon.CapEngine:ComputeEffectiveWeights(statTotals, specKey, mode)
 
     -- Pass 2: Score each item with effective weights
     local perSlot = {}
@@ -563,7 +570,12 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     -- 1. Global scale (C.SCORE_SCALE) — reserved for future tuning, default 1.0
     -- 2. Per-spec scale (SPEC_SCALE) — normalizes cross-class score parity
     local globalScale = C.SCORE_SCALE or 1
-    local specScale = addon.StatWeights:GetSpecScale(specKey)
+    local specScale
+    if mode == "pvp" then
+        specScale = addon.StatWeights:GetSpecPvPScale(specKey)
+    else
+        specScale = addon.StatWeights:GetSpecScale(specKey)
+    end
     local scale = globalScale * specScale
     -- Single floor at the end: totalScore is the only place we truncate to integer.
     -- Per-slot values are floored individually for display (integer requirement)
@@ -639,6 +651,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     return {
         totalScore = totalScore,
         specKey = specKey,  -- Resolved spec (e.g., DRUID_FERAL_CAT or DRUID_FERAL_BEAR)
+        mode = mode,        -- "pve" or "pvp"
         perSlot = perSlot,
         perSlotDetails = perSlotDetails,
         effectiveWeights = effectiveWeights,
@@ -657,4 +670,27 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
             socketBonuses = scaledSocketBonuses,
         },
     }
+end
+
+---------------------------------------------------------------------------
+-- Score with best mode (PvE vs PvP auto-detection)
+---------------------------------------------------------------------------
+
+--- Score a character with both PvE and PvP weights, returning the higher result.
+-- This provides automatic PvE/PvP mode detection based on gear composition:
+-- PvP gear (with resilience) scores higher under PvP weights, PvE gear scores
+-- higher under PvE weights.
+-- @param equippedItems  Table of { [slotID] = itemLink, ... }
+-- @param specKey        Player spec key. If nil, uses addon.playerSpec.
+-- @return table         Same as ScoreCharacter, with mode = "pve" or "pvp"
+function addon.ItemScoring:ScoreCharacterBestMode(equippedItems, specKey)
+    local pveResult = self:ScoreCharacter(equippedItems, specKey, "pve")
+    local pvpResult = self:ScoreCharacter(equippedItems, specKey, "pvp")
+
+    if pvpResult.totalScore > pveResult.totalScore then
+        addon:DebugPrint("ScoreCharacterBestMode: PvP wins (" .. pvpResult.totalScore .. " > " .. pveResult.totalScore .. ")")
+        return pvpResult
+    end
+    addon:DebugPrint("ScoreCharacterBestMode: PvE wins (" .. pveResult.totalScore .. " >= " .. pvpResult.totalScore .. ")")
+    return pveResult
 end

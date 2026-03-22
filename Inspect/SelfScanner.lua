@@ -68,10 +68,11 @@ function M:ScanEquipment()
         self.perSlotScores = {}
         self.effectiveWeights = {}
         self.breakdown = nil
+        self.mode = nil
         addon:DebugPrint("SelfScanner: no items equipped")
         -- Fall through to notify display modules
     else
-        local result = addon.ItemScoring:ScoreCharacter(items)
+        local result = addon.ItemScoring:ScoreCharacterBestMode(items)
 
         -- Validate scoring result
         if type(result) ~= "table" then
@@ -80,10 +81,12 @@ function M:ScanEquipment()
             self.perSlotScores = {}
             self.effectiveWeights = {}
             self.breakdown = nil
+            self.mode = nil
             -- Fall through to notify display modules
         else
             self.currentScore = result.totalScore
             self.resolvedSpec = result.specKey  -- Resolved sub-spec (e.g., DRUID_FERAL_CAT vs DRUID_FERAL_BEAR)
+            self.mode = result.mode             -- "pve" or "pvp"
             self.perSlotScores = result.perSlot
             self.perSlotDetails = result.perSlotDetails
             self.effectiveWeights = result.effectiveWeights
@@ -99,6 +102,7 @@ function M:ScanEquipment()
                 source = "self",
                 timestamp = GetTime(),
                 efficiency = self.efficiency,
+                mode = self.mode,
             })
 
             addon:DebugPrint("SelfScanner: score updated to " .. self.currentScore .. " eff=" .. tostring(self.efficiency) .. "%")

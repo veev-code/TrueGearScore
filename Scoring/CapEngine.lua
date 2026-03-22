@@ -13,13 +13,25 @@ addon.CapEngine = {}
 
 local C = addon.Constants
 
+--- Resolve the spec data table for a given spec key and mode.
+-- @param specKey  Player spec key
+-- @param mode     "pve" or "pvp" (default "pve")
+-- @return table   Spec data with .weights and .caps
+local function ResolveSpecData(specKey, mode)
+    if mode == "pvp" then
+        return addon.StatWeights:GetSpecPvPWeights(specKey)
+    end
+    return addon.StatWeights:GetSpecWeights(specKey)
+end
+
 --- Compute the effective weight for one point of a stat given current totals.
 -- @param statName   Canonical stat name (e.g., "HIT_RATING")
 -- @param currentTotal  Total rating of this stat across all gear
 -- @param specKey    Player spec key (e.g., "WARRIOR_ARMS")
+-- @param mode       "pve" or "pvp" (default "pve")
 -- @return number    Effective weight-per-point
-function addon.CapEngine:GetEffectiveWeight(statName, currentTotal, specKey)
-    local specData = addon.StatWeights:GetSpecWeights(specKey)
+function addon.CapEngine:GetEffectiveWeight(statName, currentTotal, specKey, mode)
+    local specData = ResolveSpecData(specKey, mode)
     if not specData then return 0 end
 
     local baseWeight = specData.weights[statName] or 0
@@ -42,15 +54,16 @@ end
 --- Compute effective weights for all stats given the player's total stat budget.
 -- @param statTotals  Table of { STAT_NAME = totalValue, ... } across all gear
 -- @param specKey     Player spec key
+-- @param mode        "pve" or "pvp" (default "pve")
 -- @return table      { STAT_NAME = effectiveWeight, ... }
-function addon.CapEngine:ComputeEffectiveWeights(statTotals, specKey)
-    local specData = addon.StatWeights:GetSpecWeights(specKey)
+function addon.CapEngine:ComputeEffectiveWeights(statTotals, specKey, mode)
+    local specData = ResolveSpecData(specKey, mode)
     if not specData then return {} end
 
     local effective = {}
     for statName, baseWeight in pairs(specData.weights) do
         local total = statTotals[statName] or 0
-        effective[statName] = self:GetEffectiveWeight(statName, total, specKey)
+        effective[statName] = self:GetEffectiveWeight(statName, total, specKey, mode)
     end
     return effective
 end

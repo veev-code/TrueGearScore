@@ -771,6 +771,614 @@ addon.StatWeights.SPEC_SCALE = {
 }
 
 ---------------------------------------------------------------------------
+-- PvP stat weight tables
+-- Derived from PvE weights with PvP-specific adjustments:
+--   - RESILIENCE added at high weight (0.60-0.78) — primary PvP survival stat
+--   - STAMINA boosted significantly (0.30-0.50) — survival matters in PvP
+--   - SPELL_PEN boosted for caster specs (counters player resistances)
+--   - Pure throughput stats (HASTE, CRIT) reduced ~10-15%
+--   - Hit caps unchanged (same rating requirements apply)
+-- PvP weights are inherently more subjective than PvE; these represent
+-- broadly accepted community priorities for TBC arena/BG gearing.
+---------------------------------------------------------------------------
+
+addon.StatWeights.PVP_SPECS = {
+
+    ---------------------------------------------------------------------------
+    -- WARRIOR
+    ---------------------------------------------------------------------------
+
+    WARRIOR_ARMS = {
+        weights = {
+            STRENGTH     = 0.70,
+            AGILITY      = 0.22,
+            ATTACK_POWER = 0.31,
+            HIT_RATING   = 0.60,
+            CRIT_RATING  = 0.55,
+            HASTE_RATING = 0.35,
+            EXPERTISE    = 0.75,
+            ARMOR_PEN    = 0.35,
+            STAMINA      = 0.40,
+            RESILIENCE   = 0.78,
+        },
+        caps = {
+            HIT_RATING = { softCap = 142, hardCap = 142, overCapWeight = 0.0 },
+            EXPERTISE  = { softCap = 57,  hardCap = 95,  overCapWeight = 0.15 },
+        },
+    },
+
+    WARRIOR_FURY = {
+        weights = {
+            STRENGTH     = 0.70,
+            AGILITY      = 0.22,
+            ATTACK_POWER = 0.31,
+            HIT_RATING   = 0.64,
+            CRIT_RATING  = 0.53,
+            HASTE_RATING = 0.40,
+            EXPERTISE    = 0.75,
+            ARMOR_PEN    = 0.33,
+            STAMINA      = 0.40,
+            RESILIENCE   = 0.78,
+        },
+        caps = {
+            HIT_RATING = { softCap = 142, hardCap = 363, overCapWeight = 0.25 },
+            EXPERTISE  = { softCap = 57,  hardCap = 95,  overCapWeight = 0.15 },
+        },
+    },
+
+    WARRIOR_PROT = {
+        weights = {
+            STAMINA      = 0.78,
+            ARMOR        = 0.12,
+            DEFENSE      = 0.55,
+            DODGE        = 0.51,
+            PARRY        = 0.47,
+            BLOCK_RATING = 0.43,
+            BLOCK_VALUE  = 0.18,
+            EXPERTISE    = 0.59,
+            HIT_RATING   = 0.35,
+            STRENGTH     = 0.27,
+            AGILITY      = 0.27,
+            ATTACK_POWER = 0.10,
+            RESILIENCE   = 0.63,
+        },
+        caps = {
+            DEFENSE    = { softCap = 332, hardCap = 400, overCapWeight = 0.30 },
+            HIT_RATING = { softCap = 142, hardCap = 142, overCapWeight = 0.0 },
+            EXPERTISE  = { softCap = 95,  hardCap = 95,  overCapWeight = 0.0 },
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- PALADIN
+    ---------------------------------------------------------------------------
+
+    PALADIN_HOLY = {
+        weights = {
+            INTELLECT    = 0.70,
+            CRIT_RATING  = 0.57,
+            MP5          = 0.55,
+            HEAL_POWER   = 0.51,
+            SPELL_POWER  = 0.47,
+            HASTE_RATING = 0.40,
+            STAMINA      = 0.50,
+            SPIRIT       = 0.07,
+            RESILIENCE   = 0.63,
+        },
+        caps = {},
+    },
+
+    PALADIN_PROT = {
+        weights = {
+            STAMINA      = 0.78,
+            ARMOR        = 0.12,
+            DEFENSE      = 0.55,
+            DODGE        = 0.43,
+            PARRY        = 0.40,
+            BLOCK_RATING = 0.47,
+            BLOCK_VALUE  = 0.10,
+            SPELL_POWER  = 0.31,
+            HIT_RATING   = 0.39,
+            EXPERTISE    = 0.47,
+            INTELLECT    = 0.22,
+            STRENGTH     = 0.14,
+            RESILIENCE   = 0.63,
+        },
+        caps = {
+            DEFENSE    = { softCap = 332, hardCap = 400, overCapWeight = 0.30 },
+            HIT_RATING = { softCap = 142, hardCap = 202, overCapWeight = 0.50 },
+            EXPERTISE  = { softCap = 95,  hardCap = 95,  overCapWeight = 0.0 },
+        },
+    },
+
+    PALADIN_RET = {
+        weights = {
+            STRENGTH     = 0.70,
+            ATTACK_POWER = 0.31,
+            HIT_RATING   = 0.66,
+            CRIT_RATING  = 0.41,
+            HASTE_RATING = 0.57,
+            EXPERTISE    = 0.78,
+            AGILITY      = 0.14,
+            ARMOR_PEN    = 0.30,
+            SPELL_POWER  = 0.18,
+            STAMINA      = 0.40,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING = { softCap = 95,  hardCap = 95,  overCapWeight = 0.0 },
+            EXPERTISE  = { softCap = 95,  hardCap = 95,  overCapWeight = 0.0 },
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- HUNTER
+    ---------------------------------------------------------------------------
+
+    HUNTER_BM = {
+        weights = {
+            AGILITY      = 0.70,
+            ATTACK_POWER = 0.35,
+            HIT_RATING   = 0.82,
+            CRIT_RATING  = 0.51,
+            HASTE_RATING = 0.47,
+            INTELLECT    = 0.14,
+            STAMINA      = 0.35,
+            RESILIENCE   = 0.78,
+        },
+        caps = {
+            HIT_RATING = { softCap = 142, hardCap = 142, overCapWeight = 0.0 },
+        },
+    },
+
+    HUNTER_MM = {
+        weights = {
+            AGILITY      = 0.70,
+            ATTACK_POWER = 0.35,
+            HIT_RATING   = 0.82,
+            CRIT_RATING  = 0.55,
+            HASTE_RATING = 0.43,
+            ARMOR_PEN    = 0.37,
+            INTELLECT    = 0.14,
+            STAMINA      = 0.35,
+            RESILIENCE   = 0.78,
+        },
+        caps = {
+            HIT_RATING = { softCap = 142, hardCap = 142, overCapWeight = 0.0 },
+        },
+    },
+
+    HUNTER_SURV = {
+        weights = {
+            AGILITY      = 0.70,
+            ATTACK_POWER = 0.31,
+            HIT_RATING   = 0.82,
+            CRIT_RATING  = 0.57,
+            HASTE_RATING = 0.40,
+            INTELLECT    = 0.14,
+            STAMINA      = 0.35,
+            RESILIENCE   = 0.78,
+        },
+        caps = {
+            HIT_RATING = { softCap = 142, hardCap = 142, overCapWeight = 0.0 },
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- ROGUE
+    ---------------------------------------------------------------------------
+
+    ROGUE_ASSASSIN = {
+        weights = {
+            AGILITY      = 0.70,
+            STRENGTH     = 0.32,
+            ATTACK_POWER = 0.29,
+            HIT_RATING   = 0.67,
+            CRIT_RATING  = 0.53,
+            HASTE_RATING = 0.49,
+            EXPERTISE    = 0.72,
+            ARMOR_PEN    = 0.06,
+            STAMINA      = 0.38,
+            RESILIENCE   = 0.78,
+        },
+        caps = {
+            HIT_RATING = { softCap = 79, hardCap = 363, overCapWeight = 0.30 },
+            EXPERTISE  = { softCap = 64, hardCap = 64,  overCapWeight = 0.0 },
+        },
+    },
+
+    ROGUE_COMBAT = {
+        weights = {
+            AGILITY      = 0.70,
+            STRENGTH     = 0.35,
+            ATTACK_POWER = 0.32,
+            HIT_RATING   = 0.75,
+            CRIT_RATING  = 0.53,
+            HASTE_RATING = 0.66,
+            EXPERTISE    = 0.82,
+            ARMOR_PEN    = 0.09,
+            STAMINA      = 0.38,
+            RESILIENCE   = 0.78,
+        },
+        caps = {
+            HIT_RATING = { softCap = 79, hardCap = 363, overCapWeight = 0.30 },
+            EXPERTISE  = { softCap = 64, hardCap = 64,  overCapWeight = 0.0 },
+        },
+    },
+
+    ROGUE_SUBTLETY = {
+        weights = {
+            AGILITY      = 0.70,
+            STRENGTH     = 0.35,
+            ATTACK_POWER = 0.32,
+            HIT_RATING   = 0.72,
+            CRIT_RATING  = 0.52,
+            HASTE_RATING = 0.47,
+            EXPERTISE    = 0.76,
+            ARMOR_PEN    = 0.08,
+            STAMINA      = 0.38,
+            RESILIENCE   = 0.78,
+        },
+        caps = {
+            HIT_RATING = { softCap = 142, hardCap = 363, overCapWeight = 0.25 },
+            EXPERTISE  = { softCap = 64,  hardCap = 64,  overCapWeight = 0.0 },
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- PRIEST
+    ---------------------------------------------------------------------------
+
+    PRIEST_DISC = {
+        weights = {
+            INTELLECT    = 0.70,
+            HEAL_POWER   = 0.63,
+            SPELL_POWER  = 0.59,
+            SPIRIT       = 0.47,
+            MP5          = 0.43,
+            HASTE_RATING = 0.40,
+            CRIT_RATING  = 0.33,
+            STAMINA      = 0.50,
+            RESILIENCE   = 0.60,
+        },
+        caps = {
+            HIT_RATING = { softCap = 202, hardCap = 202, overCapWeight = 0.0 },
+        },
+    },
+
+    PRIEST_HOLY = {
+        weights = {
+            HEAL_POWER   = 0.70,
+            SPELL_POWER  = 0.66,
+            HASTE_RATING = 0.62,
+            SPIRIT       = 0.55,
+            INTELLECT    = 0.51,
+            CRIT_RATING  = 0.43,
+            MP5          = 0.40,
+            STAMINA      = 0.50,
+            RESILIENCE   = 0.60,
+        },
+        caps = {
+            HIT_RATING = { softCap = 202, hardCap = 202, overCapWeight = 0.0 },
+        },
+    },
+
+    PRIEST_SHADOW = {
+        weights = {
+            SPELL_POWER  = 0.70,
+            HIT_RATING   = 1.06,
+            HASTE_RATING = 0.57,
+            CRIT_RATING  = 0.33,
+            INTELLECT    = 0.31,
+            SPIRIT       = 0.24,
+            STAMINA      = 0.38,
+            MP5          = 0.21,
+            SPELL_PEN    = 0.35,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING = { softCap = 76, hardCap = 76, overCapWeight = 0.0 },
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- SHAMAN
+    ---------------------------------------------------------------------------
+
+    SHAMAN_ELE = {
+        weights = {
+            SPELL_POWER  = 0.70,
+            HIT_RATING   = 0.96,
+            HASTE_RATING = 0.72,
+            CRIT_RATING  = 0.47,
+            INTELLECT    = 0.31,
+            MP5          = 0.24,
+            STAMINA      = 0.38,
+            SPELL_PEN    = 0.35,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING   = { softCap = 164, hardCap = 164, overCapWeight = 0.0 },
+            HASTE_RATING = { softCap = 158, hardCap = 505, overCapWeight = 0.40 },
+        },
+    },
+
+    SHAMAN_ENH = {
+        weights = {
+            STRENGTH     = 0.66,
+            AGILITY      = 0.39,
+            ATTACK_POWER = 0.30,
+            HIT_RATING   = 0.49,
+            CRIT_RATING  = 0.40,
+            HASTE_RATING = 0.57,
+            EXPERTISE    = 0.84,
+            ARMOR_PEN    = 0.08,
+            SPELL_POWER  = 0.12,
+            INTELLECT    = 0.14,
+            STAMINA      = 0.38,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING = { softCap = 142, hardCap = 363, overCapWeight = 0.20 },
+            EXPERTISE  = { softCap = 95,  hardCap = 95,  overCapWeight = 0.0 },
+        },
+    },
+
+    SHAMAN_RESTO = {
+        weights = {
+            MP5          = 0.70,
+            HEAL_POWER   = 0.51,
+            SPELL_POWER  = 0.47,
+            HASTE_RATING = 0.62,
+            INTELLECT    = 0.40,
+            CRIT_RATING  = 0.37,
+            SPIRIT       = 0.07,
+            STAMINA      = 0.50,
+            RESILIENCE   = 0.60,
+        },
+        caps = {},
+    },
+
+    ---------------------------------------------------------------------------
+    -- MAGE
+    ---------------------------------------------------------------------------
+
+    MAGE_ARCANE = {
+        weights = {
+            INTELLECT    = 0.70,
+            HASTE_RATING = 0.64,
+            HIT_RATING   = 0.96,
+            SPELL_POWER  = 0.51,
+            SPIRIT       = 0.37,
+            CRIT_RATING  = 0.33,
+            STAMINA      = 0.38,
+            SPELL_PEN    = 0.35,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING = { softCap = 126, hardCap = 126, overCapWeight = 0.0 },
+        },
+    },
+
+    MAGE_FIRE = {
+        weights = {
+            SPELL_POWER  = 0.70,
+            HIT_RATING   = 0.96,
+            CRIT_RATING  = 0.62,
+            HASTE_RATING = 0.57,
+            INTELLECT    = 0.35,
+            SPIRIT       = 0.10,
+            STAMINA      = 0.38,
+            SPELL_PEN    = 0.35,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING = { softCap = 164, hardCap = 164, overCapWeight = 0.0 },
+        },
+    },
+
+    MAGE_FROST = {
+        weights = {
+            SPELL_POWER  = 0.70,
+            HIT_RATING   = 0.96,
+            HASTE_RATING = 0.57,
+            CRIT_RATING  = 0.47,
+            INTELLECT    = 0.40,
+            SPIRIT       = 0.14,
+            STAMINA      = 0.38,
+            SPELL_PEN    = 0.35,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING = { softCap = 164, hardCap = 164, overCapWeight = 0.0 },
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- WARLOCK
+    ---------------------------------------------------------------------------
+
+    WARLOCK_AFFLIC = {
+        weights = {
+            SPELL_POWER  = 0.70,
+            HIT_RATING   = 1.02,
+            HASTE_RATING = 0.62,
+            CRIT_RATING  = 0.30,
+            INTELLECT    = 0.24,
+            SPIRIT       = 0.21,
+            STAMINA      = 0.38,
+            MP5          = 0.14,
+            SPELL_PEN    = 0.35,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING = { softCap = 177, hardCap = 177, overCapWeight = 0.0 },
+        },
+    },
+
+    WARLOCK_DEMO = {
+        weights = {
+            SPELL_POWER  = 0.70,
+            HIT_RATING   = 0.96,
+            HASTE_RATING = 0.57,
+            CRIT_RATING  = 0.40,
+            INTELLECT    = 0.31,
+            STAMINA      = 0.38,
+            SPIRIT       = 0.18,
+            MP5          = 0.14,
+            SPELL_PEN    = 0.35,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING = { softCap = 202, hardCap = 202, overCapWeight = 0.0 },
+        },
+    },
+
+    WARLOCK_DESTRO = {
+        weights = {
+            SPELL_POWER  = 0.70,
+            HIT_RATING   = 1.02,
+            HASTE_RATING = 0.64,
+            CRIT_RATING  = 0.55,
+            INTELLECT    = 0.31,
+            STAMINA      = 0.38,
+            SPIRIT       = 0.18,
+            MP5          = 0.14,
+            SPELL_PEN    = 0.35,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING = { softCap = 190, hardCap = 202, overCapWeight = 0.10 },
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- DRUID
+    ---------------------------------------------------------------------------
+
+    DRUID_BALANCE = {
+        weights = {
+            SPELL_POWER  = 0.70,
+            HIT_RATING   = 0.96,
+            HASTE_RATING = 0.57,
+            CRIT_RATING  = 0.55,
+            INTELLECT    = 0.40,
+            SPIRIT       = 0.27,
+            MP5          = 0.24,
+            STAMINA      = 0.38,
+            SPELL_PEN    = 0.35,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING = { softCap = 152, hardCap = 152, overCapWeight = 0.0 },
+        },
+    },
+
+    DRUID_FERAL_BEAR = {
+        weights = {
+            STAMINA      = 0.78,
+            ARMOR        = 0.16,
+            DEFENSE      = 0.51,
+            DODGE        = 0.55,
+            AGILITY      = 0.47,
+            EXPERTISE    = 0.40,
+            HIT_RATING   = 0.31,
+            STRENGTH     = 0.24,
+            ATTACK_POWER = 0.14,
+            CRIT_RATING  = 0.21,
+            HASTE_RATING = 0.10,
+            RESILIENCE   = 0.63,
+        },
+        caps = {
+            DEFENSE    = { softCap = 156, hardCap = 332, overCapWeight = 0.20 },
+            HIT_RATING = { softCap = 142, hardCap = 142, overCapWeight = 0.0 },
+            EXPERTISE  = { softCap = 95,  hardCap = 95,  overCapWeight = 0.0 },
+        },
+    },
+
+    DRUID_FERAL_CAT = {
+        weights = {
+            AGILITY      = 0.70,
+            STRENGTH     = 0.57,
+            ATTACK_POWER = 0.29,
+            HIT_RATING   = 0.60,
+            CRIT_RATING  = 0.47,
+            HASTE_RATING = 0.33,
+            EXPERTISE    = 0.70,
+            ARMOR_PEN    = 0.16,
+            STAMINA      = 0.38,
+            RESILIENCE   = 0.75,
+        },
+        caps = {
+            HIT_RATING = { softCap = 142, hardCap = 142, overCapWeight = 0.0 },
+            EXPERTISE  = { softCap = 95,  hardCap = 95,  overCapWeight = 0.0 },
+        },
+    },
+
+    DRUID_RESTO = {
+        weights = {
+            HEAL_POWER   = 0.70,
+            SPELL_POWER  = 0.66,
+            SPIRIT       = 0.59,
+            HASTE_RATING = 0.55,
+            INTELLECT    = 0.47,
+            MP5          = 0.40,
+            CRIT_RATING  = 0.27,
+            STAMINA      = 0.50,
+            RESILIENCE   = 0.60,
+        },
+        caps = {
+            HASTE_RATING = { softCap = 242, hardCap = 400, overCapWeight = 0.15 },
+        },
+    },
+}
+
+---------------------------------------------------------------------------
+-- PvP per-spec calibration scale factors
+-- Starting at 1.0 for all specs since we don't have PvP reference sets.
+-- PvP scoring is less calibration-sensitive than PvE because there's no
+-- single "BIS" benchmark — gear choices depend on comp and bracket.
+---------------------------------------------------------------------------
+
+addon.StatWeights.PVP_SPEC_SCALE = {
+    -- Healers
+    ["PRIEST_DISC"]     = 1.0,
+    ["PRIEST_HOLY"]     = 1.0,
+    ["DRUID_RESTO"]     = 1.0,
+    ["PALADIN_HOLY"]    = 1.0,
+    ["SHAMAN_RESTO"]    = 1.0,
+
+    -- Tanks
+    ["WARRIOR_PROT"]    = 1.0,
+    ["PALADIN_PROT"]    = 1.0,
+    ["DRUID_FERAL_BEAR"]= 1.0,
+
+    -- Melee DPS
+    ["ROGUE_COMBAT"]    = 1.0,
+    ["ROGUE_ASSASSIN"]  = 1.0,
+    ["ROGUE_SUBTLETY"]  = 1.0,
+    ["WARRIOR_FURY"]    = 1.0,
+    ["WARRIOR_ARMS"]    = 1.0,
+    ["PALADIN_RET"]     = 1.0,
+    ["SHAMAN_ENH"]      = 1.0,
+    ["HUNTER_BM"]       = 1.0,
+    ["HUNTER_MM"]       = 1.0,
+    ["HUNTER_SURV"]     = 1.0,
+    ["DRUID_FERAL_CAT"] = 1.0,
+
+    -- Caster DPS
+    ["MAGE_FIRE"]       = 1.0,
+    ["MAGE_ARCANE"]     = 1.0,
+    ["MAGE_FROST"]      = 1.0,
+    ["DRUID_BALANCE"]   = 1.0,
+    ["WARLOCK_DESTRO"]  = 1.0,
+    ["WARLOCK_AFFLIC"]  = 1.0,
+    ["WARLOCK_DEMO"]    = 1.0,
+    ["SHAMAN_ELE"]      = 1.0,
+    ["PRIEST_SHADOW"]   = 1.0,
+}
+
+---------------------------------------------------------------------------
 -- API
 ---------------------------------------------------------------------------
 
@@ -785,4 +1393,12 @@ end
 function addon.StatWeights:GetSpecCap(specKey, statName)
     local spec = self.SPECS[specKey]
     return spec and spec.caps and spec.caps[statName]
+end
+
+function addon.StatWeights:GetSpecPvPWeights(specKey)
+    return self.PVP_SPECS[specKey]
+end
+
+function addon.StatWeights:GetSpecPvPScale(specKey)
+    return self.PVP_SPEC_SCALE[specKey] or 1.0
 end

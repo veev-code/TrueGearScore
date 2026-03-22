@@ -46,7 +46,7 @@ function M:OnTooltipSetUnit(tooltip)
     if UnitIsUnit(unit, "player") then
         local selfScanner = addon:GetModule("SelfScanner")
         if selfScanner and selfScanner.currentScore and selfScanner.currentScore > 0 then
-            self:AddScoreLine(tooltip, selfScanner.currentScore, nil, selfScanner.efficiency)
+            self:AddScoreLine(tooltip, selfScanner.currentScore, nil, selfScanner.efficiency, selfScanner.mode)
             if IsShiftKeyDown() and selfScanner.breakdown then
                 self:AddBreakdownLines(tooltip, selfScanner.breakdown)
             end
@@ -57,7 +57,7 @@ function M:OnTooltipSetUnit(tooltip)
     -- Others: check cache
     local cached = addon.ScoreCache:Get(guid)
     if cached then
-        self:AddScoreLine(tooltip, cached.score, cached.source, cached.efficiency)
+        self:AddScoreLine(tooltip, cached.score, cached.source, cached.efficiency, cached.mode)
         if IsShiftKeyDown() and cached.breakdown then
             self:AddBreakdownLines(tooltip, cached.breakdown)
         end
@@ -76,7 +76,7 @@ end
 -- Add score line to tooltip
 ---------------------------------------------------------------------------
 
-function M:AddScoreLine(tooltip, score, source, efficiency)
+function M:AddScoreLine(tooltip, score, source, efficiency, mode)
     if not score or score <= 0 then return end
 
     local r, g, b = addon.ScoreColors:GetColor(score)
@@ -85,13 +85,20 @@ function M:AddScoreLine(tooltip, score, source, efficiency)
         sourceTag = "~"
     end
 
+    -- Show [PvP] tag when scored with PvP weights (yellow for visibility)
+    local pvpTag = ""
+    if mode == "pvp" then
+        pvpTag = " \124cffffcc00[PvP]\124r"
+    end
+
     -- Show efficiency percentage when available (inspect/self sources only)
     local effSuffix = ""
     if efficiency and efficiency > 0 then
         effSuffix = " (" .. tostring(efficiency) .. "%)"
     end
 
-    tooltip:AddLine("TrueGearScore: " .. sourceTag .. tostring(score) .. effSuffix, r, g, b)
+    -- Format: "TrueGearScore: 1840 [PvP] (85%)"
+    tooltip:AddLine("TrueGearScore: " .. sourceTag .. tostring(score) .. pvpTag .. effSuffix, r, g, b)
 end
 
 ---------------------------------------------------------------------------

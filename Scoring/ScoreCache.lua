@@ -8,7 +8,7 @@
 local _, addon = ...
 addon.ScoreCache = {}
 
-local cache = {}  -- { [guid] = { score, perSlot, timestamp, source, specKey, efficiency } }
+local cache = {}  -- { [guid] = { score, perSlot, timestamp, source, specKey, efficiency, mode } }
 local DEFAULT_TTL = 300  -- 5 minutes
 local MAX_CACHE_SIZE = 500
 local PRUNE_INTERVAL = 60  -- seconds
@@ -19,7 +19,7 @@ local PRUNE_INTERVAL = 60  -- seconds
 
 --- Get a cached score for a player GUID.
 -- @param guid  Player GUID
--- @return table or nil  { score, perSlot, timestamp, source, specKey, efficiency }
+-- @return table or nil  { score, perSlot, timestamp, source, specKey, efficiency, mode }
 function addon.ScoreCache:Get(guid)
     local entry = cache[guid]
     if not entry then return nil end
@@ -80,6 +80,7 @@ function addon.ScoreCache:Set(guid, data)
         timestamp = GetTime(),
         source = data.source or "unknown",
         specKey = data.specKey,
+        mode = data.mode,
         baseScore = data.baseScore,
         breakdown = data.breakdown,
         efficiency = data.efficiency,

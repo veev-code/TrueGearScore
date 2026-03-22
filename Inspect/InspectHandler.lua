@@ -323,8 +323,8 @@ function M:OnInspectReady(guid)
         -- If dual spec detected, score with both and pick higher
         local result
         if self._dualSpecCandidates and #self._dualSpecCandidates >= 2 then
-            local result1 = addon.ItemScoring:ScoreCharacter(equippedItems, self._dualSpecCandidates[1])
-            local result2 = addon.ItemScoring:ScoreCharacter(equippedItems, self._dualSpecCandidates[2])
+            local result1 = addon.ItemScoring:ScoreCharacterBestMode(equippedItems, self._dualSpecCandidates[1])
+            local result2 = addon.ItemScoring:ScoreCharacterBestMode(equippedItems, self._dualSpecCandidates[2])
             if type(result2) == "table" and type(result1) == "table" and result2.totalScore > result1.totalScore then
                 result = result2
                 specKey = self._dualSpecCandidates[2]
@@ -336,7 +336,7 @@ function M:OnInspectReady(guid)
             end
             self._dualSpecCandidates = nil
         else
-            result = addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
+            result = addon.ItemScoring:ScoreCharacterBestMode(equippedItems, specKey)
         end
 
         -- Validate scoring result
@@ -350,6 +350,7 @@ function M:OnInspectReady(guid)
                 perSlot = result.perSlot,
                 source = "inspect",
                 specKey = specKey,
+                mode = result.mode,
                 baseScore = result.baseOnlyScore,
                 breakdown = result.breakdown,
                 efficiency = result.efficiency,
