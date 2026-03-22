@@ -1924,4 +1924,133 @@ addon.ReferenceSets = {
             [18] = 33506,  -- Skycall Totem
         },
     },
+
+    ---------------------------------------------------------------------------
+    -- Paladin Protection (Tank)
+    ---------------------------------------------------------------------------
+
+    -- Pre-Raid BIS (heroic dungeons, badge gear, crafted)
+    PALADIN_PROT_PRERAID = {
+        name = "Paladin Prot Pre-Raid BIS",
+        spec = "PALADIN_PROT",
+        items = {
+            [1]  = 32083,  -- Faceguard of Determination
+            [2]  = 28245,  -- Pendant of Dominance
+            [3]  = 27706,  -- Gladiator's Lamellar Shoulders
+            [5]  = 28203,  -- Breastplate of the Righteous
+            [6]  = 29253,  -- Girdle of Valorous Deeds
+            [7]  = 29184,  -- Timewarden's Leggings
+            [8]  = 29254,  -- Boots of the Righteous Path
+            [9]  = 29252,  -- Bracers of Dignity
+            [10] = 30741,  -- Topaz-Studded Battlegrips
+            [11] = 29172,  -- Ashyen's Gift
+            [12] = 31319,  -- Band of Impenetrable Defenses
+            [13] = 29387,  -- Gnomeregan Auto-Blocker 600
+            [14] = 27529,  -- Figurine of the Colossus
+            [15] = 27804,  -- Devilshark Cape
+            [16] = 32450,  -- Gladiator's Gavel
+            [17] = 29176,  -- Crest of the Sha'tar
+            [18] = 29388,  -- Libram of Repentance
+        },
+    },
+
+    -- Phase 1: Karazhan / Gruul / Mag BIS
+    PALADIN_PROT_P1 = {
+        name = "Paladin Prot Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "PALADIN_PROT",
+        items = {
+            [1]  = 29068,  -- Justicar Faceguard
+            [2]  = 28516,  -- Barbed Choker of Discipline
+            [3]  = 29070,  -- Justicar Shoulderguards
+            [5]  = 29066,  -- Justicar Chestguard
+            [6]  = 29253,  -- Girdle of Valorous Deeds
+            [7]  = 29069,  -- Justicar Legguards
+            [8]  = 29254,  -- Boots of the Righteous Path
+            [9]  = 29252,  -- Bracers of Dignity
+            [10] = 29067,  -- Justicar Handguards
+            [11] = 29279,  -- Violet Signet of the Great Protector
+            [12] = 28792,  -- A'dal's Signet of Defense
+            [13] = 28528,  -- Moroes' Lucky Pocket Watch
+            [14] = 27529,  -- Figurine of the Colossus
+            [15] = 29385,  -- Farstrider Defender's Cloak
+            [16] = 28749,  -- King's Defender
+            [17] = 29266,  -- Azure-Shield of Coldarra
+            [18] = 29388,  -- Libram of Repentance
+        },
+    },
+
+    -- Phase 2: SSC / TK BIS
+    PALADIN_PROT_P2 = {
+        name = "Paladin Prot Phase 2 BIS (SSC/TK)",
+        spec = "PALADIN_PROT",
+        items = {
+            [1]  = 29068,  -- Justicar Faceguard
+            [2]  = 30007,  -- The Darkener's Grasp
+            [3]  = 29070,  -- Justicar Shoulderguards
+            [5]  = 29066,  -- Justicar Chestguard
+            [6]  = 30034,  -- Belt of the Guardian
+            [7]  = 29069,  -- Justicar Legguards
+            [8]  = 30033,  -- Boots of the Protector
+            [9]  = 32515,  -- Wristguards of Determination
+            [10] = 29067,  -- Justicar Handguards
+            [11] = 30083,  -- Ring of Sundered Souls
+            [12] = 29172,  -- Ashyen's Gift
+            [13] = 28528,  -- Moroes' Lucky Pocket Watch
+            [14] = 30629,  -- Scarab of Displacement
+            [15] = 29925,  -- Phoenix-Wing Cloak
+            [16] = 30095,  -- Fang of the Leviathan
+            [17] = 29176,  -- Crest of the Sha'tar
+            [18] = 29388,  -- Libram of Repentance
+        },
+    },
+
+    -- Phase 3: BT / Hyjal BIS
+    PALADIN_PROT_P3 = {
+        name = "Paladin Prot Phase 3 BIS (BT/Hyjal)",
+        spec = "PALADIN_PROT",
+        items = {
+            [1]  = 32521,  -- Faceplate of the Impenetrable
+            [2]  = 32362,  -- Pendant of Titans
+            [3]  = 30998,  -- Lightbringer Shoulderguards
+            [5]  = 30991,  -- Lightbringer Chestguard
+            [6]  = 32342,  -- Girdle of Mighty Resolve
+            [7]  = 30995,  -- Lightbringer Legguards
+            [8]  = 32245,  -- Tide-stomper's Greaves
+            [9]  = 32279,  -- The Seeker's Wristguards
+            [10] = 30985,  -- Lightbringer Handguards
+            [11] = 30083,  -- Ring of Sundered Souls
+            [12] = 29172,  -- Ashyen's Gift
+            [13] = 32501,  -- Shadowmoon Insignia
+            [14] = 31858,  -- Darkmoon Card: Vengeance
+            [15] = 34010,  -- Pepe's Shroud of Pacification
+            [16] = 30910,  -- Tempest of Chaos
+            [17] = 32375,  -- Bulwark of Azzinoth
+            [18] = 29388,  -- Libram of Repentance
+        },
+    },
+
+    -- Phase 5: Sunwell BIS
+    PALADIN_PROT_P5 = {
+        name = "Paladin Prot Phase 5 BIS (Sunwell)",
+        spec = "PALADIN_PROT",
+        items = {
+            [1]  = 34401,  -- Helm of Uther's Resolve
+            [2]  = 34178,  -- Collar of the Pit Lord
+            [3]  = 34389,  -- Spaulders of the Thalassian Defender
+            [5]  = 34216,  -- Heroic Judicator's Chestguard
+            [6]  = 34488,  -- Lightbringer Waistguard
+            [7]  = 34382,  -- Judicator's Legguards
+            [8]  = 34560,  -- Lightbringer Stompers
+            [9]  = 34433,  -- Lightbringer Wristguards
+            [10] = 34352,  -- Borderland Fortress Grips
+            [11] = 34213,  -- Ring of Hardened Resolve
+            [12] = 34888,  -- Ring of the Stalwart Protector
+            [13] = 32501,  -- Shadowmoon Insignia
+            [14] = 31858,  -- Darkmoon Card: Vengeance
+            [15] = 34190,  -- Crimson Paragon's Cover
+            [16] = 34176,  -- Reign of Misery
+            [17] = 34185,  -- Sword Breaker's Bulwark
+            [18] = 33504,  -- Libram of Divine Purpose
+        },
+    },
 }
