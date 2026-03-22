@@ -697,7 +697,7 @@ addon.StatWeights.SPEC_SCALE = {
     -- DPS specs have high scale (gear concentrates into fewer stats).
 
     -- All values from /tgs calibrate with 137 reference BIS sets.
-    -- Calibration target: PRIEST_DISC P1 base = 1750.
+    -- ALL specs now data-driven (no estimates). Calibration target: PRIEST_DISC P1 base = 1750.
 
     -- Healers
     ["PRIEST_DISC"]     = 1.000,  -- P1 base=1750 (anchor)
@@ -709,11 +709,11 @@ addon.StatWeights.SPEC_SCALE = {
     -- Tanks
     ["WARRIOR_PROT"]    = 1.000,  -- P1 base=1750
     ["PALADIN_PROT"]    = 0.957,  -- P1 base=1828
-    ["DRUID_FERAL_BEAR"]= 2.091,  -- shares DRUID_FERAL weights; same scale
+    ["DRUID_FERAL_BEAR"]= 2.273,  -- shares DRUID_FERAL weights; P1 base=770
 
     -- Melee DPS
     ["ROGUE_COMBAT"]    = 3.125,  -- P1 base=560
-    ["ROGUE_ASSASSIN"]  = 3.125,  -- P1 items uncached; same gear type as Combat
+    ["ROGUE_ASSASSIN"]  = 3.119,  -- P1 base=561
     ["ROGUE_SUBTLETY"]  = 3.125,  -- same gear type as Combat
     ["WARRIOR_FURY"]    = 3.043,  -- P1 base=575
     ["WARRIOR_ARMS"]    = 3.076,  -- P1 base=569
@@ -721,8 +721,8 @@ addon.StatWeights.SPEC_SCALE = {
     ["SHAMAN_ENH"]      = 3.327,  -- P1 base=526
     ["HUNTER_BM"]       = 2.796,  -- P1 base=626
     ["HUNTER_MM"]       = 2.511,  -- P1 base=697
-    ["HUNTER_SURV"]     = 2.511,  -- P1 items uncached; same gear type as MM
-    ["DRUID_FERAL"]     = 2.091,  -- P1 base=837
+    ["HUNTER_SURV"]     = 3.493,  -- P1 base=501
+    ["DRUID_FERAL"]     = 2.273,  -- P1 base=770
 
     -- Caster DPS
     ["MAGE_FIRE"]       = 1.581,  -- P1 base=1107
@@ -733,7 +733,7 @@ addon.StatWeights.SPEC_SCALE = {
     ["WARLOCK_AFFLIC"]  = 1.902,  -- P1 base=920
     ["WARLOCK_DEMO"]    = 1.823,  -- P1 base=960
     ["SHAMAN_ELE"]      = 2.163,  -- P1 base=809
-    ["PRIEST_SHADOW"]   = 1.823,  -- P1 items uncached; similar to Arcane Mage/Demo Lock cloth caster
+    ["PRIEST_SHADOW"]   = 1.757,  -- P1 base=996
 }
 
 ---------------------------------------------------------------------------

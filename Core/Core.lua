@@ -195,14 +195,6 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1, ...)
             end
         end)
 
-        -- Auto-calibrate on login (remove after SPEC_SCALE is stable)
-        C_Timer.After(5, function()
-            addon.SlashCommands:RunCalibration()
-            C_Timer.After(10, function()
-                addon.SlashCommands:RunCalibration()
-            end)
-        end)
-
         self:UnregisterEvent("PLAYER_LOGIN")
 
     elseif event == "CHARACTER_POINTS_CHANGED" then
