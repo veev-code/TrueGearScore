@@ -274,16 +274,22 @@ AddonChannel: AceComm prefix "TGS", broadcast own score on login/group join/gear
 | **Pre-commit hook** | `.githooks/pre-commit` (new) | validate_data | S |
 | **Stat weight validation** | Cross-ref against Pawn `ScaleTemplates.lua` | None | M |
 
-### Sprint 5 — Set Bonuses + PvP + Options
+### Sprint 5 — Set Bonuses + Socket Bonuses + Trinkets + PvP + Options
 
 | Item | Files | Deps | Size |
 |---|---|---|---|
 | **SetBonusDatabase** | `Data/SetBonusDatabase.lua` (new), `Scoring/ItemScoring.lua` | None | M |
+| **Socket bonus scoring** | `Scoring/ItemScoring.lua` | GemDatabase (needs color field) | M |
+| **Proc DB expansion** (12 → 80+) | `Data/ProcDatabase.lua` | None | L |
 | **PvP stat weights** | `Scoring/StatWeights.lua` | None | L |
 | **PvE/PvP auto-detect** | `Core/Core.lua`, `Inspect/SelfScanner.lua` | PvP weights | S |
 | **Options panel** | `UI/Options.lua` (new) | All display modules | M |
 
 Set bonus detection uses `GetItemInfo()[16]` for setID (confirmed working). SetBonusDatabase maps `{setID, pieceCount}` to equivalent stat budgets per spec.
+
+Socket bonus scoring: when all gem sockets are filled with correct color matches, the item grants a socket bonus (e.g., +4 INT). Currently not scored. Need to detect socket colors, gem colors, and conditionally add bonus stats. GemDatabase needs a `_COLOR` field per gem (RED/YELLOW/BLUE/META).
+
+Proc DB expansion: currently only 12 raid trinkets. Need comprehensive coverage of all trinkets with procs/on-use effects — heroic dungeon trinkets (Quagmirran's Eye, Sextant, etc.), badge trinkets, world drops, PvP trinkets. Also weapon procs (Blackout, Spellsurge, etc.) and notable equip effects. Each entry needs sim-derived average stat equivalents.
 
 ### Sprint 6 — Gossip + Polish
 
@@ -291,8 +297,6 @@ Set bonus detection uses `GetItemInfo()[16]` for setID (confirmed working). SetB
 |---|---|---|---|
 | **GossipProtocol** | `Communication/GossipProtocol.lua` (new) | AddonChannel, ScoreCache | L |
 | **Anti-fake hardening** | `Communication/AddonChannel.lua` | GossipProtocol | M |
-| **More reference sets** | `Data/ReferenceSets.lua` | None | M |
-| **Proc DB expansion** (12 → 80) | `Data/ProcDatabase.lua` | None | L |
 | **RaidFrame inline scores** (optional) | `Display/RaidFrame.lua` (new) | ScoreCache | M |
 
 ### Cross-Cutting: Paperdoll + Stat Weights
