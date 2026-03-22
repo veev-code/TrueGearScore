@@ -12,11 +12,7 @@ addon:RegisterModule("GossipProtocol", M)
 
 local C = addon.Constants
 
-local AceComm = LibStub("AceComm-3.0")
 local AceSerializer = LibStub("AceSerializer-3.0")
-
--- Embed AceComm into the module so SendCommMessage/RegisterComm work as methods
-AceComm:Embed(M)
 
 local QUERY_PREFIX = "TGSQ"
 local RESPONSE_PREFIX = "TGSR"
@@ -61,11 +57,17 @@ end
 ---------------------------------------------------------------------------
 
 function M:Initialize()
-    self:RegisterComm( QUERY_PREFIX, function(prefix, message, distribution, sender)
-        M:OnQueryReceived(prefix, message, distribution, sender)
-    end)
-    self:RegisterComm( RESPONSE_PREFIX, function(prefix, message, distribution, sender)
-        M:OnResponseReceived(prefix, message, distribution, sender)
+    C_ChatInfo.RegisterAddonMessagePrefix(QUERY_PREFIX)
+    C_ChatInfo.RegisterAddonMessagePrefix(RESPONSE_PREFIX)
+
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("CHAT_MSG_ADDON")
+    eventFrame:SetScript("OnEvent", function(_, event, prefix, message, distribution, sender)
+        if prefix == QUERY_PREFIX then
+            M:OnQueryReceived(prefix, message, distribution, sender)
+        elseif prefix == RESPONSE_PREFIX then
+            M:OnResponseReceived(prefix, message, distribution, sender)
+        end
     end)
 
     -- Periodically prune shared score history to avoid unbounded growth
@@ -118,12 +120,12 @@ function M:QueryScore(guid)
 
     -- Broadcast query to available channels
     if IsInGuild() then
-        M:SendCommMessage(QUERY_PREFIX, serialized, "GUILD")
+        C_ChatInfo.SendAddonMessage(QUERY_PREFIX, serialized, "GUILD")
     end
     if IsInRaid() then
-        M:SendCommMessage(QUERY_PREFIX, serialized, "RAID")
+        C_ChatInfo.SendAddonMessage(QUERY_PREFIX, serialized, "RAID")
     elseif IsInGroup() then
-        M:SendCommMessage(QUERY_PREFIX, serialized, "PARTY")
+        C_ChatInfo.SendAddonMessage(QUERY_PREFIX, serialized, "PARTY")
     end
 
     addon:DebugPrint("GossipProtocol: queried score for " .. guid)
@@ -176,7 +178,7 @@ function M:OnQueryReceived(prefix, message, distribution, sender)
     RecordResponseSent()
 
     -- Respond on same channel we received on
-    M:SendCommMessage(RESPONSE_PREFIX, serialized, distribution)
+    C_ChatInfo.SendAddonMessage(RESPONSE_PREFIX, serialized, distribution)
 
     addon:DebugPrint("GossipProtocol: responded with score " .. cached.score .. " for " .. guid .. " to " .. distribution)
 end

@@ -16,11 +16,7 @@ local PROTOCOL_VERSION = 1
 local BROADCAST_DEBOUNCE = 10  -- seconds between broadcasts
 local SCORE_UPDATE_DELAY = 2   -- seconds to debounce OnScoreUpdated
 
-local AceComm = LibStub("AceComm-3.0")
 local AceSerializer = LibStub("AceSerializer-3.0")
-
--- Embed AceComm into the module so SendCommMessage/RegisterComm work as methods
-AceComm:Embed(M)
 
 -- State
 local lastBroadcastTime = 0
@@ -31,8 +27,15 @@ local scoreUpdateTimer = nil
 ---------------------------------------------------------------------------
 
 function M:Initialize()
-    self:RegisterComm(COMM_PREFIX, function(prefix, message, distribution, sender)
-        M:OnCommReceived(prefix, message, distribution, sender)
+    -- Register addon message prefix and listen for messages
+    C_ChatInfo.RegisterAddonMessagePrefix(COMM_PREFIX)
+
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("CHAT_MSG_ADDON")
+    eventFrame:SetScript("OnEvent", function(_, event, prefix, message, distribution, sender)
+        if prefix == COMM_PREFIX then
+            M:OnCommReceived(prefix, message, distribution, sender)
+        end
     end)
 
     -- Register events for broadcast triggers
@@ -104,15 +107,15 @@ function M:BroadcastScore()
 
     -- Send to each channel the player is in (stagger to avoid burst)
     if IsInGuild() then
-        M:SendCommMessage(COMM_PREFIX, serialized, "GUILD")
+        C_ChatInfo.SendAddonMessage(COMM_PREFIX, serialized, "GUILD")
     end
     -- Stagger group broadcast to avoid burst when also sending to guild
     local groupDelay = IsInGuild() and 0.1 or 0
     local function SendGroupBroadcast()
         if IsInRaid() then
-            M:SendCommMessage(COMM_PREFIX, serialized, "RAID")
+            C_ChatInfo.SendAddonMessage(COMM_PREFIX, serialized, "RAID")
         elseif IsInGroup() then
-            M:SendCommMessage(COMM_PREFIX, serialized, "PARTY")
+            C_ChatInfo.SendAddonMessage(COMM_PREFIX, serialized, "PARTY")
         end
     end
     if groupDelay > 0 then
