@@ -104,15 +104,15 @@ function M:BroadcastScore()
 
     -- Send to each channel the player is in (stagger to avoid burst)
     if IsInGuild() then
-        M:SendCommMessage(COMM_PREFIX, serialized, "GUILD", nil, "BULK")
+        M:SendCommMessage(COMM_PREFIX, serialized, "GUILD")
     end
     -- Stagger group broadcast to avoid burst when also sending to guild
     local groupDelay = IsInGuild() and 0.1 or 0
     local function SendGroupBroadcast()
         if IsInRaid() then
-            M:SendCommMessage(COMM_PREFIX, serialized, "RAID", nil, "NORMAL")
+            M:SendCommMessage(COMM_PREFIX, serialized, "RAID")
         elseif IsInGroup() then
-            M:SendCommMessage(COMM_PREFIX, serialized, "PARTY", nil, "NORMAL")
+            M:SendCommMessage(COMM_PREFIX, serialized, "PARTY")
         end
     end
     if groupDelay > 0 then

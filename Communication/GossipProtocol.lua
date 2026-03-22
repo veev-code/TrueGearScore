@@ -118,12 +118,12 @@ function M:QueryScore(guid)
 
     -- Broadcast query to available channels
     if IsInGuild() then
-        M:SendCommMessage(QUERY_PREFIX, serialized, "GUILD", nil, "BULK")
+        M:SendCommMessage(QUERY_PREFIX, serialized, "GUILD")
     end
     if IsInRaid() then
-        M:SendCommMessage(QUERY_PREFIX, serialized, "RAID", nil, "BULK")
+        M:SendCommMessage(QUERY_PREFIX, serialized, "RAID")
     elseif IsInGroup() then
-        M:SendCommMessage(QUERY_PREFIX, serialized, "PARTY", nil, "BULK")
+        M:SendCommMessage(QUERY_PREFIX, serialized, "PARTY")
     end
 
     addon:DebugPrint("GossipProtocol: queried score for " .. guid)
@@ -176,7 +176,7 @@ function M:OnQueryReceived(prefix, message, distribution, sender)
     RecordResponseSent()
 
     -- Respond on same channel we received on
-    M:SendCommMessage(RESPONSE_PREFIX, serialized, distribution, nil, "BULK")
+    M:SendCommMessage(RESPONSE_PREFIX, serialized, distribution)
 
     addon:DebugPrint("GossipProtocol: responded with score " .. cached.score .. " for " .. guid .. " to " .. distribution)
 end
