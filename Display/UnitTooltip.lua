@@ -113,11 +113,12 @@ end
 ---------------------------------------------------------------------------
 
 local BREAKDOWN_CATEGORIES = {
-    { key = "base",      label = "Base Stats" },
-    { key = "gems",      label = "Gems" },
-    { key = "enchants",  label = "Enchants" },
-    { key = "procs",     label = "Procs" },
-    { key = "setBonuses", label = "Set Bonuses" },
+    { key = "base",           label = "Base Stats" },
+    { key = "gems",           label = "Gems" },
+    { key = "enchants",       label = "Enchants" },
+    { key = "procs",          label = "Procs" },
+    { key = "setBonuses",     label = "Set Bonuses" },
+    { key = "socketBonuses",  label = "Socket Bonuses" },
 }
 
 function M:AddBreakdownLines(tooltip, breakdown)

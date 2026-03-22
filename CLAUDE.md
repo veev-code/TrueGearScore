@@ -53,7 +53,8 @@ Score = Σ (stat_value × stat_weight) across all sources per item, for all equi
 - `.github/workflows/release.yml` — CI release workflow
 
 ### Core (`Core/`)
-- `Core.lua` — Addon init, module registration, slash commands (`/tgs`)
+- `Core.lua` — Addon init, module registration, spec detection, logging
+- `SlashCommands.lua` — All `/tgs` subcommands including calibration
 - `Constants.lua` — Score brackets, color tables, expansion-wide score cap, timing constants, `C.DEFAULTS.profile`
 - `Database.lua` — AceDB wrapper: profiles, saved variables, settings
 
@@ -64,10 +65,11 @@ Score = Σ (stat_value × stat_weight) across all sources per item, for all equi
 - `ScoreCache.lua` — Per-player score cache with TTL expiry
 
 ### Data (`Data/`)
-- `ProcDatabase.lua` — Item ID → equivalent stat budget for procs/equip effects (~30-50 raid items at launch, expanding to ~150)
-- `EnchantDatabase.lua` — Enchant ID → stat contributions (~60-80 TBC enchants)
-- `GemDatabase.lua` — Gem item ID → stat contributions (~100 gem cuts)
-- `SetBonusDatabase.lua` — Set ID + piece count (2pc/4pc) → equivalent stat budget per spec
+- `ProcDatabase.lua` — Item ID → equivalent stat budget for procs/equip effects (~92 items)
+- `EnchantDatabase.lua` — Enchant ID → stat contributions (~282 TBC enchants)
+- `GemDatabase.lua` — Gem item ID → stat contributions (~151 gem cuts)
+- `SetBonusDatabase.lua` — Set ID + piece count (2pc/4pc) → equivalent stat budget per spec (~45 sets, ~164 bonus entries)
+- `ReferenceSets.lua` — Per-spec BIS gear sets for calibration (~137 sets across P1/P2/heroic variants)
 
 ### Inspect (`Inspect/`)
 - `InspectHandler.lua` — Hooks `INSPECT_READY` to capture full item links via `GetInventoryItemLink(unit, slot)` (includes gems/enchants). Caches results.
@@ -83,7 +85,7 @@ Score = Σ (stat_value × stat_weight) across all sources per item, for all equi
 - `Paperdoll.lua` — Player's own score on character panel
 - `InspectFrame.lua` — Score on inspect frame
 - `RaidFrame.lua` — Score in raid UI tooltips
-- `LFGIntegration.lua` — Auto-appends `[TGS: XXXX]` to LookingForGroup channel messages. Hooks LFGBulletinBoard tooltips if loaded (no hard dependency).
+- `LFGIntegration.lua` — Hooks LFGBulletinBoard tooltips to show scores if LFGBB is loaded (soft dependency, no chat message modification).
 - `ScoreColors.lua` — Score → color bracket mapping (gradient from grey → green → blue → purple → orange, calibrated to TacoTip brackets)
 
 ### UI (`UI/`)

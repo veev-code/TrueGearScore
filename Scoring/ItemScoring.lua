@@ -18,6 +18,218 @@ local C = addon.Constants
 local STAT_REVERSE = C.STAT_REVERSE
 
 ---------------------------------------------------------------------------
+-- Socket bonus detection via tooltip scanning
+---------------------------------------------------------------------------
+
+-- Hidden tooltip for scanning socket bonus text (created on first use)
+local scanTooltip
+
+--- Build a "clean" item link with gem slots zeroed out.
+-- Used to detect socket layout via GetItemStats() on the ungemmed item.
+-- @param itemLink  Full item link
+-- @return string   Item link with gem IDs set to 0
+local function BuildCleanItemLink(itemLink)
+    -- Item link format: item:itemID:enchantID:gem1:gem2:gem3:gem4:suffixID:...
+    -- Replace gem fields (positions 3-6 in the colon-delimited item string) with 0
+    return itemLink:gsub("(item:%d+:%d+):%d+:%d+:%d+:%d+:", "%1:0:0:0:0:")
+end
+
+--- Get the socket layout of an item (how many of each socket color).
+-- Strips gems from the link and reads EMPTY_SOCKET_* from GetItemStats().
+-- @param itemLink  Full item link (may have gems)
+-- @return table    { RED = count, YELLOW = count, BLUE = count, META = count } or nil if no sockets
+local function GetSocketLayout(itemLink)
+    local cleanLink = BuildCleanItemLink(itemLink)
+    local rawStats = {}
+    GetItemStats(cleanLink, rawStats)
+
+    local layout = {}
+    local totalSockets = 0
+
+    for key, value in pairs(rawStats) do
+        if key == "EMPTY_SOCKET_RED" then
+            layout.RED = (layout.RED or 0) + value
+            totalSockets = totalSockets + value
+        elseif key == "EMPTY_SOCKET_YELLOW" then
+            layout.YELLOW = (layout.YELLOW or 0) + value
+            totalSockets = totalSockets + value
+        elseif key == "EMPTY_SOCKET_BLUE" then
+            layout.BLUE = (layout.BLUE or 0) + value
+            totalSockets = totalSockets + value
+        elseif key == "EMPTY_SOCKET_META" then
+            layout.META = (layout.META or 0) + value
+            totalSockets = totalSockets + value
+        end
+    end
+
+    if totalSockets == 0 then return nil end
+    return layout
+end
+
+--- TBC socket color matching rules.
+-- Returns true if a gem of the given color satisfies a socket of the given color.
+local SOCKET_MATCH = {
+    -- RED socket accepts: Red, Orange, Purple, Prismatic
+    RED    = { RED = true, ORANGE = true, PURPLE = true, PRISMATIC = true },
+    -- YELLOW socket accepts: Yellow, Orange, Green, Prismatic
+    YELLOW = { YELLOW = true, ORANGE = true, GREEN = true, PRISMATIC = true },
+    -- BLUE socket accepts: Blue, Green, Purple, Prismatic
+    BLUE   = { BLUE = true, GREEN = true, PURPLE = true, PRISMATIC = true },
+    -- META socket accepts: Meta only
+    META   = { META = true },
+}
+
+--- Check if all gem colors match their corresponding sockets.
+-- Socket order in the item matches gem order in the link (gem1 → socket1, etc.).
+-- @param gems         Array of gem item IDs from ParseItemLink
+-- @param socketLayout Table from GetSocketLayout: { RED = n, YELLOW = n, BLUE = n, META = n }
+-- @return boolean     True if all sockets are filled with matching gems
+local function AreSocketsMatched(gems, socketLayout)
+    local db = addon.GemDatabase
+    if not db then return false end
+
+    -- Build ordered list of socket colors from layout
+    -- Socket order convention: META first, then RED, YELLOW, BLUE
+    -- (this matches WoW's internal socket ordering in the item link)
+    local socketOrder = {}
+    for _ = 1, (socketLayout.META or 0) do
+        socketOrder[#socketOrder + 1] = "META"
+    end
+    for _ = 1, (socketLayout.RED or 0) do
+        socketOrder[#socketOrder + 1] = "RED"
+    end
+    for _ = 1, (socketLayout.YELLOW or 0) do
+        socketOrder[#socketOrder + 1] = "YELLOW"
+    end
+    for _ = 1, (socketLayout.BLUE or 0) do
+        socketOrder[#socketOrder + 1] = "BLUE"
+    end
+
+    -- Check each socket has a matching gem
+    for i, socketColor in ipairs(socketOrder) do
+        local gemID = gems[i]
+        if not gemID or gemID == 0 then
+            return false  -- Empty socket = bonus inactive
+        end
+
+        local gemData = db[gemID]
+        if not gemData or not gemData._COLOR then
+            return false  -- Unknown gem = can't verify match
+        end
+
+        local accepted = SOCKET_MATCH[socketColor]
+        if not accepted or not accepted[gemData._COLOR] then
+            return false  -- Gem doesn't match socket
+        end
+    end
+
+    return true
+end
+
+--- Scan tooltip for socket bonus stats.
+-- Creates a hidden tooltip, sets the item, and scans for the "Socket Bonus:" line.
+-- Parses the stat name and value from the bonus text.
+-- @param itemLink  Full item link
+-- @return table    { STAT_NAME = value, ... } or empty table if no bonus found
+local function ParseSocketBonusFromTooltip(itemLink)
+    -- Create hidden scan tooltip on first use
+    if not scanTooltip then
+        scanTooltip = CreateFrame("GameTooltip", "TGSScanTooltip", nil, "GameTooltipTemplate")
+        scanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
+    end
+
+    scanTooltip:ClearLines()
+    scanTooltip:SetHyperlink(itemLink)
+
+    local stats = {}
+    local numLines = scanTooltip:NumLines()
+
+    for i = 1, numLines do
+        local line = _G["TGSScanTooltipTextLeft" .. i]
+        if line then
+            local text = line:GetText()
+            if text and text:match("Socket Bonus:") then
+                -- Parse "+X Stat" patterns from the bonus line
+                -- Examples: "Socket Bonus: +4 Intellect", "Socket Bonus: +3 Spell Damage"
+                -- Can have multiple stats: "Socket Bonus: +4 Stamina and +2 Mana every 5 Sec."
+                for value, stat in text:gmatch("%+(%d+)%s+(.-)%s*$") do
+                    -- Also try to match multiple bonuses separated by " and "
+                    -- But most TBC socket bonuses are single-stat
+                end
+
+                -- More robust: extract all +N patterns with their stat text
+                -- TBC socket bonuses are typically single stat, but handle edge cases
+                local bonusText = text:match("Socket Bonus:%s*(.*)")
+                if bonusText then
+                    -- Map tooltip stat names to canonical stat names
+                    local BONUS_STAT_MAP = {
+                        ["Strength"]       = "STRENGTH",
+                        ["Agility"]        = "AGILITY",
+                        ["Stamina"]        = "STAMINA",
+                        ["Intellect"]      = "INTELLECT",
+                        ["Spirit"]         = "SPIRIT",
+                        ["Spell Damage"]   = "SPELL_POWER",
+                        ["Spell Power"]    = "SPELL_POWER",
+                        ["Healing"]        = "HEAL_POWER",
+                        ["Attack Power"]   = "ATTACK_POWER",
+                        ["Hit Rating"]     = "HIT_RATING",
+                        ["Critical Strike Rating"] = "CRIT_RATING",
+                        ["Crit Rating"]    = "CRIT_RATING",
+                        ["Haste Rating"]   = "HASTE_RATING",
+                        ["Defense Rating"] = "DEFENSE",
+                        ["Dodge Rating"]   = "DODGE",
+                        ["Parry Rating"]   = "PARRY",
+                        ["Resilience Rating"] = "RESILIENCE",
+                        ["Resilience"]     = "RESILIENCE",
+                        ["Block Rating"]   = "BLOCK_RATING",
+                        ["Block Value"]    = "BLOCK_VALUE",
+                        ["Expertise Rating"] = "EXPERTISE",
+                        ["Spell Penetration"] = "SPELL_PEN",
+                        ["Mana every 5 Sec."] = "MP5",
+                        ["Mana every 5 sec."] = "MP5",
+                        ["mana per 5 sec."]   = "MP5",
+                        ["mana per 5 Sec."]   = "MP5",
+                        ["Spell Damage and Healing"] = "SPELL_POWER",
+                    }
+
+                    -- Match patterns like "+4 Intellect", "+3 Spell Damage"
+                    for val, statName in bonusText:gmatch("%+(%d+)%s+([%a%s%.]+)") do
+                        -- Trim trailing whitespace/punctuation
+                        statName = statName:match("^(.-)%s*$")
+                        local canonical = BONUS_STAT_MAP[statName]
+                        if canonical then
+                            stats[canonical] = (stats[canonical] or 0) + tonumber(val)
+                        else
+                            addon:DebugPrint("ParseSocketBonus: unmapped bonus stat '" .. statName .. "' = " .. val .. " on " .. tostring(itemLink))
+                        end
+                    end
+                end
+                break  -- Only one socket bonus line per item
+            end
+        end
+    end
+
+    return stats
+end
+
+--- Get socket bonus stats for an item if the bonus is active (all sockets matched).
+-- @param itemLink  Full item link
+-- @param gems      Array of gem IDs from ParseItemLink
+-- @return table    { STAT_NAME = value, ... } or empty table
+function addon.ItemScoring:GetSocketBonusStats(itemLink, gems)
+    local socketLayout = GetSocketLayout(itemLink)
+    if not socketLayout then return {} end  -- No sockets on this item
+
+    -- Check if all gems match their socket colors
+    if not AreSocketsMatched(gems, socketLayout) then
+        return {}  -- Bonus inactive
+    end
+
+    -- Bonus is active — parse the stats from tooltip
+    return ParseSocketBonusFromTooltip(itemLink)
+end
+
+---------------------------------------------------------------------------
 -- Item link parsing
 ---------------------------------------------------------------------------
 
@@ -145,6 +357,12 @@ function addon.ItemScoring:GetItemTotalStats(itemLink)
         stats[stat] = (stats[stat] or 0) + value
     end
 
+    -- Add socket bonus stats (if all gems match their socket colors)
+    local socketBonusStats = self:GetSocketBonusStats(itemLink, parsed.gems)
+    for stat, value in pairs(socketBonusStats) do
+        stats[stat] = (stats[stat] or 0) + value
+    end
+
     return stats
 end
 
@@ -196,6 +414,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     local itemGemStats = {}    -- Cache per-item gem stats for breakdown
     local itemEnchantStats = {} -- Cache per-item enchant stats for breakdown
     local itemProcStats = {}   -- Cache per-item proc stats for breakdown
+    local itemSocketBonusStats = {} -- Cache per-item socket bonus stats for breakdown
 
     for slotID, itemLink in pairs(equippedItems) do
         local stats = self:GetItemTotalStats(itemLink)
@@ -207,6 +426,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
             itemGemStats[slotID] = self:GetGemStats(parsed.gems)
             itemEnchantStats[slotID] = self:GetEnchantStats(parsed.enchantID)
             itemProcStats[slotID] = self:GetProcStats(parsed.itemID)
+            itemSocketBonusStats[slotID] = self:GetSocketBonusStats(itemLink, parsed.gems)
         end
         for stat, value in pairs(stats) do
             statTotals[stat] = (statTotals[stat] or 0) + value
@@ -302,10 +522,11 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     end
     baseOnlyRaw = math.floor(baseOnlyRaw)
 
-    -- Compute per-category breakdown (gems, enchants, procs scored separately)
+    -- Compute per-category breakdown (gems, enchants, procs, socket bonuses scored separately)
     local gemScoreRaw = 0
     local enchantScoreRaw = 0
     local procScoreRaw = 0
+    local socketBonusScoreRaw = 0
     for slotID, _ in pairs(equippedItems) do
         local gs = itemGemStats[slotID]
         if gs then
@@ -326,6 +547,13 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
             for stat, value in pairs(ps) do
                 local weight = effectiveWeights[stat] or 0
                 procScoreRaw = procScoreRaw + (value * weight)
+            end
+        end
+        local sbs = itemSocketBonusStats[slotID]
+        if sbs then
+            for stat, value in pairs(sbs) do
+                local weight = effectiveWeights[stat] or 0
+                socketBonusScoreRaw = socketBonusScoreRaw + (value * weight)
             end
         end
     end
@@ -357,7 +585,8 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     local scaledGems = math.floor(math.max(0, gemScoreRaw) * scale)
     local scaledEnchants = math.floor(math.max(0, enchantScoreRaw) * scale)
     local scaledProcs = math.floor(math.max(0, procScoreRaw) * scale)
-    local scaledBase = totalScore - scaledGems - scaledEnchants - scaledProcs - scaledSetBonus
+    local scaledSocketBonuses = math.floor(math.max(0, socketBonusScoreRaw) * scale)
+    local scaledBase = totalScore - scaledGems - scaledEnchants - scaledProcs - scaledSetBonus - scaledSocketBonuses
 
     return {
         totalScore = totalScore,
@@ -376,6 +605,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
             enchants = scaledEnchants,
             procs = scaledProcs,
             setBonuses = scaledSetBonus,
+            socketBonuses = scaledSocketBonuses,
         },
     }
 end
