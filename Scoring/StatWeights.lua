@@ -730,44 +730,45 @@ addon.StatWeights.SPEC_SCALE = {
     -- Healers/tanks have low scale (their gear has many weighted stats).
     -- DPS specs have high scale (gear concentrates into fewer stats).
 
-    -- All values from /tgs calibrate with 137 reference BIS sets.
-    -- ALL specs now data-driven (no estimates). Calibration target: PRIEST_DISC P1 base = 1750.
+    -- All values from /tgs calibrate with 148 reference BIS sets.
+    -- ALL specs data-driven. Calibration target: PRIEST_DISC P1 base = 1750.
 
     -- Healers
-    ["PRIEST_DISC"]     = 1.000,  -- P1 base=1750 (anchor)
-    ["PRIEST_HOLY"]     = 0.946,  -- P1 base=1850
+    ["PRIEST_DISC"]     = 1.000,  -- P1 base=1750
+    ["PRIEST_HOLY"]     = 0.946,  -- P1 base=1851
     ["DRUID_RESTO"]     = 0.984,  -- P1 base=1778
     ["PALADIN_HOLY"]    = 1.202,  -- P1 base=1456
-    ["SHAMAN_RESTO"]    = 1.312,  -- P1 base=1334
+    ["SHAMAN_RESTO"]    = 1.311,  -- P1 base=1335
 
     -- Tanks
     ["WARRIOR_PROT"]    = 1.000,  -- P1 base=1750
     ["PALADIN_PROT"]    = 0.957,  -- P1 base=1828
-    ["DRUID_FERAL_BEAR"]= 2.273,  -- P1 base=770 (own weight table)
+    ["DRUID_FERAL_BEAR"]= 1.578,  -- P1 base=1109
 
     -- Melee DPS
-    ["ROGUE_COMBAT"]    = 3.125,  -- P1 base=560
+    ["ROGUE_COMBAT"]    = 3.120,  -- P1 base=561
     ["ROGUE_ASSASSIN"]  = 3.119,  -- P1 base=561
-    ["ROGUE_SUBTLETY"]  = 3.125,  -- same gear type as Combat
-    ["WARRIOR_FURY"]    = 3.043,  -- P1 base=575
-    ["WARRIOR_ARMS"]    = 3.076,  -- P1 base=569
-    ["PALADIN_RET"]     = 3.165,  -- P1 base=553
-    ["SHAMAN_ENH"]      = 3.327,  -- P1 base=526
-    ["HUNTER_BM"]       = 2.796,  -- P1 base=626
-    ["HUNTER_MM"]       = 2.511,  -- P1 base=697
-    ["HUNTER_SURV"]     = 3.493,  -- P1 base=501
-    ["DRUID_FERAL_CAT"] = 2.273,  -- P1 base=770
+    ["ROGUE_SUBTLETY"]  = 3.030,  -- P1 base=578
+    ["WARRIOR_FURY"]    = 3.041,  -- P1 base=575
+    ["WARRIOR_ARMS"]    = 3.074,  -- P1 base=569
+    ["PALADIN_RET"]     = 3.161,  -- P1 base=554
+    ["SHAMAN_ENH"]      = 3.321,  -- P1 base=527
+    ["HUNTER_BM"]       = 2.793,  -- P1 base=627
+    ["HUNTER_MM"]       = 2.509,  -- P1 base=698
+    ["HUNTER_SURV"]     = 3.488,  -- P1 base=502
+    ["DRUID_FERAL"]     = 2.091,  -- P1 base=837 (cat DPS, legacy key)
+    ["DRUID_FERAL_CAT"] = 2.091,  -- P1 base=837
 
     -- Caster DPS
     ["MAGE_FIRE"]       = 1.581,  -- P1 base=1107
-    ["MAGE_ARCANE"]     = 1.823,  -- P1 base=960
-    ["MAGE_FROST"]      = 1.670,  -- P1 base=1048
-    ["DRUID_BALANCE"]   = 1.597,  -- P1 base=1096
-    ["WARLOCK_DESTRO"]  = 1.634,  -- P1 base=1071
-    ["WARLOCK_AFFLIC"]  = 1.902,  -- P1 base=920
-    ["WARLOCK_DEMO"]    = 1.823,  -- P1 base=960
-    ["SHAMAN_ELE"]      = 2.163,  -- P1 base=809
-    ["PRIEST_SHADOW"]   = 1.757,  -- P1 base=996
+    ["MAGE_ARCANE"]     = 1.822,  -- P1 base=960
+    ["MAGE_FROST"]      = 1.669,  -- P1 base=1049
+    ["DRUID_BALANCE"]   = 1.596,  -- P1 base=1096
+    ["WARLOCK_DESTRO"]  = 1.633,  -- P1 base=1071
+    ["WARLOCK_AFFLIC"]  = 1.900,  -- P1 base=921
+    ["WARLOCK_DEMO"]    = 1.822,  -- P1 base=961
+    ["SHAMAN_ELE"]      = 2.161,  -- P1 base=810
+    ["PRIEST_SHADOW"]   = 1.756,  -- P1 base=997
 }
 
 ---------------------------------------------------------------------------
