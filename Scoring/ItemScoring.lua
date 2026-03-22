@@ -236,6 +236,51 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
         totalRaw = totalRaw + slotScore
     end
 
+    -- Set bonus scoring: detect equipped sets, count pieces, add bonus stats
+    local setBonusScore = 0
+    local setBonusDetails = {}
+    local setDB = addon.SetBonusDatabase
+    if setDB then
+        -- Count equipped pieces per setID
+        local setCounts = {}
+        for slotID, itemLink in pairs(equippedItems) do
+            -- GetItemInfo return #16 is setID (0 or nil if not part of a set)
+            local _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, setID = GetItemInfo(itemLink)
+            if setID and setID > 0 then
+                setCounts[setID] = (setCounts[setID] or 0) + 1
+            end
+        end
+
+        -- Look up active bonuses and score them
+        for setID, count in pairs(setCounts) do
+            local setData = setDB[setID]
+            if setData and setData.bonuses then
+                for threshold, bonusStats in pairs(setData.bonuses) do
+                    if count >= threshold then
+                        local bonusScore = 0
+                        for stat, value in pairs(bonusStats) do
+                            local weight = effectiveWeights[stat] or 0
+                            bonusScore = bonusScore + (value * weight)
+                        end
+                        bonusScore = math.max(0, math.floor(bonusScore))
+                        if bonusScore > 0 then
+                            setBonusScore = setBonusScore + bonusScore
+                            setBonusDetails[#setBonusDetails + 1] = {
+                                setName = setData.name,
+                                setID = setID,
+                                pieces = count,
+                                threshold = threshold,
+                                score = bonusScore,
+                            }
+                            addon:DebugPrint("SetBonus: " .. setData.name .. " " .. threshold .. "pc active (" .. count .. " equipped) = +" .. bonusScore)
+                        end
+                    end
+                end
+            end
+        end
+        totalRaw = totalRaw + setBonusScore
+    end
+
     -- Compute base-only score (what TacoTip roughly measures — no gems/enchants/procs)
     local baseOnlyRaw = 0
     for slotID, baseStats in pairs(itemBaseStats) do
@@ -270,5 +315,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
         rawScore = totalRaw,
         baseOnlyRaw = baseOnlyRaw,
         baseOnlyScore = baseOnlyScore,
+        setBonusScore = math.floor(setBonusScore * scale),
+        setBonusDetails = setBonusDetails,
     }
 end

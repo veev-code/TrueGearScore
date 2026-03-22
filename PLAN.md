@@ -316,6 +316,38 @@ Proc DB expansion: currently only 12 raid trinkets. Need comprehensive coverage 
 - Deliver as incremental updates to `Scoring/StatWeights.lua`
 - Must recalibrate after weight changes to maintain TacoTip parity on base scores
 
+### Sprint 7 — Addressing GearScore Stigma (Community Trust Features)
+
+These features don't improve scoring accuracy — they address the *social* problems that made GearScore toxic. The goal: make TrueGearScore a tool that helps people make good decisions instead of lazy ones.
+
+| Item | Files | Deps | Size |
+|---|---|---|---|
+| **Score breakdown tooltip** | `Display/UnitTooltip.lua`, `Display/InspectFrame.lua` | ItemScoring | M |
+| **Missing potential indicator** | `Scoring/ItemScoring.lua`, `Display/UnitTooltip.lua` | GemDB, EnchantDB | M |
+| **Content readiness labels** | `Core/Constants.lua`, `Display/ScoreColors.lua`, `Display/UnitTooltip.lua` | None | S |
+| **Spec-mismatch warning** | `Scoring/ItemScoring.lua`, `Display/UnitTooltip.lua` | StatWeights | M |
+| **Per-item upgrade indicator** | `Display/ItemTooltip.lua` (new) | ItemScoring, SelfScanner | M |
+
+**Score breakdown tooltip** (Shift-hover or config toggle)
+- Problem: GearScore reduces 16 slots to one number, enabling lazy evaluation. Raid leaders stop inspecting.
+- Solution: On expanded tooltip, show a per-category breakdown: base stats, gems, enchants, procs, set bonuses. Give raid leaders *more* information, not less. When someone sees "Gems: +180 / Enchants: +0" they know exactly what's wrong without opening the inspect window.
+
+**Missing potential indicator**
+- Problem: Traditional GS can't distinguish a fully optimized player from one with empty sockets and no enchants.
+- Solution: Show "potential score" alongside actual score — what the character *would* score with optimal gems/enchants for their spec. Display as e.g., `TGS: 2400 (2650 potential)` or a percentage: `TGS: 2400 (91%)`. This reframes the conversation from "is this number high enough?" to "has this player invested in their gear?" — which is what raid leaders actually want to know.
+
+**Content readiness labels**
+- Problem: Score numbers are meaningless without context. Players set absurd thresholds (900+ GS for Molten Core) because they don't know what the numbers mean.
+- Solution: Map score ranges to content tiers and show them as labels: "Heroic-ready", "Kara-ready", "SSC/TK-ready", "BT/Hyjal-ready", "Sunwell-ready". Based on reference BiS sets — P1 BiS = floor of next tier's "ready" label. This gives the number meaning and pushes back against arbitrarily inflated requirements. If someone demands "Sunwell-ready" for Karazhan, the label makes the absurdity visible.
+
+**Spec-mismatch warning**
+- Problem: Players equip wrong-spec high-ilvl gear to inflate traditional GearScore. TrueGearScore already handles this via stat weights (wrong-spec stats get near-zero weight), but doesn't surface the *reason* visibly.
+- Solution: When >20% of a character's stat budget comes from off-spec stats (e.g., a warrior with spell power, a healer stacking hit), show a warning icon or text on the tooltip. This makes gear-gaming visible without penalizing legitimate hybrid builds (e.g., a balance druid with some spirit gear).
+
+**Per-item upgrade indicator** (Item tooltip, default off)
+- Problem: Players avoid equipping BiS items because they lower traditional GearScore.
+- Solution: On item tooltips, show the TrueGearScore delta: "Equipping this: +45 TGS" or "-12 TGS". Players can see at a glance whether an item is actually an upgrade *for their spec*, regardless of ilvl or rarity color. Low-ilvl BiS items like DST would show a positive delta, reinforcing the correct decision.
+
 ### Pre-Release Cleanup (before any public release)
 
 - Remove `RunAPIDiscovery()` from `Core/Core.lua`
