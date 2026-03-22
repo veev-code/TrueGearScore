@@ -630,11 +630,39 @@ addon.StatWeights.SPECS = {
         },
     },
 
+    -- Feral Bear Tank: Stamina/armor/avoidance focused. Cannot parry or block.
+    -- Dodge is primary avoidance. Defense to uncrittable (415 defense skill = 332 rating
+    -- above base 350, offset by Survival of the Fittest 3% crit reduction).
+    -- AGI still strong: dodge + armor (in bear form). STR = AP for threat.
+    -- Bear tank weights derived from Emmerald/Rawr bear module, class Discord consensus
+    DRUID_FERAL_BEAR = {
+        weights = {
+            STAMINA      = 0.78,   -- Primary EH stat; bears have massive HP pool
+            ARMOR        = 0.16,   -- Bear form multiplier makes armor extremely efficient
+            DEFENSE      = 0.59,   -- Path to uncrittable (SotF reduces need)
+            DODGE        = 0.63,   -- Primary avoidance; AGI also feeds this
+            AGILITY      = 0.55,   -- Dodge + armor in bear form; strong dual-purpose
+            EXPERTISE    = 0.47,   -- Reduces dodge/parry for threat
+            HIT_RATING   = 0.35,   -- Threat consistency
+            STRENGTH     = 0.27,   -- 2.4 AP/STR w/ HotW; threat stat
+            ATTACK_POWER = 0.16,   -- Pure threat
+            CRIT_RATING  = 0.24,   -- Minor: threat + Primal Fury (rage on crit)
+            HASTE_RATING = 0.12,   -- Minimal value for bears
+            RESILIENCE   = 0.12,   -- Path to uncrittable (alternative to defense)
+        },
+        caps = {
+            -- SotF reduces crit reduction needed; effective defense cap is lower
+            DEFENSE    = { softCap = 156, hardCap = 332, overCapWeight = 0.20 },
+            HIT_RATING = { softCap = 142, hardCap = 142, overCapWeight = 0.0 },
+            EXPERTISE  = { softCap = 95,  hardCap = 95,  overCapWeight = 0.0 },
+        },
+    },
+
     -- Feral Cat DPS: 1 AGI = 1 AP + 0.04% crit (best stat by far).
     -- 1 STR = 2.4 AP w/ Heart of the Wild. Haste lower due to powershifting.
     -- ArPen grows significantly in later tiers.
     -- Sources: WoWSims, Icy Veins, Warcraft Tavern
-    DRUID_FERAL = {
+    DRUID_FERAL_CAT = {
         weights = {
             AGILITY      = 0.78,   -- Primary: AP + crit, scales w/ SotF + BoK
             STRENGTH     = 0.65,   -- 2.4 AP/STR w/ HotW; strong
@@ -709,7 +737,7 @@ addon.StatWeights.SPEC_SCALE = {
     -- Tanks
     ["WARRIOR_PROT"]    = 1.000,  -- P1 base=1750
     ["PALADIN_PROT"]    = 0.957,  -- P1 base=1828
-    ["DRUID_FERAL_BEAR"]= 2.273,  -- shares DRUID_FERAL weights; P1 base=770
+    ["DRUID_FERAL_BEAR"]= 2.273,  -- P1 base=770 (own weight table)
 
     -- Melee DPS
     ["ROGUE_COMBAT"]    = 3.125,  -- P1 base=560
@@ -722,7 +750,7 @@ addon.StatWeights.SPEC_SCALE = {
     ["HUNTER_BM"]       = 2.796,  -- P1 base=626
     ["HUNTER_MM"]       = 2.511,  -- P1 base=697
     ["HUNTER_SURV"]     = 3.493,  -- P1 base=501
-    ["DRUID_FERAL"]     = 2.273,  -- P1 base=770
+    ["DRUID_FERAL_CAT"] = 2.273,  -- P1 base=770
 
     -- Caster DPS
     ["MAGE_FIRE"]       = 1.581,  -- P1 base=1107

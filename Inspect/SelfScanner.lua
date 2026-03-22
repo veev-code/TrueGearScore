@@ -27,9 +27,13 @@ function M:Initialize()
     eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
     eventFrame:SetScript("OnEvent", function(_, event, slotID)
         if event == "PLAYER_EQUIPMENT_CHANGED" then
-            -- Small delay to let item data settle
-            C_Timer.After(0.2, function()
+            -- Debounce: cancel previous timer so rapid gear swaps collapse into one scan
+            if self.equipChangeTimer then
+                self.equipChangeTimer:Cancel()
+            end
+            self.equipChangeTimer = C_Timer.After(0.3, function()
                 self:ScanEquipment()
+                self.equipChangeTimer = nil
             end)
         end
     end)
@@ -63,7 +67,19 @@ function M:ScanEquipment()
     end
 
     local result = addon.ItemScoring:ScoreCharacter(items)
+
+    -- Validate scoring result
+    if type(result) ~= "table" then
+        addon:DebugPrint("SelfScanner: ERROR — ScoreCharacter returned " .. type(result) .. " instead of table")
+        self.currentScore = 0
+        self.perSlotScores = {}
+        self.effectiveWeights = {}
+        self.breakdown = nil
+        return
+    end
+
     self.currentScore = result.totalScore
+    self.resolvedSpec = result.specKey  -- Resolved sub-spec (e.g., DRUID_FERAL_CAT vs DRUID_FERAL_BEAR)
     self.perSlotScores = result.perSlot
     self.perSlotDetails = result.perSlotDetails
     self.effectiveWeights = result.effectiveWeights
@@ -72,6 +88,14 @@ function M:ScanEquipment()
     self.baseOnlyScore = result.baseOnlyScore
     self.breakdown = result.breakdown
     self.efficiency = result.efficiency
+
+    -- Cache self score so display modules can use ScoreCache uniformly
+    addon.ScoreCache:Set(addon.playerGUID, {
+        score = self.currentScore,
+        source = "self",
+        timestamp = GetTime(),
+        efficiency = self.efficiency,
+    })
 
     addon:DebugPrint("SelfScanner: score updated to " .. self.currentScore .. " eff=" .. tostring(self.efficiency) .. "%")
 

@@ -17,26 +17,15 @@ addon:RegisterModule("UnitTooltip", M)
 ---------------------------------------------------------------------------
 
 function M:Initialize()
+    self.enabled = addon.db.profile.showUnitTooltip
+
     GameTooltip:HookScript("OnTooltipSetUnit", function(tooltip)
         self:OnTooltipSetUnit(tooltip)
     end)
 end
 
----------------------------------------------------------------------------
--- Check if we already added our line to the tooltip
----------------------------------------------------------------------------
-
-function M:HasScoreLine(tooltip)
-    for i = 1, tooltip:NumLines() do
-        local left = _G["GameTooltipTextLeft" .. i]
-        if left then
-            local text = left:GetText()
-            if text and text:match("^TrueGearScore") then
-                return true
-            end
-        end
-    end
-    return false
+function M:Refresh()
+    self.enabled = addon.db.profile.showUnitTooltip
 end
 
 ---------------------------------------------------------------------------
@@ -44,6 +33,8 @@ end
 ---------------------------------------------------------------------------
 
 function M:OnTooltipSetUnit(tooltip)
+    if not self.enabled then return end
+
     local _, unit = tooltip:GetUnit()
     if not unit or not UnitIsPlayer(unit) then return end
 
@@ -51,7 +42,7 @@ function M:OnTooltipSetUnit(tooltip)
     if not guid then return end
 
     -- Don't add if already present
-    if self:HasScoreLine(tooltip) then return end
+    if addon.ScoreColors:HasScoreLine(tooltip) then return end
 
     -- Self: use SelfScanner directly
     if UnitIsUnit(unit, "player") then
@@ -96,16 +87,13 @@ function M:AddScoreLine(tooltip, score, source, efficiency)
         sourceTag = "~"
     end
 
-    local tier = addon.ScoreColors:GetContentTier(score)
-    local tierSuffix = tier and (" (" .. tier .. ")") or ""
-
     -- Show efficiency percentage when available (inspect/self sources only)
     local effSuffix = ""
     if efficiency and efficiency > 0 then
-        effSuffix = " - " .. tostring(efficiency) .. "%"
+        effSuffix = " (" .. tostring(efficiency) .. "%)"
     end
 
-    tooltip:AddLine("TrueGearScore: " .. sourceTag .. tostring(score) .. effSuffix .. tierSuffix, r, g, b)
+    tooltip:AddLine("TrueGearScore: " .. sourceTag .. tostring(score) .. effSuffix, r, g, b)
 end
 
 ---------------------------------------------------------------------------

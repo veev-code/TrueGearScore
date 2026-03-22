@@ -345,7 +345,7 @@ These features don't improve scoring accuracy — they address the *social* prob
 
 ### Pre-Release Cleanup (before any public release)
 
-- Remove `RunAPIDiscovery()` from `Core/Core.lua`
-- Remove auto-print/auto-calibrate `C_Timer.After` blocks from `Core/Core.lua`
-- Remove `RunCalibration()` auto-run (keep as `/tgs calibrate` command)
+- ~~Remove `RunAPIDiscovery()` from `Core/Core.lua`~~ DONE
+- ~~Remove auto-print/auto-calibrate `C_Timer.After` blocks from `Core/Core.lua`~~ DONE
+- ~~Remove `RunCalibration()` auto-run (keep as `/tgs calibrate` command)~~ DONE — only in SlashCommands
 - Verify all debug logging is gated behind `debugMode`

@@ -46,26 +46,15 @@ local EQUIPLOC_TO_SLOT = {
 ---------------------------------------------------------------------------
 
 function M:Initialize()
+    self.enabled = addon.db.profile.showItemTooltip
+
     GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
         self:OnTooltipSetItem(tooltip)
     end)
 end
 
----------------------------------------------------------------------------
--- Check if we already added our line to the tooltip
----------------------------------------------------------------------------
-
-function M:HasScoreLine(tooltip)
-    for i = 1, tooltip:NumLines() do
-        local left = _G["GameTooltipTextLeft" .. i]
-        if left then
-            local text = left:GetText()
-            if text and text:match("^TrueGearScore") then
-                return true
-            end
-        end
-    end
-    return false
+function M:Refresh()
+    self.enabled = addon.db.profile.showItemTooltip
 end
 
 ---------------------------------------------------------------------------
@@ -73,7 +62,7 @@ end
 ---------------------------------------------------------------------------
 
 function M:OnTooltipSetItem(tooltip)
-    if not addon.db.profile.showItemTooltip then return end
+    if not self.enabled then return end
 
     local _, itemLink = tooltip:GetItem()
     if not itemLink then return end
@@ -83,7 +72,7 @@ function M:OnTooltipSetItem(tooltip)
     if not equipLoc or equipLoc == "" then return end
 
     -- Duplicate prevention
-    if self:HasScoreLine(tooltip) then return end
+    if addon.ScoreColors:HasScoreLine(tooltip) then return end
 
     -- Get effective weights from SelfScanner (cap-aware), fall back to raw spec weights
     local selfScanner = addon:GetModule("SelfScanner")
@@ -114,7 +103,6 @@ function M:OnTooltipSetItem(tooltip)
         end
 
         tooltip:AddLine(line, r, g, b)
-        tooltip:Show()
     end
 end
 

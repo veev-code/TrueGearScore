@@ -27,6 +27,8 @@ local ILVL_VALUE_X, ILVL_VALUE_Y = -12, 24
 ---------------------------------------------------------------------------
 
 function M:Initialize()
+    self.enabled = addon.db.profile.showInspectFrame
+
     -- InspectFrame may not exist yet (loaded on demand)
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("ADDON_LOADED")
@@ -43,12 +45,21 @@ function M:Initialize()
     end
 end
 
+function M:Refresh()
+    self.enabled = addon.db.profile.showInspectFrame
+end
+
 function M:HookInspectFrame()
     if self.hooked then return end
     self.hooked = true
 
     InspectFrame:HookScript("OnShow", function()
         self:OnInspectShow()
+    end)
+
+    InspectFrame:HookScript("OnHide", function()
+        if self.updateTimer1 then self.updateTimer1:Cancel(); self.updateTimer1 = nil end
+        if self.updateTimer2 then self.updateTimer2:Cancel(); self.updateTimer2 = nil end
     end)
 end
 
@@ -81,20 +92,26 @@ end
 ---------------------------------------------------------------------------
 
 function M:OnInspectShow()
+    if not self.enabled then return end
+
     self:EnsureDisplay()
     self:HideTacoTipInspect()
 
+    -- Cancel any pending timers from a previous show
+    if self.updateTimer1 then self.updateTimer1:Cancel(); self.updateTimer1 = nil end
+    if self.updateTimer2 then self.updateTimer2:Cancel(); self.updateTimer2 = nil end
+
     -- Update with delays to let InspectHandler capture data
     self:UpdateScore()
-    C_Timer.After(0.5, function() self:UpdateScore() end)
-    C_Timer.After(2, function() self:UpdateScore() end)
+    self.updateTimer1 = C_Timer.NewTimer(0.5, function() self.updateTimer1 = nil; self:UpdateScore() end)
+    self.updateTimer2 = C_Timer.NewTimer(2, function() self.updateTimer2 = nil; self:UpdateScore() end)
 end
 
 function M:EnsureDisplay()
     if self.gsValue then return end
 
     -- Anchor to the model frame inside the inspect window
-    local anchor = InspectModelFrame or InspectPaperDollFrame or InspectFrame
+    local anchor = InspectModelFrame or InspectPaperDollFrame
     if not anchor then return end
 
     -- GearScore label
@@ -178,19 +195,15 @@ function M:UpdateScore()
         self.gsValue:SetText(tostring(cached.score))
         self.gsValue:SetTextColor(r, g, b, 1)
     else
-        self.gsValue:SetText("...")
+        self.gsValue:SetText("--")
         self.gsValue:SetTextColor(0.53, 0.53, 0.53, 1)
     end
 
-    -- iLvl
+    -- iLvl (neutral white — iLvl is not a score)
     local avgIlvl = self:ComputeInspectIlvl(unit)
     if avgIlvl > 0 then
-        local r, g, b = 1, 1, 1
-        if cached and cached.score > 0 then
-            r, g, b = addon.ScoreColors:GetColor(cached.score)
-        end
         self.ilvlValue:SetText(tostring(avgIlvl))
-        self.ilvlValue:SetTextColor(r, g, b, 1)
+        self.ilvlValue:SetTextColor(1, 1, 1, 1)
     else
         self.ilvlValue:SetText("--")
         self.ilvlValue:SetTextColor(0.53, 0.53, 0.53, 1)

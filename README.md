@@ -11,15 +11,19 @@ Accounts for gems, enchants, proc effects, set bonuses, and stat caps. Spec-awar
 
 ---
 
-## Key Features
+## Features
 
 ### Spec-Aware Stat Weights
 
-Every class/spec has its own weight table sourced from community simulations and theorycrafting (ClassicSim, WoWSims, Elitist Jerks archives, class Discord pins). Agility matters more to a Combat Rogue than a Holy Paladin. A warrior equipping a spell power trinket to inflate ilvl gets near-zero credit for those stats — the score reflects what actually helps your character.
+Every class/spec has its own weight table sourced from community simulations and theorycrafting (ClassicSim, WoWSims, Elitist Jerks archives, class Discord pins). A warrior equipping a spell power trinket to inflate ilvl gets near-zero credit for those stats — the score reflects what actually helps your character.
+
+Feral druids are automatically scored as both cat DPS and bear tank — whichever role the equipped gear scores higher with is used.
 
 ### Gems, Enchants, and Set Bonuses
 
-TrueGearScore reads the full item link — base stats, socketed gems, applied enchants — and scores all of it. Missing enchants? Empty sockets? Bad gem choices? Your score reflects the missing power. Players who invest in optimizing their gear are rewarded with a higher number.
+TrueGearScore reads the full item link — base stats, socketed gems, applied enchants — and scores all of it. Missing enchants? Empty sockets? Bad gem choices? Your score reflects the missing power.
+
+Set bonuses (tier sets and notable non-tier sets) are valued as equivalent stat budgets, so wearing 4pc T6 is reflected in the number.
 
 ### Cap-Aware Scoring
 
@@ -27,23 +31,23 @@ Hit rating past cap is nearly worthless. Expertise past the dodge cap is wasted.
 
 ### Proc Effects and Trinkets
 
-Dragonspine Trophy scores like BiS because it *is* BiS — valued by its average proc uptime converted to equivalent stat budget, not its item level. A curated database of raid trinkets, dungeon trinkets, and weapon procs ensures that low-ilvl powerhouses are scored for what they actually contribute.
+Dragonspine Trophy scores like BiS because it *is* BiS — valued by its average proc uptime converted to equivalent stat budget, not its item level. A curated database of ~92 raid trinkets, dungeon trinkets, and weapon procs ensures that low-ilvl powerhouses are scored for what they actually contribute.
 
 ### PvE and PvP Scoring
 
-Auto-detects context — battleground or arena uses PvP weights, otherwise PvE. Resilience counts where it matters and doesn't inflate your raid score. Manual toggle via `/tgs pvp`.
+Auto-detects context — battleground or arena uses PvP weights, otherwise PvE. Resilience counts where it matters and doesn't inflate your raid score.
 
 ### Calibrated to Existing Benchmarks
 
-Raid leaders already have mental anchors for what scores mean. TrueGearScore is calibrated so that a fully optimized character lands at roughly the same number as TacoTip GearScore. Scores diverge where they *should* — lower for missing gems and enchants, higher for correctly valued BiS items. No need to recalibrate your mental model.
+TrueGearScore is calibrated so that a fully optimized character lands at roughly the same number as TacoTip GearScore. Scores diverge where they *should* — lower for missing gems and enchants, higher for correctly valued BiS items.
 
 ### Consistent Across Players
 
-Stat weights are hardcoded. There are no user-configurable weight overrides for the main score. When you see `[TGS: 2400]`, it means exactly the same thing regardless of who computed it — no version fragmentation, no "which GearScore addon?" confusion.
+Stat weights are hardcoded. There are no user-configurable weight overrides for the main score. When you see a TrueGearScore number, it means exactly the same thing regardless of who computed it.
 
 ### Instant Scores via Addon Messaging
 
-Players who also run TrueGearScore share scores automatically via guild, party, and raid channels — no inspect range needed. For everyone else, a standard inspect captures full item data including gems and enchants.
+Players who also run TrueGearScore share scores automatically via guild, party, and raid channels — no inspect range needed. For everyone else, a standard inspect captures full item data.
 
 ---
 
@@ -52,7 +56,18 @@ Players who also run TrueGearScore share scores automatically via guild, party, 
 - **Unit tooltips** — Score shown on player mouseover
 - **Character panel** — Your own score on the paperdoll
 - **Inspect frame** — Score when inspecting another player
+- **Item tooltips** — Per-item score on item mouseover (optional, default off)
 - **LFG integration** — Scores shown in LFGBulletinBoard tooltips (soft dependency, works without it)
+
+---
+
+## Installation
+
+1. Download and extract into your `Interface/AddOns/` folder
+2. The folder should be named `TrueGearScore`
+3. Restart WoW or `/reload` if already logged in
+
+No configuration required — scores appear on tooltips immediately. Customize display options via `/tgs config` or the Interface > AddOns panel.
 
 ---
 
@@ -60,41 +75,27 @@ Players who also run TrueGearScore share scores automatically via guild, party, 
 
 | Command | Description |
 |---|---|
-| `/tgs` | Print your PvE and PvP scores |
-| `/tgs report [channel]` | Share score to party/raid/guild chat |
-| `/tgs pvp` | Toggle PvP score display |
+| `/tgs` | Print your score |
+| `/tgs report [channel]` | Share score to party/raid/guild/say chat |
+| `/tgs breakdown` | Per-slot score breakdown |
 | `/tgs config` | Open options panel |
-| `/tgs inspect` | Force score lookup on target |
+| `/tgs rescan` | Force gear rescan |
+| `/tgs debug` | Toggle debug mode |
+| `/tgs help` | Full command list |
 
 ---
 
-## How It Compares to Traditional GearScore
+## How Scoring Works
 
-Traditional GearScore uses an `item level x rarity` formula. It doesn't look at gems, enchants, stat caps, proc effects, or set bonuses — and it has no concept of spec. This leads to well-documented problems:
+Every stat on every equipped item is multiplied by a weight specific to your class and spec. Gems, enchants, proc effects, and set bonuses are all included. Stats approaching their cap (like hit rating) are progressively devalued. The result is a single number that reflects actual gearing quality.
 
-- A player in full epics with empty sockets scores the same as one who spent thousands of gold optimizing
-- BiS items with low ilvl (DST, Darkmoon cards, relics) are penalized, so players avoid equipping them
-- Wrong-spec high-ilvl gear inflates the score, incentivizing players to game the system
-- Stats past cap count at full value, rewarding over-capping that hurts actual performance
-- PvP gear inflates PvE scores because resilience contributes to ilvl
-
-TrueGearScore addresses each of these at the scoring level — not with warnings or workarounds, but by making the formula itself aware of what matters.
-
----
-
-## A Tool, Not a Verdict
-
-Gear score is a tool, and TrueGearScore does its best to make it an accurate one — reflecting actual character power and making it difficult to game. But what people do with the number is up to them.
-
-**Score is not skill.** TrueGearScore measures gear optimization, not encounter awareness, rotation execution, or cooldown management. It's one signal among many.
-
-**Gatekeeping is a social problem.** A better number won't stop people from setting arbitrary thresholds. But when the number reflects actual gear quality, the threshold at least *means something*.
+All 27 class/specs have dedicated weight tables. Cross-spec normalization ensures a well-geared mage and a well-geared warrior with equivalent quality gear land at comparable scores.
 
 ---
 
 ## Current Status
 
-TrueGearScore currently supports **TBC Anniversary Edition**. All 27 class/specs have stat weights, and the curated databases cover the majority of TBC enchants, gems, proc items, and set bonuses. Active development is ongoing — database coverage and display features are expanding with each release.
+TrueGearScore supports **TBC Anniversary Edition**. All 27 class/specs have stat weights, and the curated databases cover 282 enchants, 151 gems, 92 proc items, and 57 set bonus sets. Active development is ongoing.
 
 ---
 

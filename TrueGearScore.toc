@@ -1,10 +1,11 @@
 ## Interface: 20505
 ## Title: TrueGearScore
 ## Notes: Stat-weight-based gear score that accounts for gems, enchants, procs, and stat caps.
+## IconTexture: Interface\Icons\INV_Helmet_08
 ## Author: Veev
 ## Version: 0.1.0
 ## SavedVariables: TrueGearScoreDB, TrueGearScoreLog
-## OptionalDeps: Ace3
+## OptionalDeps: AceAddon-3.0, AceConsole-3.0, AceConfig-3.0, AceDB-3.0, AceDBOptions-3.0, AceEvent-3.0, AceGUI-3.0, AceHook-3.0, AceComm-3.0, AceSerializer-3.0
 
 ## X-License: MIT
 ## X-Curse-Project-ID: 0
@@ -17,6 +18,7 @@ Libs\embeds.xml
 Core\Constants.lua
 Core\Core.lua
 Core\Database.lua
+Core\ScoreValidation.lua
 Core\SlashCommands.lua
 
 # Data

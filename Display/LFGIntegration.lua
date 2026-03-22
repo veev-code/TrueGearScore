@@ -16,6 +16,8 @@ addon:RegisterModule("LFGIntegration", M)
 ---------------------------------------------------------------------------
 
 function M:Initialize()
+    self.enabled = addon.db.profile.showLFGIntegration
+
     -- Soft dependency: only hook if LFGBB is loaded
     local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
     if not (IsAddOnLoaded and IsAddOnLoaded("LFGBulletinBoard")) then
@@ -27,6 +29,10 @@ function M:Initialize()
 
     addon:DebugPrint("LFGIntegration: LFGBB detected, hooking tooltips")
     self:HookEntryTooltips()
+end
+
+function M:Refresh()
+    self.enabled = addon.db.profile.showLFGIntegration
 end
 
 ---------------------------------------------------------------------------
@@ -76,11 +82,8 @@ function M:HookEntryTooltips()
     -- tooltip is being built, but the simplest reliable approach is to
     -- hook OnEnter on each child frame of the scroll child.
 
-    -- Set up a repeating check since frames are pooled and recycled
-    self.hookedFrames = self.hookedFrames or {}
-
-    -- Run initial hook pass after a short delay (frames may not exist yet at init)
-    C_Timer.After(2, function() self:HookChildFrames() end)
+    -- Weak-keyed table: allows GC of recycled LFGBB frames
+    self.hookedFrames = setmetatable({}, {__mode = "k"})
 end
 
 function M:HookChildFrames()
@@ -107,18 +110,11 @@ end
 ---------------------------------------------------------------------------
 
 function M:AppendScoreLine(tooltip, request)
+    if not self.enabled then return end
     if not request then return end
 
     -- Don't double-add
-    for i = 1, tooltip:NumLines() do
-        local left = _G["GameTooltipTextLeft" .. i]
-        if left then
-            local text = left:GetText()
-            if text and text:match("^TrueGearScore") then
-                return
-            end
-        end
-    end
+    if addon.ScoreColors:HasScoreLine(tooltip) then return end
 
     -- Try to find a cached score for this player
     local score, source = self:LookupScore(request)

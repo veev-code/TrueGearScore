@@ -97,6 +97,18 @@ local function GetOptionsTable()
                             M:RefreshModule("InspectFrameDisplay")
                         end,
                     },
+                    showLFGIntegration = {
+                        type = "toggle",
+                        name = "LFG Bulletin Board Scores",
+                        desc = "Show cached TrueGearScore on LFGBulletinBoard tooltips (requires LFGBB addon).",
+                        width = "full",
+                        order = 5,
+                        get = function() return addon.db.profile.showLFGIntegration end,
+                        set = function(_, val)
+                            addon.db.profile.showLFGIntegration = val
+                            M:RefreshModule("LFGIntegration")
+                        end,
+                    },
                 },
             },
             debug = {
@@ -145,6 +157,14 @@ function M:RefreshAll()
             end
         end
     end
+end
+
+---------------------------------------------------------------------------
+-- Profile change callback — propagates new profile values to all modules
+---------------------------------------------------------------------------
+
+function M:Refresh()
+    self:RefreshAll()
 end
 
 ---------------------------------------------------------------------------

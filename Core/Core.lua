@@ -23,6 +23,10 @@ function addon:GetModule(name)
     return self.modules[name]
 end
 
+-- Module init order is non-deterministic (pairs() over a hash table).
+-- Modules must NOT depend on other modules being initialized first.
+-- If a module needs another module, it should defer that access to a later
+-- event (e.g., PLAYER_LOGIN callback) or use lazy lookup via addon:GetModule().
 function addon:InitializeModules()
     for name, module in pairs(self.modules) do
         if module.Initialize then
@@ -35,19 +39,30 @@ function addon:InitializeModules()
 end
 
 ---------------------------------------------------------------------------
--- Logging (persists to TrueGearScoreLog SavedVariable)
--- Follows VeevHUD Logger pattern: structured entries, session tracking
+-- Logging (persists to TrueGearScoreLog SavedVariable when debugMode is on)
+-- Follows VeevHUD Logger pattern: structured entries, session tracking,
+-- SavedVariable writes gated behind debugMode.
 ---------------------------------------------------------------------------
 
 local MAX_LOG_ENTRIES = 500
 
+-- Check if debug mode is enabled (safe before DB init)
+local function IsDebugMode()
+    return addon.db and addon.db.profile and addon.db.profile.debugMode
+end
+
+-- Get log storage (only creates SavedVariables entry if debug mode is on)
 local function GetLog()
+    if not IsDebugMode() then
+        return nil
+    end
     TrueGearScoreLog = TrueGearScoreLog or { entries = {}, session = 0 }
     return TrueGearScoreLog
 end
 
 function addon:Log(level, msg)
     local log = GetLog()
+    if not log then return end  -- Debug mode off, skip logging
     log.entries[#log.entries + 1] = {
         time = date("%H:%M:%S"),
         level = level,
@@ -60,9 +75,11 @@ function addon:Log(level, msg)
 end
 
 function addon:StartNewSession()
+    if not IsDebugMode() then return end
     -- Clear old entries so SavedVariables only contains current session
     TrueGearScoreLog = nil
     local log = GetLog()
+    if not log then return end
     log.session = (log.session or 0) + 1
     self:Log("INFO", "=== Session " .. log.session .. " started ===")
     self:Log("INFO", "Player: " .. (UnitName("player") or "?") .. " Class: " .. tostring(self.playerClass))
@@ -105,14 +122,16 @@ function addon:PrintError(msg)
     DEFAULT_CHAT_FRAME:AddMessage("|cffff4444TrueGearScore:|r " .. tostring(msg))
 end
 
+-- Debug output: chat print AND SavedVariable log only when debugMode is on.
 function addon:DebugPrint(msg)
     if self.db and self.db.profile.debugMode then
         DEFAULT_CHAT_FRAME:AddMessage("|cff888888TGS Debug:|r " .. tostring(msg))
+        self:Log("DEBUG", msg)
     end
-    self:Log("DEBUG", msg)
 end
 
---- Print to chat AND write to diagnostic log
+-- User-facing diagnostic output: always prints to chat (it's user-requested),
+-- but only writes to SavedVariable log when debugMode is on.
 function addon:DiagPrint(msg)
     self:Print(msg)
     self:Log("DIAG", msg)
@@ -188,7 +207,7 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1, ...)
         addon:Print("v" .. addon.version .. " loaded. Type |cff00ff00/tgs|r for your score.")
 
         -- Trigger initial self-scan after a short delay (let equipment data load)
-        C_Timer.After(1, function()
+        C_Timer.After(C.INITIAL_SCAN_DELAY, function()
             local selfScanner = addon:GetModule("SelfScanner")
             if selfScanner then
                 selfScanner:ScanEquipment()

@@ -25,71 +25,14 @@ local RESPONSE_WINDOW = 10       -- max 5 responses per this window
 local MAX_RESPONSES_PER_WINDOW = 5
 local STALENESS_THRESHOLD = 300  -- 5 minutes — don't share stale data
 
--- Suspicious score tracking
-local SCORE_CHANGE_THRESHOLD = 500  -- flag if score jumps by this much
-local SCORE_CHANGE_WINDOW = 60      -- within this many seconds
-
 -- State
 local lastQueryTime = 0
 local responseTimestamps = {}  -- ring buffer of recent response times
 local pendingQueries = {}      -- { [guid] = true } — GUIDs we've asked about recently
-local scoreHistory = {}        -- { [guid] = { score, timestamp } } — for change detection
 
 ---------------------------------------------------------------------------
 -- Helpers
 ---------------------------------------------------------------------------
-
---- Validate a score value. Returns true if plausible, false otherwise.
-local function ValidateScore(score, sender)
-    if type(score) ~= "number" then
-        addon:DebugPrint("GossipProtocol: non-numeric score from " .. tostring(sender))
-        return false
-    end
-    if score < 0 then
-        addon:DebugPrint("GossipProtocol: negative score from " .. tostring(sender))
-        return false
-    end
-    if score > C.MAX_PLAUSIBLE_SCORE then
-        addon:DebugPrint("GossipProtocol: rejected implausible score " .. score .. " from " .. tostring(sender))
-        return false
-    end
-    if score > C.MAX_PLAUSIBLE_SCORE * 0.9 then
-        addon:DebugPrint("GossipProtocol: WARNING near-cap score " .. score .. " from " .. tostring(sender))
-    end
-    return true
-end
-
---- Check if a score change for a GUID looks suspicious.
--- @param guid   Player GUID
--- @param score  New score
--- @return boolean  true if suspicious
-local function IsSuspiciousChange(guid, score)
-    local prev = scoreHistory[guid]
-    if not prev then return false end
-
-    local now = GetTime()
-    if (now - prev.timestamp) > SCORE_CHANGE_WINDOW then
-        return false  -- old data, not suspicious
-    end
-
-    local delta = math.abs(score - prev.score)
-    if delta > SCORE_CHANGE_THRESHOLD then
-        addon:DebugPrint("GossipProtocol: SUSPICIOUS score change for " .. tostring(guid) ..
-            " (" .. prev.score .. " -> " .. score .. " in " ..
-            math.floor(now - prev.timestamp) .. "s)")
-        return true
-    end
-
-    return false
-end
-
---- Record a score in the per-GUID history for change detection.
-local function RecordScoreHistory(guid, score)
-    scoreHistory[guid] = {
-        score = score,
-        timestamp = GetTime(),
-    }
-end
 
 --- Check if we can send a response (throttle check).
 local function CanSendResponse()
@@ -122,14 +65,9 @@ function M:Initialize()
         M:OnResponseReceived(prefix, message, distribution, sender)
     end)
 
-    -- Periodically prune scoreHistory to avoid unbounded growth
+    -- Periodically prune shared score history to avoid unbounded growth
     C_Timer.NewTicker(120, function()
-        local now = GetTime()
-        for guid, entry in pairs(scoreHistory) do
-            if (now - entry.timestamp) > SCORE_CHANGE_WINDOW * 2 then
-                scoreHistory[guid] = nil
-            end
-        end
+        addon.ScoreValidation:PruneHistory()
     end)
 end
 
@@ -153,8 +91,8 @@ function M:QueryScore(guid)
     local now = GetTime()
     if (now - lastQueryTime) < QUERY_COOLDOWN then return end
 
-    -- Already asked recently?
-    if pendingQueries[guid] then return end
+    -- Already asked recently? Only suppress if cache already has data.
+    if pendingQueries[guid] and addon.ScoreCache:Get(guid) then return end
 
     local payload = {
         guid = guid,
@@ -255,15 +193,15 @@ function M:OnResponseReceived(prefix, message, distribution, sender)
     local score = tonumber(payload.score)
 
     if not guid or type(guid) ~= "string" then return end
-    if not ValidateScore(score, sender) then return end
+    if not addon.ScoreValidation:ValidateScore(score, sender) then return end
 
     -- Check for suspicious rapid score changes
-    if IsSuspiciousChange(guid, score) then
+    if addon.ScoreValidation:IsSuspiciousChange(guid, score, sender) then
         addon:DebugPrint("GossipProtocol: ignoring suspicious gossip for " .. guid)
         return
     end
 
-    RecordScoreHistory(guid, score)
+    addon.ScoreValidation:RecordScoreHistory(guid, score)
 
     -- Store with source="gossip" (lowest priority)
     -- ScoreCache:Set already protects inspect > broadcast; we also protect broadcast > gossip

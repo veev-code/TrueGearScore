@@ -314,10 +314,10 @@ addon.ProcDatabase = {
     -- Medallion of the Alliance (Season 4 — all classes)
     -- CC break on-use only (no stat proc). Passive resilience in GetItemStats.
     -- The on-use has no stat equivalent for scoring
-    [37864] = { RESILIENCE = 0 },
+    [37864] = {},
 
     -- Medallion of the Horde (Season 4 — all classes)
-    [37865] = { RESILIENCE = 0 },
+    [37865] = {},
 
     ---------------------------------------------------------------------------
     -- TRINKETS — Misc Notable

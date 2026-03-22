@@ -29,8 +29,14 @@ local ILVL_VALUE_X, ILVL_VALUE_Y = -12, 24
 ---------------------------------------------------------------------------
 
 function M:Initialize()
+    self.enabled = addon.db.profile.showPaperdoll
+
     if PaperDollFrame then
         PaperDollFrame:HookScript("OnShow", function()
+            if not self.enabled then
+                self:HideDisplay()
+                return
+            end
             self:EnsureDisplay()
             self:HideTacoTip()
             self:UpdateScore()
@@ -128,8 +134,24 @@ end
 -- Score update
 ---------------------------------------------------------------------------
 
+function M:HideDisplay()
+    if self.gsLabel then self.gsLabel:Hide() end
+    if self.gsValue then self.gsValue:Hide() end
+    if self.ilvlLabel then self.ilvlLabel:Hide() end
+    if self.ilvlValue then self.ilvlValue:Hide() end
+end
+
+function M:ShowDisplay()
+    if self.gsLabel then self.gsLabel:Show() end
+    if self.gsValue then self.gsValue:Show() end
+    if self.ilvlLabel then self.ilvlLabel:Show() end
+    if self.ilvlValue then self.ilvlValue:Show() end
+end
+
 function M:UpdateScore()
     if not self.gsValue then return end
+    if not self.enabled then self:HideDisplay() return end
+    self:ShowDisplay()
 
     local selfScanner = addon:GetModule("SelfScanner")
     local score = selfScanner and selfScanner.currentScore or 0
@@ -144,12 +166,11 @@ function M:UpdateScore()
         self.gsValue:SetTextColor(0.53, 0.53, 0.53, 1)
     end
 
-    -- iLvl
+    -- iLvl (neutral white — iLvl is not a score)
     local avgIlvl = self:ComputeAverageItemLevel()
     if avgIlvl > 0 then
-        local r, g, b = addon.ScoreColors:GetColor(score)
         self.ilvlValue:SetText(tostring(avgIlvl))
-        self.ilvlValue:SetTextColor(r, g, b, 1)
+        self.ilvlValue:SetTextColor(1, 1, 1, 1)
     else
         self.ilvlValue:SetText("--")
         self.ilvlValue:SetTextColor(0.53, 0.53, 0.53, 1)
@@ -158,11 +179,17 @@ end
 
 --- Called by SelfScanner when score changes.
 function M:OnScoreUpdated(score)
+    if not self.enabled then return end
     if CharacterFrame and CharacterFrame:IsShown() then
         self:UpdateScore()
     end
 end
 
 function M:Refresh()
+    self.enabled = addon.db.profile.showPaperdoll
+    if not self.enabled then
+        self:HideDisplay()
+        return
+    end
     self:UpdateScore()
 end

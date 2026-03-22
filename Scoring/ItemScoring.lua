@@ -24,6 +24,39 @@ local STAT_REVERSE = C.STAT_REVERSE
 -- Hidden tooltip for scanning socket bonus text (created on first use)
 local scanTooltip
 
+-- Map tooltip stat names to canonical stat keys for socket bonus parsing.
+-- NOTE: These are English stat names as they appear in tooltip text.
+-- Non-English clients will need a localized version of this table.
+local BONUS_STAT_MAP = {
+    ["Strength"]       = "STRENGTH",
+    ["Agility"]        = "AGILITY",
+    ["Stamina"]        = "STAMINA",
+    ["Intellect"]      = "INTELLECT",
+    ["Spirit"]         = "SPIRIT",
+    ["Spell Damage"]   = "SPELL_POWER",
+    ["Spell Power"]    = "SPELL_POWER",
+    ["Healing"]        = "HEAL_POWER",
+    ["Attack Power"]   = "ATTACK_POWER",
+    ["Hit Rating"]     = "HIT_RATING",
+    ["Critical Strike Rating"] = "CRIT_RATING",
+    ["Crit Rating"]    = "CRIT_RATING",
+    ["Haste Rating"]   = "HASTE_RATING",
+    ["Defense Rating"] = "DEFENSE",
+    ["Dodge Rating"]   = "DODGE",
+    ["Parry Rating"]   = "PARRY",
+    ["Resilience Rating"] = "RESILIENCE",
+    ["Resilience"]     = "RESILIENCE",
+    ["Block Rating"]   = "BLOCK_RATING",
+    ["Block Value"]    = "BLOCK_VALUE",
+    ["Expertise Rating"] = "EXPERTISE",
+    ["Spell Penetration"] = "SPELL_PEN",
+    ["Mana every 5 Sec."] = "MP5",
+    ["Mana every 5 sec."] = "MP5",
+    ["mana per 5 sec."]   = "MP5",
+    ["mana per 5 Sec."]   = "MP5",
+    ["Spell Damage and Healing"] = "SPELL_POWER",
+}
+
 --- Build a "clean" item link with gem slots zeroed out.
 -- Used to detect socket layout via GetItemStats() on the ungemmed item.
 -- @param itemLink  Full item link
@@ -149,49 +182,9 @@ local function ParseSocketBonusFromTooltip(itemLink)
         if line then
             local text = line:GetText()
             if text and text:match("Socket Bonus:") then
-                -- Parse "+X Stat" patterns from the bonus line
-                -- Examples: "Socket Bonus: +4 Intellect", "Socket Bonus: +3 Spell Damage"
-                -- Can have multiple stats: "Socket Bonus: +4 Stamina and +2 Mana every 5 Sec."
-                for value, stat in text:gmatch("%+(%d+)%s+(.-)%s*$") do
-                    -- Also try to match multiple bonuses separated by " and "
-                    -- But most TBC socket bonuses are single-stat
-                end
-
-                -- More robust: extract all +N patterns with their stat text
-                -- TBC socket bonuses are typically single stat, but handle edge cases
+                -- Extract all +N Stat patterns from the bonus line
                 local bonusText = text:match("Socket Bonus:%s*(.*)")
                 if bonusText then
-                    -- Map tooltip stat names to canonical stat names
-                    local BONUS_STAT_MAP = {
-                        ["Strength"]       = "STRENGTH",
-                        ["Agility"]        = "AGILITY",
-                        ["Stamina"]        = "STAMINA",
-                        ["Intellect"]      = "INTELLECT",
-                        ["Spirit"]         = "SPIRIT",
-                        ["Spell Damage"]   = "SPELL_POWER",
-                        ["Spell Power"]    = "SPELL_POWER",
-                        ["Healing"]        = "HEAL_POWER",
-                        ["Attack Power"]   = "ATTACK_POWER",
-                        ["Hit Rating"]     = "HIT_RATING",
-                        ["Critical Strike Rating"] = "CRIT_RATING",
-                        ["Crit Rating"]    = "CRIT_RATING",
-                        ["Haste Rating"]   = "HASTE_RATING",
-                        ["Defense Rating"] = "DEFENSE",
-                        ["Dodge Rating"]   = "DODGE",
-                        ["Parry Rating"]   = "PARRY",
-                        ["Resilience Rating"] = "RESILIENCE",
-                        ["Resilience"]     = "RESILIENCE",
-                        ["Block Rating"]   = "BLOCK_RATING",
-                        ["Block Value"]    = "BLOCK_VALUE",
-                        ["Expertise Rating"] = "EXPERTISE",
-                        ["Spell Penetration"] = "SPELL_PEN",
-                        ["Mana every 5 Sec."] = "MP5",
-                        ["Mana every 5 sec."] = "MP5",
-                        ["mana per 5 sec."]   = "MP5",
-                        ["mana per 5 Sec."]   = "MP5",
-                        ["Spell Damage and Healing"] = "SPELL_POWER",
-                    }
-
                     -- Match patterns like "+4 Intellect", "+3 Spell Damage"
                     for val, statName in bonusText:gmatch("%+(%d+)%s+([%a%s%.]+)") do
                         -- Trim trailing whitespace/punctuation
@@ -401,6 +394,18 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
         return { totalScore = 0, perSlot = {}, effectiveWeights = {} }
     end
 
+    -- Feral druids have two roles (cat DPS / bear tank) under one talent tree.
+    -- Score with both weight tables and use whichever the gear scores higher with.
+    -- This lets the gear self-select: tank gear → bear, DPS gear → cat.
+    if specKey == "DRUID_FERAL" then
+        local catResult = self:ScoreCharacter(equippedItems, "DRUID_FERAL_CAT")
+        local bearResult = self:ScoreCharacter(equippedItems, "DRUID_FERAL_BEAR")
+        if bearResult.totalScore > catResult.totalScore then
+            return bearResult
+        end
+        return catResult
+    end
+
     local specData = addon.StatWeights:GetSpecWeights(specKey)
     if not specData then
         addon:DebugPrint("ScoreCharacter: no weights for spec " .. specKey)
@@ -459,8 +464,8 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
         end
         -- Sort details by contribution descending for readability
         table.sort(details, function(a, b) return a.contribution > b.contribution end)
-        slotScore = math.max(0, math.floor(slotScore))
-        perSlot[slotID] = slotScore
+        slotScore = math.max(0, slotScore)
+        perSlot[slotID] = slotScore  -- Raw (unrounded) — floored for display later
         perSlotDetails[slotID] = details
         totalRaw = totalRaw + slotScore
     end
@@ -491,7 +496,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
                             local weight = effectiveWeights[stat] or 0
                             bonusScore = bonusScore + (value * weight)
                         end
-                        bonusScore = math.max(0, math.floor(bonusScore))
+                        bonusScore = math.max(0, bonusScore)
                         if bonusScore > 0 then
                             setBonusScore = setBonusScore + bonusScore
                             setBonusDetails[#setBonusDetails + 1] = {
@@ -499,9 +504,9 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
                                 setID = setID,
                                 pieces = count,
                                 threshold = threshold,
-                                score = bonusScore,
+                                score = math.floor(bonusScore),
                             }
-                            addon:DebugPrint("SetBonus: " .. setData.name .. " " .. threshold .. "pc active (" .. count .. " equipped) = +" .. bonusScore)
+                            addon:DebugPrint("SetBonus: " .. setData.name .. " " .. threshold .. "pc active (" .. count .. " equipped) = +" .. math.floor(bonusScore))
                         end
                     end
                 end
@@ -520,7 +525,6 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
         end
         baseOnlyRaw = baseOnlyRaw + math.max(0, slotBase)
     end
-    baseOnlyRaw = math.floor(baseOnlyRaw)
 
     -- Compute per-category breakdown (gems, enchants, procs, socket bonuses scored separately)
     local gemScoreRaw = 0
@@ -564,6 +568,9 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
     local globalScale = C.SCORE_SCALE or 1
     local specScale = addon.StatWeights:GetSpecScale(specKey)
     local scale = globalScale * specScale
+    -- Single floor at the end: totalScore is the only place we truncate to integer.
+    -- Per-slot values are floored individually for display (integer requirement)
+    -- but their raw unrounded values were summed into totalRaw above.
     local totalScore = math.floor(totalRaw * scale)
     local baseOnlyScore = math.floor(baseOnlyRaw * scale)
     for slotID, raw in pairs(perSlot) do
@@ -581,15 +588,21 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
 
     addon:DebugPrint("ScoreCharacter: raw=" .. totalRaw .. " baseOnly=" .. baseOnlyRaw .. " scaled=" .. totalScore .. " baseScaled=" .. baseOnlyScore .. " eff=" .. tostring(efficiency) .. "% (x" .. scale .. ") spec=" .. specKey)
 
+    -- Breakdown categories: floor each individually, then derive base as remainder.
+    -- This guarantees breakdown values sum exactly to totalScore. The base category
+    -- absorbs any positive rounding remainder from the other categories' floors.
     local scaledSetBonus = math.floor(setBonusScore * scale)
     local scaledGems = math.floor(math.max(0, gemScoreRaw) * scale)
     local scaledEnchants = math.floor(math.max(0, enchantScoreRaw) * scale)
     local scaledProcs = math.floor(math.max(0, procScoreRaw) * scale)
     local scaledSocketBonuses = math.floor(math.max(0, socketBonusScoreRaw) * scale)
-    local scaledBase = totalScore - scaledGems - scaledEnchants - scaledProcs - scaledSetBonus - scaledSocketBonuses
+    -- Base absorbs rounding remainder so breakdown always sums to totalScore.
+    -- Guard against negative in edge cases (e.g., negative-weight stats in base).
+    local scaledBase = math.max(0, totalScore - scaledGems - scaledEnchants - scaledProcs - scaledSetBonus - scaledSocketBonuses)
 
     return {
         totalScore = totalScore,
+        specKey = specKey,  -- Resolved spec (e.g., DRUID_FERAL_CAT or DRUID_FERAL_BEAR)
         perSlot = perSlot,
         perSlotDetails = perSlotDetails,
         effectiveWeights = effectiveWeights,
@@ -600,7 +613,7 @@ function addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
         setBonusDetails = setBonusDetails,
         efficiency = efficiency,
         breakdown = {
-            base = scaledBase,
+            base = scaledBase,  -- Includes rounding remainder so breakdown sums to totalScore
             gems = scaledGems,
             enchants = scaledEnchants,
             procs = scaledProcs,

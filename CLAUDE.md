@@ -6,7 +6,7 @@ TrueGearScore is a gear score addon for World of Warcraft (TBC Classic / Anniver
 
 - **Stat-weight-based scoring**: Every stat point is multiplied by a per-spec weight. The sum across all items is the score.
 - **Cap-aware**: Hit rating (and other capped stats) diminish in value as the player approaches cap. No double-counting past breakpoints.
-- **PvE / PvP dual scoring**: Auto-detects context (BG/arena → PvP weights, otherwise PvE). Manual toggle via `/tgs pvp`.
+- **PvE / PvP dual scoring**: Auto-detects context (BG/arena → PvP weights, otherwise PvE).
 - **Calibrated to TacoTip**: Fully BIS characters with proper gems/enchants score roughly the same as TacoTip GearScore. Scores diverge when players are missing gems/enchants (lower) or have low-ilvl BIS items like DST (higher).
 - **Works on everyone**: Scores any player via inspect — no addon required on their end. Addon-to-addon communication provides instant scores without inspect range.
 - **Hardcoded weights**: No user-configurable weights for the main score. Everyone sees the same number for the same gear. Consistent, comparable, no debates.
@@ -44,19 +44,25 @@ Score = Σ (stat_value × stat_weight) across all sources per item, for all equi
 - Stats below cap: full weight
 - Stats at/above cap: reduced weight (near-zero for hard caps like hit, soft diminishment for others)
 
+**Feral Druid dual-role scoring:**
+Feral is the only spec with two distinct roles (cat DPS / bear tank) under one talent tree. Talent detection returns `DRUID_FERAL`, but the weight tables are split into `DRUID_FERAL_CAT` and `DRUID_FERAL_BEAR`. When `ScoreCharacter` receives `DRUID_FERAL`, it scores with both weight tables and returns whichever produces the higher score. The gear self-selects: tank gear (STAM/DEF/DODGE) → bear weights win, DPS gear (AGI/CRIT/AP) → cat weights win. The resolved sub-spec (`specKey`) is propagated through the result, SelfScanner, AddonChannel broadcast, and ScoreCache. Display modules can distinguish "Feral (Cat)" from "Feral (Bear)" via the cached `specKey`.
+
 ## File Structure
 
 ### Root
 - `TrueGearScore.toc` — TOC file
 - `CLAUDE.md`, `README.md`, `CHANGELOG.md`, `PLAN.md`
+- `LICENSE` — MIT license
 - `.pkgmeta` — CurseForge packaging
 - `.github/workflows/release.yml` — CI release workflow
+- `.githooks/pre-commit` — Pre-commit hook running `Tools/validate_data.py`
 
 ### Core (`Core/`)
 - `Core.lua` — Addon init, module registration, spec detection, logging
 - `SlashCommands.lua` — All `/tgs` subcommands including calibration
 - `Constants.lua` — Score brackets, color tables, expansion-wide score cap, timing constants, `C.DEFAULTS.profile`
 - `Database.lua` — AceDB wrapper: profiles, saved variables, settings
+- `ScoreValidation.lua` — Shared anti-fake validation utilities (plausibility checks, suspicious rapid-change detection) used by AddonChannel and GossipProtocol
 
 ### Scoring (`Scoring/`)
 - `StatWeights.lua` — Per-class/spec stat weight tables (PvE + PvP sets), stat cap thresholds
@@ -68,8 +74,8 @@ Score = Σ (stat_value × stat_weight) across all sources per item, for all equi
 - `ProcDatabase.lua` — Item ID → equivalent stat budget for procs/equip effects (~92 items)
 - `EnchantDatabase.lua` — Enchant ID → stat contributions (~282 TBC enchants)
 - `GemDatabase.lua` — Gem item ID → stat contributions (~151 gem cuts)
-- `SetBonusDatabase.lua` — Set ID + piece count (2pc/4pc) → equivalent stat budget per spec (~45 sets, ~164 bonus entries)
-- `ReferenceSets.lua` — Per-spec BIS gear sets for calibration (~137 sets across P1/P2/heroic variants)
+- `SetBonusDatabase.lua` — Set ID + piece count (2pc/4pc) → equivalent stat budget per spec (~57 sets)
+- `ReferenceSets.lua` — Per-spec BIS gear sets for calibration (~138 sets across P1/P2/heroic variants)
 
 ### Inspect (`Inspect/`)
 - `InspectHandler.lua` — Hooks `INSPECT_READY` to capture full item links via `GetInventoryItemLink(unit, slot)` (includes gems/enchants). Caches results.
@@ -84,7 +90,6 @@ Score = Σ (stat_value × stat_weight) across all sources per item, for all equi
 - `ItemTooltip.lua` — Per-item score on item mouseover (optional, default off)
 - `Paperdoll.lua` — Player's own score on character panel
 - `InspectFrame.lua` — Score on inspect frame
-- `RaidFrame.lua` — Score in raid UI tooltips
 - `LFGIntegration.lua` — Hooks LFGBulletinBoard tooltips to show scores if LFGBB is loaded (soft dependency, no chat message modification).
 - `ScoreColors.lua` — Score → color bracket mapping (gradient from grey → green → blue → purple → orange, calibrated to TacoTip brackets)
 
@@ -94,6 +99,7 @@ Score = Σ (stat_value × stat_weight) across all sources per item, for all equi
 ### Other
 - `Libs/embeds.xml` — Library loader (library sources fetched by `.pkgmeta` externals)
 - `Tools/fetch-libs.sh` — Fetches all library externals into `Libs/` for local development
+- `Tools/validate_data.py` — Data validator for gem/enchant/proc databases (duplicate IDs, invalid stat keys, range checks)
 
 ## Architecture
 
@@ -162,22 +168,31 @@ Score received via addon message channel. Instant, no range limit within channel
 All libraries fetched via `.pkgmeta` externals (same pattern as VeevHUD). NOT committed to git — `Libs/*/` is gitignored.
 
 - **LibStub** — library loader
+- **CallbackHandler-1.0** — callback/event dispatch for libraries
 - **AceAddon-3.0, AceDB-3.0, AceEvent-3.0, AceConsole-3.0** — addon framework
+- **AceHook-3.0** — hook management (used by display modules)
 - **AceComm-3.0, AceSerializer-3.0** — addon message communication
 - **AceConfig-3.0, AceGUI-3.0, AceDBOptions-3.0** — options panel
-- **LibClassicInspector** — inspect triggering, unit inventory fallback
-- **LibDeflate** (optional) — compression for gossip protocol
+
+**Optional runtime dependency** (not in `.pkgmeta`):
+- **LibClassicInspector** — used opportunistically for spec detection on inspected players (via `LibStub:GetLibrary("LibClassicInspector", true)`). Not required — falls back to talent-tab heuristic if absent.
 
 **Local dev**: `bash Tools/fetch-libs.sh` → test → release in same session.
 
 ## Slash Commands
 
 `/tgs` or `/truegearscore`:
-- *(no args)* — Print your own PvE and PvP scores
-- `report [channel]` — Share score to party/raid/guild chat
-- `pvp` — Toggle PvP score display mode
+- *(no args)* — Print your own score (base + bonus breakdown)
+- `report [channel]` — Share score to party/raid/guild/say chat (auto-detects channel if omitted)
+- `breakdown` — Per-slot score breakdown with stat-level detail in log
+- `spec` — Show detected spec
+- `rescan` — Force gear rescan
+- `statkeys` — Audit `GetItemStats()` keys for unmapped entries
+- `diag` — Run full diagnostic (item parse, stat mapping, sample scoring — logs to SavedVariables)
+- `calibrate` — Score all reference BIS sets and output SPEC_SCALE factors
+- `log [n]` — Show recent log entries (default 30)
+- `clearlog` — Clear log
 - `config` / `options` — Open options panel
-- `inspect <unit/name>` — Force score lookup on target
 - `debug` — Toggle debug mode
 - `help` — Command list
 

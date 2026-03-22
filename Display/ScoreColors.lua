@@ -49,6 +49,22 @@ function addon.ScoreColors:GetBracketLabel(score)
     return "Trash"
 end
 
+--- Check if a tooltip already contains a TrueGearScore line.
+-- @param tooltip  GameTooltip frame
+-- @return boolean  true if a "TrueGearScore" line is already present
+function addon.ScoreColors:HasScoreLine(tooltip)
+    for i = 1, tooltip:NumLines() do
+        local left = _G["GameTooltipTextLeft" .. i]
+        if left then
+            local text = left:GetText()
+            if text and text:match("^TrueGearScore") then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 --- Get the content readiness tier for a score (e.g., "Kara-ready", "SSC/TK-ready").
 -- @param score  Numeric score
 -- @return string|nil  Content tier label, or nil if below all tiers

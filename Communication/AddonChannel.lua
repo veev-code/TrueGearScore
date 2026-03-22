@@ -19,11 +19,6 @@ local SCORE_UPDATE_DELAY = 2   -- seconds to debounce OnScoreUpdated
 local AceComm = LibStub("AceComm-3.0")
 local AceSerializer = LibStub("AceSerializer-3.0")
 
--- Anti-fake: per-GUID score history for rapid-change detection
-local SCORE_CHANGE_THRESHOLD = 500  -- flag if score jumps by this much
-local SCORE_CHANGE_WINDOW = 60      -- within this many seconds
-local scoreHistory = {}              -- { [guid] = { score, timestamp } }
-
 -- State
 local lastBroadcastTime = 0
 local scoreUpdateTimer = nil
@@ -89,7 +84,7 @@ function M:BroadcastScore()
     local payload = {
         score = score,
         guid = addon.playerGUID,
-        specKey = addon.playerSpec,
+        specKey = selfScanner.resolvedSpec or addon.playerSpec,
         version = PROTOCOL_VERSION,
     }
 
@@ -139,46 +134,15 @@ function M:OnCommReceived(prefix, message, distribution, sender)
         return
     end
 
-    -- Anti-fake: reject negative scores
-    if score < 0 then
-        addon:DebugPrint("AddonChannel: rejected negative score " .. score .. " from " .. tostring(sender))
-        return
-    end
-
-    -- Anti-fake: reject scores above theoretical max
-    if score > C.MAX_PLAUSIBLE_SCORE then
-        addon:DebugPrint("AddonChannel: rejected implausible score " .. score .. " from " .. tostring(sender))
-        return
-    end
-
-    -- Anti-fake: reject zero scores
-    if score <= 0 then
-        addon:DebugPrint("AddonChannel: rejected zero score from " .. tostring(sender))
-        return
-    end
-
-    -- Anti-fake: warn on near-cap scores (>90% of max)
-    if score > C.MAX_PLAUSIBLE_SCORE * 0.9 then
-        addon:DebugPrint("AddonChannel: WARNING near-cap score " .. score .. " from " .. tostring(sender) .. " (GUID " .. tostring(guid) .. ")")
-    end
+    -- Anti-fake: validate score range (negative, zero, implausible, near-cap)
+    if not addon.ScoreValidation:ValidateScore(score, sender) then return end
 
     -- Anti-fake: detect rapid score changes (>500 in <1 minute)
-    local prevHistory = scoreHistory[guid]
-    if prevHistory then
-        local now = GetTime()
-        if (now - prevHistory.timestamp) < SCORE_CHANGE_WINDOW then
-            local delta = math.abs(score - prevHistory.score)
-            if delta > SCORE_CHANGE_THRESHOLD then
-                addon:DebugPrint("AddonChannel: SUSPICIOUS rapid score change for " .. tostring(guid) ..
-                    " (" .. prevHistory.score .. " -> " .. score .. " in " ..
-                    math.floor(now - prevHistory.timestamp) .. "s) from " .. tostring(sender))
-                -- Still store it (might be legitimate respec/gear swap), but the log flags it
-            end
-        end
-    end
+    -- Still store it (might be legitimate respec/gear swap), but the log flags it
+    addon.ScoreValidation:IsSuspiciousChange(guid, score, sender)
 
     -- Record in score history for change detection
-    scoreHistory[guid] = { score = score, timestamp = GetTime() }
+    addon.ScoreValidation:RecordScoreHistory(guid, score)
 
     -- Store in cache
     addon.ScoreCache:Set(guid, {

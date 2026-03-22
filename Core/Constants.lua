@@ -6,7 +6,11 @@ local C = addon.Constants
 -- Score color brackets (calibrated to TacoTip TBC ranges: BRACKET_SIZE=400)
 ---------------------------------------------------------------------------
 
+-- Number of score points per color bracket tier (controls how wide each tier is)
 C.BRACKET_SIZE = 400
+
+-- Seconds to wait after PLAYER_LOGIN before initial self-scan (lets equipment data load)
+C.INITIAL_SCAN_DELAY = 1
 
 -- WarcraftLogs-inspired color scheme.
 -- Thresholds calibrated against reference gear sets:
@@ -28,7 +32,8 @@ C.SCORE_BRACKETS = {
     { threshold = 0,    label = "Poor",       color = { 0.40, 0.40, 0.40 } }, -- Grey (#666666) — Fresh 70
 }
 
--- Expansion-wide theoretical max (full Sunwell BIS, perfect gems/enchants, all specs)
+-- Expansion-wide theoretical max (full Sunwell BIS, perfect gems/enchants, all specs).
+-- Used by AddonChannel to reject implausible scores.
 C.MAX_PLAUSIBLE_SCORE = 3500
 
 ---------------------------------------------------------------------------
@@ -39,16 +44,16 @@ C.MAX_PLAUSIBLE_SCORE = 3500
 ---------------------------------------------------------------------------
 
 C.CONTENT_TIERS = {
-    { threshold = 2258, label = "Sunwell-ready" },
-    { threshold = 2077, label = "BT/Hyjal-ready" },
-    { threshold = 1930, label = "SSC/TK-ready" },
-    { threshold = 1740, label = "Kara-ready" },
-    { threshold = 1085, label = "Heroic-ready" },
+    { threshold = 2258, label = "SWP" },
+    { threshold = 2077, label = "T6" },
+    { threshold = 1930, label = "T5" },
+    { threshold = 1740, label = "T4" },
+    { threshold = 1085, label = "Heroics" },
 }
 
--- Calibration scale factor: raw score × SCALE = displayed score
--- Weights in StatWeights.lua are pre-calibrated so base items ≈ TacoTip GearScore.
--- This scale factor is reserved for future global tuning if needed.
+-- Calibration scale factor: raw score * SCALE = displayed score.
+-- Weights in StatWeights.lua are pre-calibrated so base items match TacoTip GearScore.
+-- Reserved for future global tuning if needed (1.0 = no adjustment).
 C.SCORE_SCALE = 1.0
 
 ---------------------------------------------------------------------------
@@ -183,6 +188,19 @@ C.STAT_REVERSE["ITEM_MOD_SPELL_PENETRATION"] = "SPELL_PEN"
 -- Weapon DPS (not directly a stat weight, but track it to avoid "unmapped" noise)
 -- C.STAT_REVERSE["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = "WEAPON_DPS"
 
+-- Resistances (no weight, but recognized so EnchantDatabase entries aren't dropped)
+C.STAT_REVERSE["FIRE_RESIST"]    = "FIRE_RESIST"
+C.STAT_REVERSE["FROST_RESIST"]   = "FROST_RESIST"
+C.STAT_REVERSE["ARCANE_RESIST"]  = "ARCANE_RESIST"
+C.STAT_REVERSE["NATURE_RESIST"]  = "NATURE_RESIST"
+C.STAT_REVERSE["SHADOW_RESIST"]  = "SHADOW_RESIST"
+C.STAT_REVERSE["RESIST_ALL"]     = "RESIST_ALL"
+-- Threat modifiers (no weight)
+C.STAT_REVERSE["THREAT"]           = "THREAT"
+C.STAT_REVERSE["THREAT_REDUCTION"] = "THREAT_REDUCTION"
+-- Weapon flat damage (no weight currently)
+C.STAT_REVERSE["WEAPON_DAMAGE"] = "WEAPON_DAMAGE"
+
 ---------------------------------------------------------------------------
 -- Spec detection: class + talent tree index => spec key
 ---------------------------------------------------------------------------
@@ -211,5 +229,6 @@ C.DEFAULTS = {
         showItemTooltip = false,
         showInspectFrame = true,
         debugMode = false,
+        showLFGIntegration = true,
     },
 }

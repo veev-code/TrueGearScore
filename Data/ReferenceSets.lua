@@ -1072,9 +1072,9 @@ addon.ReferenceSets = {
     -- Druid Feral DPS (Cat) — Wowhead TBC Classic BIS guides
     ---------------------------------------------------------------------------
 
-    DRUID_FERAL_PRERAID = {
-        name = "Druid Feral DPS Pre-Raid BIS",
-        spec = "DRUID_FERAL",
+    DRUID_FERAL_CAT_PRERAID = {
+        name = "Druid Feral Cat Pre-Raid BIS",
+        spec = "DRUID_FERAL_CAT",
         items = {
             [1]  = 8345,   -- Wolfshead Helm
             [2]  = 24114,  -- Braided Eternium Chain
@@ -1095,9 +1095,9 @@ addon.ReferenceSets = {
         },
     },
 
-    DRUID_FERAL_P1 = {
-        name = "Druid Feral DPS Phase 1 BIS (Kara/Gruul/Mag)",
-        spec = "DRUID_FERAL",
+    DRUID_FERAL_CAT_P1 = {
+        name = "Druid Feral Cat Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "DRUID_FERAL_CAT",
         items = {
             [1]  = 8345,   -- Wolfshead Helm
             [2]  = 24114,  -- Braided Eternium Chain
@@ -1118,9 +1118,9 @@ addon.ReferenceSets = {
         },
     },
 
-    DRUID_FERAL_P2 = {
-        name = "Druid Feral DPS Phase 2 BIS (SSC/TK)",
-        spec = "DRUID_FERAL",
+    DRUID_FERAL_CAT_P2 = {
+        name = "Druid Feral Cat Phase 2 BIS (SSC/TK)",
+        spec = "DRUID_FERAL_CAT",
         items = {
             [1]  = 8345,   -- Wolfshead Helm
             [2]  = 24114,  -- Braided Eternium Chain
@@ -1141,9 +1141,9 @@ addon.ReferenceSets = {
         },
     },
 
-    DRUID_FERAL_P3 = {
-        name = "Druid Feral DPS Phase 3 BIS (BT/Hyjal)",
-        spec = "DRUID_FERAL",
+    DRUID_FERAL_CAT_P3 = {
+        name = "Druid Feral Cat Phase 3 BIS (BT/Hyjal)",
+        spec = "DRUID_FERAL_CAT",
         items = {
             [1]  = 8345,   -- Wolfshead Helm
             [2]  = 32260,  -- Choker of Endless Nightmares
@@ -1164,9 +1164,9 @@ addon.ReferenceSets = {
         },
     },
 
-    DRUID_FERAL_P5 = {
-        name = "Druid Feral DPS Phase 5 BIS (Sunwell)",
-        spec = "DRUID_FERAL",
+    DRUID_FERAL_CAT_P5 = {
+        name = "Druid Feral Cat Phase 5 BIS (Sunwell)",
+        spec = "DRUID_FERAL_CAT",
         items = {
             [1]  = 34244,  -- Duplicitous Guise
             [2]  = 34358,  -- Hard Khorium Choker
@@ -2433,7 +2433,7 @@ addon.ReferenceSets = {
     -- Pre-Raid BIS
     DRUID_FERAL_BEAR_PRERAID = {
         name = "Druid Feral Tank Pre-Raid BIS",
-        spec = "DRUID_FERAL",
+        spec = "DRUID_FERAL_BEAR",
         items = {
             [1]  = 29502,  -- Cobrascale Hood
             [2]  = 29815,  -- Chain of Glowing Tendrils
@@ -2457,7 +2457,7 @@ addon.ReferenceSets = {
     -- Phase 1: Karazhan / Gruul / Mag BIS
     DRUID_FERAL_BEAR_P1 = {
         name = "Druid Feral Tank Phase 1 BIS (Kara/Gruul/Mag)",
-        spec = "DRUID_FERAL",
+        spec = "DRUID_FERAL_BEAR",
         items = {
             [1]  = 29098,  -- Stag-Helm of Malorne
             [2]  = 28509,  -- Worgen Claw Necklace
@@ -2481,7 +2481,7 @@ addon.ReferenceSets = {
     -- Phase 2: SSC / TK BIS
     DRUID_FERAL_BEAR_P2 = {
         name = "Druid Feral Tank Phase 2 BIS (SSC/TK)",
-        spec = "DRUID_FERAL",
+        spec = "DRUID_FERAL_BEAR",
         items = {
             [1]  = 30228,  -- Nordrassil Headdress
             [2]  = 30017,  -- Telonicus's Pendant of Mayhem
@@ -2505,7 +2505,7 @@ addon.ReferenceSets = {
     -- Phase 3: BT / Hyjal BIS
     DRUID_FERAL_BEAR_P3 = {
         name = "Druid Feral Tank Phase 3 BIS (BT/Hyjal)",
-        spec = "DRUID_FERAL",
+        spec = "DRUID_FERAL_BEAR",
         items = {
             [1]  = 31039,  -- Thunderheart Cover
             [2]  = 30017,  -- Telonicus's Pendant of Mayhem
@@ -2529,7 +2529,7 @@ addon.ReferenceSets = {
     -- Phase 5: Sunwell BIS
     DRUID_FERAL_BEAR_P5 = {
         name = "Druid Feral Tank Phase 5 BIS (Sunwell)",
-        spec = "DRUID_FERAL",
+        spec = "DRUID_FERAL_BEAR",
         items = {
             [1]  = 34404,  -- Mask of the Fury Hunter
             [2]  = 34178,  -- Collar of the Pit Lord
@@ -3348,6 +3348,31 @@ addon.ReferenceSets = {
             [16] = 29185,  -- Nethershard (dagger MH)
             [17] = 32660,  -- Retainer's Blade (dagger OH)
             [18] = 29152,  -- Marksman's Bow
+        },
+    },
+
+    -- Subtlety shares gearing with Assassination in P1 (identical leather DPS itemization)
+    ROGUE_SUBTLETY_P1 = {
+        name = "Rogue Subtlety Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "ROGUE_SUBTLETY",
+        items = {
+            [1]  = 29044,  -- Netherblade Facemask
+            [2]  = 29381,  -- Choker of Vile Intent
+            [3]  = 27797,  -- Wastewalker Shoulderpads
+            [5]  = 29045,  -- Netherblade Chestpiece
+            [6]  = 29247,  -- Girdle of the Deathdealer
+            [7]  = 28741,  -- Skulker's Greaves
+            [8]  = 28545,  -- Edgewalker Longboots
+            [9]  = 29246,  -- Nightfall Wristguards
+            [10] = 27531,  -- Wastewalker Gloves
+            [11] = 28757,  -- Ring of a Thousand Marks
+            [12] = 28649,  -- Garona's Signet Ring
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 23206,  -- Mark of the Champion
+            [15] = 28672,  -- Drape of the Dark Reavers
+            [16] = 28768,  -- Malchazeen (dagger MH)
+            [17] = 28729,  -- Spiteblade (dagger OH)
+            [18] = 29151,  -- Veteran's Musket
         },
     },
 

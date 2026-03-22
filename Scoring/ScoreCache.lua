@@ -10,6 +10,8 @@ addon.ScoreCache = {}
 
 local cache = {}  -- { [guid] = { score, perSlot, timestamp, source, specKey, efficiency } }
 local DEFAULT_TTL = 300  -- 5 minutes
+local MAX_CACHE_SIZE = 500
+local PRUNE_INTERVAL = 60  -- seconds
 
 ---------------------------------------------------------------------------
 -- API
@@ -34,8 +36,8 @@ end
 --- Store a score in the cache.
 -- @param guid    Player GUID
 -- @param data    Table with: score (number), perSlot (table, optional), source (string), specKey (string, optional)
--- Source priority: inspect > broadcast > gossip
-local SOURCE_PRIORITY = { inspect = 3, broadcast = 2, gossip = 1 }
+-- Source priority: self > inspect > broadcast > gossip
+local SOURCE_PRIORITY = { self = 4, inspect = 3, broadcast = 2, gossip = 1 }
 
 function addon.ScoreCache:Set(guid, data)
     -- Don't overwrite higher-priority data with lower-priority data
@@ -47,6 +49,24 @@ function addon.ScoreCache:Set(guid, data)
             -- Only overwrite if existing is expired
             if (GetTime() - existing.timestamp) <= DEFAULT_TTL then
                 return
+            end
+        end
+    end
+
+    -- Enforce size cap before inserting
+    if addon.ScoreCache:GetSize() >= MAX_CACHE_SIZE then
+        addon.ScoreCache:Prune()
+        -- If still over after pruning expired entries, evict oldest
+        if addon.ScoreCache:GetSize() >= MAX_CACHE_SIZE then
+            local oldestGUID, oldestTime = nil, math.huge
+            for g, entry in pairs(cache) do
+                if entry.timestamp < oldestTime then
+                    oldestGUID = g
+                    oldestTime = entry.timestamp
+                end
+            end
+            if oldestGUID then
+                cache[oldestGUID] = nil
             end
         end
     end
@@ -90,3 +110,17 @@ end
 function addon.ScoreCache:Clear()
     cache = {}
 end
+
+---------------------------------------------------------------------------
+-- Auto-prune timer: periodically remove expired entries
+---------------------------------------------------------------------------
+
+local pruneFrame = CreateFrame("Frame")
+pruneFrame.elapsed = 0
+pruneFrame:SetScript("OnUpdate", function(self, dt)
+    self.elapsed = self.elapsed + dt
+    if self.elapsed >= PRUNE_INTERVAL then
+        self.elapsed = 0
+        addon.ScoreCache:Prune()
+    end
+end)

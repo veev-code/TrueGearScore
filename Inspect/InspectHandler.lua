@@ -22,9 +22,11 @@ M.inspecting = false     -- Currently waiting for INSPECT_READY
 M.inspectUnit = nil      -- Unit we're currently inspecting
 M.inspectGUID = nil      -- GUID of unit we're inspecting
 M.lastInspectTime = 0    -- Throttle: minimum 1.5s between inspects
-M.callbacks = {}         -- { [guid] = { func1, func2, ... } }
+M.callbacks = {}         -- { [guid] = { callbacks = { func1, func2, ... }, registered = GetTime() } }
+M.retryTimerActive = false  -- True while a throttle-retry timer is pending
 
 local INSPECT_THROTTLE = 1.5  -- Seconds between NotifyInspect calls
+local CALLBACK_STALE_THRESHOLD = 30  -- Seconds before orphaned callbacks are pruned
 
 ---------------------------------------------------------------------------
 -- Lifecycle
@@ -143,9 +145,10 @@ end
 -- @param callback  function(guid, score, cacheEntry)
 function M:RegisterCallback(guid, callback)
     if not self.callbacks[guid] then
-        self.callbacks[guid] = {}
+        self.callbacks[guid] = { callbacks = {}, registered = GetTime() }
     end
-    self.callbacks[guid][#self.callbacks[guid] + 1] = callback
+    local cbs = self.callbacks[guid].callbacks
+    cbs[#cbs + 1] = callback
 end
 
 ---------------------------------------------------------------------------
@@ -164,13 +167,24 @@ function M:QueueInspect(unit, guid)
 end
 
 function M:ProcessQueue()
+    if self.retryTimerActive then return end
     if self.inspecting then return end
     if #self.inspectQueue == 0 then return end
 
+    -- Prune stale callbacks that were never fired (orphaned by missed events)
     local now = GetTime()
+    for guid, entry in pairs(self.callbacks) do
+        if entry.registered and (now - entry.registered) > CALLBACK_STALE_THRESHOLD then
+            addon:DebugPrint("InspectHandler: Pruning stale callbacks for " .. guid)
+            self.callbacks[guid] = nil
+        end
+    end
+
     if (now - self.lastInspectTime) < INSPECT_THROTTLE then
         -- Wait and retry
+        self.retryTimerActive = true
         C_Timer.After(INSPECT_THROTTLE - (now - self.lastInspectTime) + 0.1, function()
+            self.retryTimerActive = false
             self:ProcessQueue()
         end)
         return
@@ -207,6 +221,10 @@ function M:ProcessQueue()
             self.inspecting = false
             self.inspectUnit = nil
             self.inspectGUID = nil
+            -- Clean up leaked callbacks for the timed-out GUID
+            if self.callbacks[entry.guid] then
+                self.callbacks[entry.guid] = nil
+            end
             self:ProcessQueue()
         end
     end)
@@ -293,23 +311,31 @@ function M:OnInspectReady(guid)
         -- Score them
         local result = addon.ItemScoring:ScoreCharacter(equippedItems, specKey)
 
-        -- Cache the result
-        addon.ScoreCache:Set(targetGUID, {
-            score = result.totalScore,
-            perSlot = result.perSlot,
-            source = "inspect",
-            specKey = specKey,
-            baseScore = result.baseOnlyScore,
-            breakdown = result.breakdown,
-            efficiency = result.efficiency,
-        })
+        -- Validate scoring result
+        if type(result) ~= "table" then
+            addon:DebugPrint("InspectHandler: ERROR — ScoreCharacter returned " .. type(result) .. " instead of table")
+            self:FireCallbacks(targetGUID, nil)
+        else
+            -- Cache the result
+            addon.ScoreCache:Set(targetGUID, {
+                score = result.totalScore,
+                perSlot = result.perSlot,
+                source = "inspect",
+                specKey = specKey,
+                baseScore = result.baseOnlyScore,
+                breakdown = result.breakdown,
+                efficiency = result.efficiency,
+            })
 
-        addon:Log("DIAG", "InspectHandler: Scored " .. result.totalScore .. " for " .. tostring(specKey) .. " (raw=" .. result.rawScore .. " base=" .. result.baseOnlyRaw .. ")")
+            addon:Log("DIAG", "InspectHandler: Scored " .. result.totalScore .. " for " .. tostring(specKey) .. " (raw=" .. result.rawScore .. " base=" .. result.baseOnlyRaw .. ")")
 
-        -- Fire callbacks
-        self:FireCallbacks(targetGUID, result.totalScore)
+            -- Fire callbacks
+            self:FireCallbacks(targetGUID, result.totalScore)
+        end
     else
         addon:DebugPrint("InspectHandler: No items captured! GetInventoryItemLink returned nil for all slots")
+        -- Fire callbacks with score=0 to signal completion to waiting requesters
+        self:FireCallbacks(targetGUID, 0)
     end
 
     -- Reset state and process next in queue
@@ -384,12 +410,12 @@ end
 ---------------------------------------------------------------------------
 
 function M:FireCallbacks(guid, score)
-    local cbs = self.callbacks[guid]
-    if not cbs then return end
+    local entry = self.callbacks[guid]
+    if not entry then return end
 
-    local entry = addon.ScoreCache:Get(guid)
-    for _, cb in ipairs(cbs) do
-        local ok, err = pcall(cb, guid, score, entry)
+    local cacheEntry = addon.ScoreCache:Get(guid)
+    for _, cb in ipairs(entry.callbacks) do
+        local ok, err = pcall(cb, guid, score, cacheEntry)
         if not ok then
             addon:DebugPrint("InspectHandler: Callback error: " .. tostring(err))
         end
