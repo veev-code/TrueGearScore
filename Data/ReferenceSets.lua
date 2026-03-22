@@ -2,9 +2,9 @@
 -- TrueGearScore Reference Gear Sets
 -- Used for calibration: score hypothetical BIS sets to tune color brackets.
 -- Each set is a table of { [slotID] = itemID }.
--- Sourced from Wowhead TBC Classic BIS guides (Priest Healer, Warlock Destro,
--- Mage Fire, Paladin Holy/Ret, Shaman Resto/Enh/Ele, Druid Resto/Feral/Balance,
--- Rogue Combat, Hunter BM).
+-- Sourced from Wowhead TBC Classic BIS guides (Priest Healer, Warlock Destro/Afflic/Demo,
+-- Mage Fire/Arcane/Frost, Paladin Holy/Ret/Prot, Shaman Resto/Enh/Ele, Druid Resto/Feral/Balance/Bear,
+-- Rogue Combat/Assassination, Hunter BM/MM/Surv, Warrior Fury/Prot/Arms).
 --
 -- Slot IDs: 1=Head, 2=Neck, 3=Shoulder, 5=Chest, 6=Waist, 7=Legs,
 -- 8=Feet, 9=Wrist, 10=Hands, 11=Finger1, 12=Finger2, 13=Trinket1,
@@ -2051,6 +2051,1399 @@ addon.ReferenceSets = {
             [16] = 34176,  -- Reign of Misery
             [17] = 34185,  -- Sword Breaker's Bulwark
             [18] = 33504,  -- Libram of Divine Purpose
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Warlock (Affliction) — Wowhead TBC Classic BIS guides
+    ---------------------------------------------------------------------------
+
+    WARLOCK_AFFLIC_PRERAID = {
+        name = "Warlock Afflic Pre-Raid BIS",
+        spec = "WARLOCK_AFFLIC",
+        items = {
+            [1]  = 24266,  -- Spellstrike Hood
+            [2]  = 28134,  -- Brooch of Heightened Potential
+            [3]  = 21869,  -- Frozen Shadoweave Shoulders
+            [5]  = 21871,  -- Frozen Shadoweave Robe
+            [6]  = 24256,  -- Girdle of Ruination
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 21870,  -- Frozen Shadoweave Boots
+            [9]  = 21186,  -- Rockfury Bracers
+            [10] = 21585,  -- Dark Storm Gauntlets
+            [11] = 29172,  -- Ashyen's Gift
+            [12] = 28227,  -- Sparking Arcanite Ring
+            [13] = 29370,  -- Icon of the Silver Crescent
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 23050,  -- Cloak of the Necropolis
+            [16] = 31336,  -- Blade of Wizardry
+            [17] = 29273,  -- Khadgar's Knapsack
+            [18] = 22821,  -- Doomfinger
+        },
+    },
+
+    WARLOCK_AFFLIC_P1 = {
+        name = "Warlock Afflic Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "WARLOCK_AFFLIC",
+        items = {
+            [1]  = 28963,  -- Voidheart Crown
+            [2]  = 28530,  -- Brooch of Unquenchable Fury
+            [3]  = 28967,  -- Voidheart Mantle
+            [5]  = 28964,  -- Voidheart Robe
+            [6]  = 24256,  -- Girdle of Ruination
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 21870,  -- Frozen Shadoweave Boots
+            [9]  = 24250,  -- Bracers of Havok
+            [10] = 28968,  -- Voidheart Gloves
+            [11] = 28793,  -- Band of Crimson Fury
+            [12] = 29172,  -- Ashyen's Gift
+            [13] = 27683,  -- Quagmirran's Eye
+            [14] = 29370,  -- Icon of the Silver Crescent
+            [15] = 28766,  -- Ruby Drape of the Mysticant
+            [16] = 30723,  -- Talon of the Tempest
+            [17] = 29273,  -- Khadgar's Knapsack
+            [18] = 28673,  -- Tirisfal Wand of Ascendancy
+        },
+    },
+
+    WARLOCK_AFFLIC_P2 = {
+        name = "Warlock Afflic Phase 2 BIS (SSC/TK)",
+        spec = "WARLOCK_AFFLIC",
+        items = {
+            [1]  = 32494,  -- Destruction Holo-gogs
+            [2]  = 24116,  -- Eye of the Night
+            [3]  = 28967,  -- Voidheart Mantle
+            [5]  = 30107,  -- Vestments of the Sea-Witch
+            [6]  = 30038,  -- Belt of Blasting
+            [7]  = 30213,  -- Leggings of the Corruptor
+            [8]  = 30037,  -- Boots of Blasting
+            [9]  = 29918,  -- Mindstorm Wristbands
+            [10] = 28968,  -- Voidheart Gloves
+            [11] = 30109,  -- Ring of Endless Coils
+            [12] = 29302,  -- Band of Eternity
+            [13] = 23207,  -- Mark of the Champion
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 28766,  -- Ruby Drape of the Mysticant
+            [16] = 32053,  -- Merciless Gladiator's Spellblade
+            [17] = 30049,  -- Fathomstone
+            [18] = 29982,  -- Wand of the Forgotten Star
+        },
+    },
+
+    WARLOCK_AFFLIC_P3 = {
+        name = "Warlock Afflic Phase 3 BIS (BT/Hyjal)",
+        spec = "WARLOCK_AFFLIC",
+        items = {
+            [1]  = 31051,  -- Hood of the Malefic
+            [2]  = 32349,  -- Translucent Spellthread Necklace
+            [3]  = 31054,  -- Mantle of the Malefic
+            [5]  = 30107,  -- Vestments of the Sea-Witch
+            [6]  = 30038,  -- Belt of Blasting
+            [7]  = 30916,  -- Leggings of Channeled Elements
+            [8]  = 32239,  -- Slippers of the Seacaller
+            [9]  = 32586,  -- Bracers of Nimble Thought
+            [10] = 31050,  -- Gloves of the Malefic
+            [11] = 32527,  -- Ring of Ancient Knowledge
+            [12] = 32247,  -- Ring of Captured Storms
+            [13] = 32483,  -- The Skull of Gul'dan
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 32590,  -- Nethervoid Cloak
+            [16] = 30910,  -- Tempest of Chaos
+            [17] = 30872,  -- Chronicle of Dark Secrets
+            [18] = 32343,  -- Wand of Prismatic Focus
+        },
+    },
+
+    WARLOCK_AFFLIC_P5 = {
+        name = "Warlock Afflic Phase 5 BIS (Sunwell)",
+        spec = "WARLOCK_AFFLIC",
+        items = {
+            [1]  = 34340,  -- Dark Conjuror's Collar
+            [2]  = 34678,  -- Shattered Sun Pendant of Acumen
+            [3]  = 34210,  -- Amice of the Convoker
+            [5]  = 34364,  -- Sunfire Robe
+            [6]  = 34541,  -- Belt of the Malefic
+            [7]  = 34181,  -- Leggings of Calamity
+            [8]  = 30050,  -- Boots of the Shifting Nightmare
+            [9]  = 34436,  -- Bracers of the Malefic
+            [10] = 34344,  -- Handguards of Defiled Worlds
+            [11] = 34230,  -- Ring of Omnipotence
+            [12] = 34362,  -- Loop of Forged Power
+            [13] = 34429,  -- Shifting Naaru Sliver
+            [14] = 32483,  -- The Skull of Gul'dan
+            [15] = 34242,  -- Tattered Cape of Antonidas
+            [16] = 34182,  -- Grand Magister's Staff of Torrents
+            [17] = 34179,  -- Heart of the Pit
+            [18] = 34347,  -- Wand of the Demonsoul
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Warlock (Demonology) — Wowhead TBC Classic BIS guides
+    ---------------------------------------------------------------------------
+
+    WARLOCK_DEMO_PRERAID = {
+        name = "Warlock Demo Pre-Raid BIS",
+        spec = "WARLOCK_DEMO",
+        items = {
+            [1]  = 24266,  -- Spellstrike Hood
+            [2]  = 28134,  -- Brooch of Heightened Potential
+            [3]  = 21869,  -- Frozen Shadoweave Shoulders
+            [5]  = 21871,  -- Frozen Shadoweave Robe
+            [6]  = 24256,  -- Girdle of Ruination
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 21870,  -- Frozen Shadoweave Boots
+            [9]  = 21186,  -- Rockfury Bracers
+            [10] = 21585,  -- Dark Storm Gauntlets
+            [11] = 29172,  -- Ashyen's Gift
+            [12] = 28227,  -- Sparking Arcanite Ring
+            [13] = 29370,  -- Icon of the Silver Crescent
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 23050,  -- Cloak of the Necropolis
+            [16] = 31336,  -- Blade of Wizardry
+            [17] = 29273,  -- Khadgar's Knapsack
+            [18] = 28386,  -- Nether Core's Control Rod
+        },
+    },
+
+    WARLOCK_DEMO_P1 = {
+        name = "Warlock Demo Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "WARLOCK_DEMO",
+        items = {
+            [1]  = 28963,  -- Voidheart Crown
+            [2]  = 28530,  -- Brooch of Unquenchable Fury
+            [3]  = 28967,  -- Voidheart Mantle
+            [5]  = 28964,  -- Voidheart Robe
+            [6]  = 24256,  -- Girdle of Ruination
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 21870,  -- Frozen Shadoweave Boots
+            [9]  = 24250,  -- Bracers of Havok
+            [10] = 30725,  -- Anger-Spark Gloves
+            [11] = 28793,  -- Band of Crimson Fury
+            [12] = 29172,  -- Ashyen's Gift
+            [13] = 27683,  -- Quagmirran's Eye
+            [14] = 29370,  -- Icon of the Silver Crescent
+            [15] = 28766,  -- Ruby Drape of the Mysticant
+            [16] = 30723,  -- Talon of the Tempest
+            [17] = 29273,  -- Khadgar's Knapsack
+            [18] = 28673,  -- Tirisfal Wand of Ascendancy
+        },
+    },
+
+    WARLOCK_DEMO_P2 = {
+        name = "Warlock Demo Phase 2 BIS (SSC/TK)",
+        spec = "WARLOCK_DEMO",
+        items = {
+            [1]  = 32494,  -- Destruction Holo-gogs
+            [2]  = 24116,  -- Eye of the Night
+            [3]  = 28967,  -- Voidheart Mantle
+            [5]  = 30107,  -- Vestments of the Sea-Witch
+            [6]  = 30038,  -- Belt of Blasting
+            [7]  = 30213,  -- Leggings of the Corruptor
+            [8]  = 30050,  -- Boots of the Shifting Nightmare
+            [9]  = 30684,  -- Ravager's Cuffs
+            [10] = 28968,  -- Voidheart Gloves
+            [11] = 30109,  -- Ring of Endless Coils
+            [12] = 29302,  -- Band of Eternity
+            [13] = 30449,  -- Void Star Talisman
+            [14] = 29370,  -- Icon of the Silver Crescent
+            [15] = 29992,  -- Royal Cloak of the Sunstriders
+            [16] = 32053,  -- Merciless Gladiator's Spellblade
+            [17] = 29273,  -- Khadgar's Knapsack
+            [18] = 29982,  -- Wand of the Forgotten Star
+        },
+    },
+
+    WARLOCK_DEMO_P3 = {
+        name = "Warlock Demo Phase 3 BIS (BT/Hyjal)",
+        spec = "WARLOCK_DEMO",
+        items = {
+            [1]  = 31051,  -- Hood of the Malefic
+            [2]  = 32349,  -- Translucent Spellthread Necklace
+            [3]  = 31054,  -- Mantle of the Malefic
+            [5]  = 30107,  -- Vestments of the Sea-Witch
+            [6]  = 30038,  -- Belt of Blasting
+            [7]  = 30916,  -- Leggings of Channeled Elements
+            [8]  = 32239,  -- Slippers of the Seacaller
+            [9]  = 32586,  -- Bracers of Nimble Thought
+            [10] = 31050,  -- Gloves of the Malefic
+            [11] = 32527,  -- Ring of Ancient Knowledge
+            [12] = 32247,  -- Ring of Captured Storms
+            [13] = 32483,  -- The Skull of Gul'dan
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 32590,  -- Nethervoid Cloak
+            [16] = 30910,  -- Tempest of Chaos
+            [17] = 30872,  -- Chronicle of Dark Secrets
+            [18] = 32343,  -- Wand of Prismatic Focus
+        },
+    },
+
+    WARLOCK_DEMO_P5 = {
+        name = "Warlock Demo Phase 5 BIS (Sunwell)",
+        spec = "WARLOCK_DEMO",
+        items = {
+            [1]  = 34340,  -- Dark Conjuror's Collar
+            [2]  = 34678,  -- Shattered Sun Pendant of Acumen
+            [3]  = 34210,  -- Amice of the Convoker
+            [5]  = 34364,  -- Sunfire Robe
+            [6]  = 34541,  -- Belt of the Malefic
+            [7]  = 34181,  -- Leggings of Calamity
+            [8]  = 34564,  -- Boots of the Malefic
+            [9]  = 34436,  -- Bracers of the Malefic
+            [10] = 31050,  -- Gloves of the Malefic
+            [11] = 34230,  -- Ring of Omnipotence
+            [12] = 34362,  -- Loop of Forged Power
+            [13] = 32483,  -- The Skull of Gul'dan
+            [14] = 34429,  -- Shifting Naaru Sliver
+            [15] = 34242,  -- Tattered Cape of Antonidas
+            [16] = 34182,  -- Grand Magister's Staff of Torrents
+            [17] = 34179,  -- Heart of the Pit
+            [18] = 34347,  -- Wand of the Demonsoul
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Warrior Arms DPS — Wowhead TBC Classic BIS guides
+    ---------------------------------------------------------------------------
+
+    -- Pre-Raid BIS
+    WARRIOR_ARMS_PRERAID = {
+        name = "Warrior Arms DPS Pre-Raid BIS",
+        spec = "WARRIOR_ARMS",
+        items = {
+            [1]  = 32087,  -- Mask of the Deceiver
+            [2]  = 29349,  -- Adamantine Chain of the Unbroken
+            [3]  = 33173,  -- Ragesteel Shoulders
+            [5]  = 23522,  -- Ragesteel Breastplate
+            [6]  = 27985,  -- Deathforge Girdle
+            [7]  = 30538,  -- Midnight Legguards
+            [8]  = 25686,  -- Fel Leather Boots
+            [9]  = 23537,  -- Black Felsteel Bracers
+            [10] = 25685,  -- Fel Leather Gloves
+            [11] = 29379,  -- Ring of Arathi Warlords
+            [12] = 23038,  -- Band of Unnatural Forces
+            [13] = 21670,  -- Badge of the Swarmguard
+            [14] = 29383,  -- Bloodlust Brooch
+            [15] = 24259,  -- Vengeance Wrap
+            [16] = 28429,  -- Lionheart Champion
+            [18] = 30279,  -- Mama's Insurance
+        },
+    },
+
+    -- Phase 1: Karazhan / Gruul / Mag BIS
+    WARRIOR_ARMS_P1 = {
+        name = "Warrior Arms DPS Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "WARRIOR_ARMS",
+        items = {
+            [1]  = 29021,  -- Warbringer Battle-Helm
+            [2]  = 29349,  -- Adamantine Chain of the Unbroken
+            [3]  = 33173,  -- Ragesteel Shoulders
+            [5]  = 30730,  -- Terrorweave Tunic
+            [6]  = 28779,  -- Girdle of the Endless Pit
+            [7]  = 30739,  -- Scaled Greaves of the Marksman
+            [8]  = 28608,  -- Ironstriders of Urgency
+            [9]  = 28795,  -- Bladespire Warbands
+            [10] = 28824,  -- Gauntlets of Martial Perfection
+            [11] = 30738,  -- Ring of Reciprocity
+            [12] = 30834,  -- Shapeshifter's Signet
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 21670,  -- Badge of the Swarmguard
+            [15] = 30729,  -- Black-Iron Battlecloak
+            [16] = 28429,  -- Lionheart Champion
+            [18] = 30724,  -- Barrel-Blade Longrifle
+        },
+    },
+
+    -- Phase 2: SSC / TK BIS
+    WARRIOR_ARMS_P2 = {
+        name = "Warrior Arms DPS Phase 2 BIS (SSC/TK)",
+        spec = "WARRIOR_ARMS",
+        items = {
+            [1]  = 30120,  -- Destroyer Battle-Helm
+            [2]  = 30022,  -- Pendant of the Perilous
+            [3]  = 30055,  -- Shoulderpads of the Stranger
+            [5]  = 30118,  -- Destroyer Breastplate
+            [6]  = 30106,  -- Belt of One-Hundred Deaths
+            [7]  = 29995,  -- Leggings of Murderous Intent
+            [8]  = 30081,  -- Warboots of Obliteration
+            [9]  = 30057,  -- Bracers of Eradication
+            [10] = 29947,  -- Gloves of the Searing Grip
+            [11] = 29997,  -- Band of the Ranger-General
+            [12] = 30738,  -- Ring of Reciprocity
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 21670,  -- Badge of the Swarmguard
+            [15] = 24259,  -- Vengeance Wrap
+            [16] = 29993,  -- Twinblade of the Phoenix
+            [18] = 30105,  -- Serpent Spine Longbow
+        },
+    },
+
+    -- Phase 3: BT / Hyjal BIS
+    WARRIOR_ARMS_P3 = {
+        name = "Warrior Arms DPS Phase 3 BIS (BT/Hyjal)",
+        spec = "WARRIOR_ARMS",
+        items = {
+            [1]  = 32235,  -- Cursed Vision of Sargeras
+            [2]  = 32260,  -- Choker of Endless Nightmares
+            [3]  = 30979,  -- Onslaught Shoulderblades
+            [5]  = 30975,  -- Onslaught Breastplate
+            [6]  = 30106,  -- Belt of One-Hundred Deaths
+            [7]  = 32341,  -- Leggings of Divine Retribution
+            [8]  = 32345,  -- Dreadboots of the Legion
+            [9]  = 30863,  -- Deadly Cuffs
+            [10] = 32278,  -- Grips of Silent Justice
+            [11] = 32497,  -- Stormrage Signet Ring
+            [12] = 32335,  -- Unstoppable Aggressor's Ring
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 32505,  -- Madness of the Betrayer
+            [15] = 32323,  -- Shadowmoon Destroyer's Drape
+            [16] = 30902,  -- Cataclysm's Edge
+            [18] = 32326,  -- Twisted Blades of Zarak
+        },
+    },
+
+    -- Phase 5: Sunwell BIS
+    WARRIOR_ARMS_P5 = {
+        name = "Warrior Arms DPS Phase 5 BIS (Sunwell)",
+        spec = "WARRIOR_ARMS",
+        items = {
+            [1]  = 34333,  -- Coif of Alleria
+            [2]  = 34358,  -- Hard Khorium Choker
+            [3]  = 34388,  -- Pauldrons of Berserking
+            [5]  = 34397,  -- Bladed Chaos Tunic
+            [6]  = 34546,  -- Onslaught Belt
+            [7]  = 34180,  -- Felfury Legplates
+            [8]  = 34569,  -- Onslaught Treads
+            [9]  = 34441,  -- Onslaught Bracers
+            [10] = 34343,  -- Thalassian Ranger Gauntlets
+            [11] = 34189,  -- Band of Ruinous Delight
+            [12] = 34361,  -- Hard Khorium Band
+            [13] = 34427,  -- Blackened Naaru Sliver
+            [14] = 34472,  -- Shard of Contempt
+            [15] = 34241,  -- Cloak of Unforgivable Sin
+            [16] = 34247,  -- Apolyon, the Soul-Render
+            [18] = 34196,  -- Golden Bow of Quel'Thalas
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Druid Feral Tank (Bear) — Wowhead TBC Classic BIS guides
+    ---------------------------------------------------------------------------
+
+    -- Pre-Raid BIS
+    DRUID_FERAL_BEAR_PRERAID = {
+        name = "Druid Feral Tank Pre-Raid BIS",
+        spec = "DRUID_FERAL",
+        items = {
+            [1]  = 29502,  -- Cobrascale Hood
+            [2]  = 29815,  -- Chain of Glowing Tendrils
+            [3]  = 27434,  -- Mantle of Perenolde
+            [5]  = 25689,  -- Heavy Clefthoof Vest
+            [6]  = 30942,  -- Manimal's Cinch
+            [7]  = 25690,  -- Heavy Clefthoof Leggings
+            [8]  = 28987,  -- Marshal's Leather Boots
+            [9]  = 30944,  -- Umberhowl's Collar
+            [10] = 30943,  -- Verdant Gloves
+            [11] = 30834,  -- Shapeshifter's Signet
+            [12] = 29384,  -- Ring of Unyielding Force
+            [13] = 23206,  -- Mark of the Champion
+            [14] = 29383,  -- Bloodlust Brooch
+            [15] = 28256,  -- Thoriumweave Cloak
+            [16] = 29171,  -- Earthwarden
+            [18] = 23198,  -- Idol of Brutality
+        },
+    },
+
+    -- Phase 1: Karazhan / Gruul / Mag BIS
+    DRUID_FERAL_BEAR_P1 = {
+        name = "Druid Feral Tank Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "DRUID_FERAL",
+        items = {
+            [1]  = 29098,  -- Stag-Helm of Malorne
+            [2]  = 28509,  -- Worgen Claw Necklace
+            [3]  = 29100,  -- Mantle of Malorne
+            [5]  = 29096,  -- Breastplate of Malorne
+            [6]  = 29264,  -- Tree-Mender's Belt
+            [7]  = 29099,  -- Greaves of Malorne
+            [8]  = 30674,  -- Zierhut's Lost Treads
+            [9]  = 28978,  -- Marshal's Dragonhide Bracers
+            [10] = 29097,  -- Gauntlets of Malorne
+            [11] = 29279,  -- Violet Signet of the Great Protector
+            [12] = 28792,  -- A'dal's Signet of Defense
+            [13] = 23206,  -- Mark of the Champion
+            [14] = 29383,  -- Bloodlust Brooch
+            [15] = 28660,  -- Gilded Thorium Cloak
+            [16] = 28658,  -- Terestian's Stranglestaff
+            [18] = 23198,  -- Idol of Brutality
+        },
+    },
+
+    -- Phase 2: SSC / TK BIS
+    DRUID_FERAL_BEAR_P2 = {
+        name = "Druid Feral Tank Phase 2 BIS (SSC/TK)",
+        spec = "DRUID_FERAL",
+        items = {
+            [1]  = 30228,  -- Nordrassil Headdress
+            [2]  = 30017,  -- Telonicus's Pendant of Mayhem
+            [3]  = 30230,  -- Nordrassil Feral-Mantle
+            [5]  = 30222,  -- Nordrassil Chestplate
+            [6]  = 30106,  -- Belt of One-Hundred Deaths
+            [7]  = 30229,  -- Nordrassil Feral-Kilt
+            [8]  = 30041,  -- Boots of Natural Grace
+            [9]  = 32810,  -- Veteran's Dragonhide Bracers
+            [10] = 30223,  -- Nordrassil Handgrips
+            [11] = 29279,  -- Violet Signet of the Great Protector
+            [12] = 28792,  -- A'dal's Signet of Defense
+            [13] = 32658,  -- Badge of Tenacity
+            [14] = 28579,  -- Romulo's Poison Vial
+            [15] = 28660,  -- Gilded Thorium Cloak
+            [16] = 30021,  -- Wildfury Greatstaff
+            [18] = 29390,  -- Everbloom Idol
+        },
+    },
+
+    -- Phase 3: BT / Hyjal BIS
+    DRUID_FERAL_BEAR_P3 = {
+        name = "Druid Feral Tank Phase 3 BIS (BT/Hyjal)",
+        spec = "DRUID_FERAL",
+        items = {
+            [1]  = 31039,  -- Thunderheart Cover
+            [2]  = 30017,  -- Telonicus's Pendant of Mayhem
+            [3]  = 31048,  -- Thunderheart Pauldrons
+            [5]  = 31042,  -- Thunderheart Chestguard
+            [6]  = 30106,  -- Belt of One-Hundred Deaths
+            [7]  = 31044,  -- Thunderheart Leggings
+            [8]  = 32593,  -- Treads of the Den Mother
+            [9]  = 32324,  -- Insidious Bands
+            [10] = 31034,  -- Thunderheart Gauntlets
+            [11] = 29279,  -- Violet Signet of the Great Protector
+            [12] = 32266,  -- Ring of Deceitful Intent
+            [13] = 32501,  -- Shadowmoon Insignia
+            [14] = 34578,  -- Battlemaster's Determination
+            [15] = 28660,  -- Gilded Thorium Cloak
+            [16] = 30883,  -- Pillar of Ferocity
+            [18] = 32257,  -- Idol of the White Stag
+        },
+    },
+
+    -- Phase 5: Sunwell BIS
+    DRUID_FERAL_BEAR_P5 = {
+        name = "Druid Feral Tank Phase 5 BIS (Sunwell)",
+        spec = "DRUID_FERAL",
+        items = {
+            [1]  = 34404,  -- Mask of the Fury Hunter
+            [2]  = 34178,  -- Collar of the Pit Lord
+            [3]  = 34392,  -- Demontooth Shoulderpads
+            [5]  = 34211,  -- Harness of Carnal Instinct
+            [6]  = 35156,  -- Guardian's Leather Belt
+            [7]  = 34385,  -- Leggings of the Immortal Beast
+            [8]  = 34573,  -- Thunderheart Treads
+            [9]  = 34444,  -- Thunderheart Wristguards
+            [10] = 34408,  -- Gloves of the Forest Drifter
+            [11] = 34213,  -- Ring of Hardened Resolve
+            [12] = 34888,  -- Ring of the Stalwart Protector
+            [13] = 32501,  -- Shadowmoon Insignia
+            [14] = 32658,  -- Badge of Tenacity
+            [15] = 34190,  -- Crimson Paragon's Cover
+            [16] = 30883,  -- Pillar of Ferocity
+            [18] = 33509,  -- Idol of Terror
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Mage (Arcane) — Wowhead TBC Classic BIS guides
+    ---------------------------------------------------------------------------
+
+    -- Pre-Raid BIS (heroic dungeons, badge gear, crafted)
+    MAGE_ARCANE_PRERAID = {
+        name = "Mage Arcane Pre-Raid BIS",
+        spec = "MAGE_ARCANE",
+        items = {
+            [1]  = 32089,  -- Mana-Binders Cowl
+            [2]  = 28134,  -- Brooch of Heightened Potential
+            [3]  = 35343,  -- Evoker's Silk Amice
+            [5]  = 21848,  -- Spellfire Robe
+            [6]  = 21846,  -- Spellfire Belt
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 28410,  -- General's Silk Footguards
+            [9]  = 28411,  -- General's Silk Cuffs
+            [10] = 21847,  -- Spellfire Gloves
+            [11] = 28227,  -- Sparking Arcanite Ring
+            [12] = 29367,  -- Ring of Cryptic Dreams
+            [13] = 29370,  -- Icon of the Silver Crescent
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 25777,  -- Ogre Slayer's Cover
+            [16] = 29155,  -- Stormcaller
+            [17] = 29271,  -- Talisman of Kalecgos
+            [18] = 29350,  -- The Black Stalk
+        },
+    },
+
+    -- Phase 1: Karazhan / Gruul / Mag BIS
+    MAGE_ARCANE_P1 = {
+        name = "Mage Arcane Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "MAGE_ARCANE",
+        items = {
+            [1]  = 29076,  -- Collar of the Aldor
+            [2]  = 28762,  -- Adornment of Stolen Souls
+            [3]  = 29079,  -- Pauldrons of the Aldor
+            [5]  = 21848,  -- Spellfire Robe
+            [6]  = 21846,  -- Spellfire Belt
+            [7]  = 29078,  -- Legwraps of the Aldor
+            [8]  = 28517,  -- Boots of Foretelling
+            [9]  = 28411,  -- General's Silk Cuffs
+            [10] = 21847,  -- Spellfire Gloves
+            [11] = 28793,  -- Band of Crimson Fury
+            [12] = 29287,  -- Violet Signet of the Archmage
+            [13] = 28785,  -- The Lightning Capacitor
+            [14] = 28789,  -- Eye of Magtheridon
+            [15] = 28797,  -- Brute Cloak of the Ogre-Magi
+            [16] = 28770,  -- Nathrezim Mindblade
+            [17] = 28603,  -- Talisman of Nightbane
+            [18] = 28783,  -- Eredar Wand of Obliteration
+        },
+    },
+
+    -- Phase 2: SSC / TK BIS
+    MAGE_ARCANE_P2 = {
+        name = "Mage Arcane Phase 2 BIS (SSC/TK)",
+        spec = "MAGE_ARCANE",
+        items = {
+            [1]  = 30206,  -- Cowl of Tirisfal
+            [2]  = 30015,  -- The Sun King's Talisman
+            [3]  = 30210,  -- Mantle of Tirisfal
+            [5]  = 30196,  -- Robes of Tirisfal
+            [6]  = 30064,  -- Cord of Screaming Terrors
+            [7]  = 30207,  -- Leggings of Tirisfal
+            [8]  = 30067,  -- Velvet Boots of the Guardian
+            [9]  = 29918,  -- Mindstorm Wristbands
+            [10] = 29987,  -- Gauntlets of the Sun King
+            [11] = 29302,  -- Band of Eternity
+            [12] = 29287,  -- Violet Signet of the Archmage
+            [13] = 30720,  -- Serpent-Coil Braid
+            [14] = 29370,  -- Icon of the Silver Crescent
+            [15] = 29992,  -- Royal Cloak of the Sunstriders
+            [16] = 29988,  -- The Nexus Key
+            [17] = 29271,  -- Talisman of Kalecgos
+            [18] = 29982,  -- Wand of the Forgotten Star
+        },
+    },
+
+    -- Phase 3: BT / Hyjal BIS
+    MAGE_ARCANE_P3 = {
+        name = "Mage Arcane Phase 3 BIS (BT/Hyjal)",
+        spec = "MAGE_ARCANE",
+        items = {
+            [1]  = 30206,  -- Cowl of Tirisfal
+            [2]  = 30015,  -- The Sun King's Talisman
+            [3]  = 30210,  -- Mantle of Tirisfal
+            [5]  = 30196,  -- Robes of Tirisfal
+            [6]  = 30888,  -- Anetheron's Noose
+            [7]  = 31058,  -- Leggings of the Tempest
+            [8]  = 32239,  -- Slippers of the Seacaller
+            [9]  = 30870,  -- Cuffs of Devastation
+            [10] = 30205,  -- Gloves of Tirisfal
+            [11] = 29305,  -- Band of the Eternal Sage
+            [12] = 32527,  -- Ring of Ancient Knowledge
+            [13] = 30720,  -- Serpent-Coil Braid
+            [14] = 32483,  -- The Skull of Gul'dan
+            [15] = 32331,  -- Cloak of the Illidari Council
+            [16] = 32374,  -- Zhar'doom, Greatstaff of the Devourer
+            [17] = 30872,  -- Chronicle of Dark Secrets
+            [18] = 28783,  -- Eredar Wand of Obliteration
+        },
+    },
+
+    -- Phase 5: Sunwell BIS
+    MAGE_ARCANE_P5 = {
+        name = "Mage Arcane Phase 5 BIS (Sunwell)",
+        spec = "MAGE_ARCANE",
+        items = {
+            [1]  = 30206,  -- Cowl of Tirisfal
+            [2]  = 34204,  -- Amulet of Unfettered Magics
+            [3]  = 30210,  -- Mantle of Tirisfal
+            [5]  = 34399,  -- Robes of Ghostly Hatred
+            [6]  = 34557,  -- Belt of the Tempest
+            [7]  = 34181,  -- Leggings of Calamity
+            [8]  = 34574,  -- Boots of the Tempest
+            [9]  = 34447,  -- Bracers of the Tempest
+            [10] = 34406,  -- Gloves of Tyri's Power
+            [11] = 29305,  -- Band of the Eternal Sage
+            [12] = 34362,  -- Loop of Forged Power
+            [13] = 34429,  -- Shifting Naaru Sliver
+            [14] = 33829,  -- Hex Shrunken Head
+            [15] = 34242,  -- Tattered Cape of Antonidas
+            [16] = 34336,  -- Sunflare
+            [17] = 34179,  -- Heart of the Pit
+            [18] = 34347,  -- Wand of the Demonsoul
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Mage (Frost) — Wowhead TBC Classic BIS guides
+    ---------------------------------------------------------------------------
+
+    -- Pre-Raid BIS (heroic dungeons, badge gear, crafted)
+    MAGE_FROST_PRERAID = {
+        name = "Mage Frost Pre-Raid BIS",
+        spec = "MAGE_FROST",
+        items = {
+            [1]  = 28193,  -- Mana-Etched Crown
+            [2]  = 29368,  -- Manasurge Pendant
+            [3]  = 21869,  -- Frozen Shadoweave Shoulders
+            [5]  = 21871,  -- Frozen Shadoweave Robe
+            [6]  = 24256,  -- Girdle of Ruination
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 21870,  -- Frozen Shadoweave Boots
+            [9]  = 28411,  -- General's Silk Cuffs
+            [10] = 27465,  -- Mana-Etched Gloves
+            [11] = 29126,  -- Seer's Signet
+            [12] = 29172,  -- Ashyen's Gift
+            [13] = 29370,  -- Icon of the Silver Crescent
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 23050,  -- Cloak of the Necropolis
+            [16] = 29355,  -- Terokk's Shadowstaff
+            [17] = 29269,  -- Sapphiron's Wing Bone
+            [18] = 29350,  -- The Black Stalk
+        },
+    },
+
+    -- Phase 1: Karazhan / Gruul / Mag BIS
+    MAGE_FROST_P1 = {
+        name = "Mage Frost Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "MAGE_FROST",
+        items = {
+            [1]  = 29076,  -- Collar of the Aldor
+            [2]  = 28530,  -- Brooch of Unquenchable Fury
+            [3]  = 21869,  -- Frozen Shadoweave Shoulders
+            [5]  = 21871,  -- Frozen Shadoweave Robe
+            [6]  = 24256,  -- Girdle of Ruination
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 28585,  -- Ruby Slippers
+            [9]  = 28411,  -- General's Silk Cuffs
+            [10] = 30725,  -- Anger-Spark Gloves
+            [11] = 29287,  -- Violet Signet of the Archmage
+            [12] = 28793,  -- Band of Crimson Fury
+            [13] = 29370,  -- Icon of the Silver Crescent
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 28766,  -- Ruby Drape of the Mysticant
+            [16] = 30723,  -- Talon of the Tempest
+            [17] = 28734,  -- Jewel of Infinite Possibilities
+            [18] = 28783,  -- Eredar Wand of Obliteration
+        },
+    },
+
+    -- Phase 2: SSC / TK BIS
+    MAGE_FROST_P2 = {
+        name = "Mage Frost Phase 2 BIS (SSC/TK)",
+        spec = "MAGE_FROST",
+        items = {
+            [1]  = 30206,  -- Cowl of Tirisfal
+            [2]  = 30015,  -- The Sun King's Talisman
+            [3]  = 30210,  -- Mantle of Tirisfal
+            [5]  = 30107,  -- Vestments of the Sea-Witch
+            [6]  = 30038,  -- Belt of Blasting
+            [7]  = 30207,  -- Leggings of Tirisfal
+            [8]  = 30067,  -- Velvet Boots of the Guardian
+            [9]  = 29918,  -- Mindstorm Wristbands
+            [10] = 30205,  -- Gloves of Tirisfal
+            [11] = 29302,  -- Band of Eternity
+            [12] = 30109,  -- Ring of Endless Coils
+            [13] = 29370,  -- Icon of the Silver Crescent
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 28766,  -- Ruby Drape of the Mysticant
+            [16] = 29988,  -- The Nexus Key
+            [17] = 30049,  -- Fathomstone
+            [18] = 29982,  -- Wand of the Forgotten Star
+        },
+    },
+
+    -- Phase 3: BT / Hyjal BIS
+    MAGE_FROST_P3 = {
+        name = "Mage Frost Phase 3 BIS (BT/Hyjal)",
+        spec = "MAGE_FROST",
+        items = {
+            [1]  = 32525,  -- Cowl of the Illidari High Lord
+            [2]  = 30015,  -- The Sun King's Talisman
+            [3]  = 31059,  -- Mantle of the Tempest
+            [5]  = 31057,  -- Robes of the Tempest
+            [6]  = 32256,  -- Waistwrap of Infinity
+            [7]  = 31058,  -- Leggings of the Tempest
+            [8]  = 32239,  -- Slippers of the Seacaller
+            [9]  = 32586,  -- Bracers of Nimble Thought
+            [10] = 31055,  -- Gloves of the Tempest
+            [11] = 32527,  -- Ring of Ancient Knowledge
+            [12] = 32527,  -- Ring of Ancient Knowledge (not Unique-Equipped)
+            [13] = 32488,  -- Ashtongue Talisman of Insight
+            [14] = 32483,  -- The Skull of Gul'dan
+            [15] = 32524,  -- Shroud of the Highborne
+            [16] = 32374,  -- Zhar'doom, Greatstaff of the Devourer
+            [17] = 30872,  -- Chronicle of Dark Secrets
+            [18] = 29982,  -- Wand of the Forgotten Star
+        },
+    },
+
+    -- Phase 5: Sunwell BIS
+    MAGE_FROST_P5 = {
+        name = "Mage Frost Phase 5 BIS (Sunwell)",
+        spec = "MAGE_FROST",
+        items = {
+            [1]  = 34340,  -- Dark Conjuror's Collar
+            [2]  = 34204,  -- Amulet of Unfettered Magics
+            [3]  = 31059,  -- Mantle of the Tempest
+            [5]  = 34364,  -- Sunfire Robe
+            [6]  = 34557,  -- Belt of the Tempest
+            [7]  = 34181,  -- Leggings of Calamity
+            [8]  = 34574,  -- Boots of the Tempest
+            [9]  = 34447,  -- Bracers of the Tempest
+            [10] = 34344,  -- Handguards of Defiled Worlds
+            [11] = 34362,  -- Loop of Forged Power
+            [12] = 34230,  -- Ring of Omnipotence
+            [13] = 34429,  -- Shifting Naaru Sliver
+            [14] = 32483,  -- The Skull of Gul'dan
+            [15] = 34242,  -- Tattered Cape of Antonidas
+            [16] = 34336,  -- Sunflare
+            [17] = 34179,  -- Heart of the Pit
+            [18] = 34347,  -- Wand of the Demonsoul
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Priest Shadow DPS — Wowhead TBC Classic BIS guides
+    ---------------------------------------------------------------------------
+
+    PRIEST_SHADOW_PRERAID = {
+        name = "Priest Shadow Pre-Raid BIS",
+        spec = "PRIEST_SHADOW",
+        items = {
+            [1]  = 24266,  -- Spellstrike Hood
+            [2]  = 28245,  -- Pendant of Dominance
+            [3]  = 21869,  -- Frozen Shadoweave Shoulders
+            [5]  = 21871,  -- Frozen Shadoweave Robe
+            [6]  = 24256,  -- Girdle of Ruination
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 21870,  -- Frozen Shadoweave Boots
+            [9]  = 24250,  -- Bracers of Havok
+            [10] = 24450,  -- Manaspark Gloves
+            [11] = 21709,  -- Ring of the Fallen God
+            [12] = 23031,  -- Band of the Inevitable
+            [13] = 29370,  -- Icon of the Silver Crescent
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 24252,  -- Cloak of the Black Void
+            [16] = 23554,  -- Eternium Runed Blade
+            [17] = 29273,  -- Khadgar's Knapsack
+            [18] = 29350,  -- The Black Stalk
+        },
+    },
+
+    PRIEST_SHADOW_P1 = {
+        name = "Priest Shadow Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "PRIEST_SHADOW",
+        items = {
+            [1]  = 24266,  -- Spellstrike Hood
+            [2]  = 30666,  -- Ritssyn's Lost Pendant
+            [3]  = 21869,  -- Frozen Shadoweave Shoulders
+            [5]  = 21871,  -- Frozen Shadoweave Robe
+            [6]  = 28799,  -- Belt of Divine Inspiration
+            [7]  = 24262,  -- Spellstrike Pants
+            [8]  = 21870,  -- Frozen Shadoweave Boots
+            [9]  = 24250,  -- Bracers of Havok
+            [10] = 28507,  -- Handwraps of Flowing Thought
+            [11] = 21709,  -- Ring of the Fallen God
+            [12] = 23031,  -- Band of the Inevitable
+            [13] = 29370,  -- Icon of the Silver Crescent
+            [14] = 27683,  -- Quagmirran's Eye
+            [15] = 24252,  -- Cloak of the Black Void
+            [16] = 28770,  -- Nathrezim Mindblade
+            [17] = 29272,  -- Orb of the Soul-Eater
+            [18] = 29350,  -- The Black Stalk
+        },
+    },
+
+    PRIEST_SHADOW_P2 = {
+        name = "Priest Shadow Phase 2 BIS (SSC/TK)",
+        spec = "PRIEST_SHADOW",
+        items = {
+            [1]  = 30161,  -- Hood of the Avatar
+            [2]  = 30666,  -- Ritssyn's Lost Pendant
+            [3]  = 30163,  -- Wings of the Avatar
+            [5]  = 30107,  -- Vestments of the Sea-Witch
+            [6]  = 30038,  -- Belt of Blasting
+            [7]  = 29972,  -- Trousers of the Astromancer
+            [8]  = 30050,  -- Boots of the Shifting Nightmare
+            [9]  = 30684,  -- Ravager's Cuffs
+            [10] = 31166,  -- Nethersteel-Lined Handwraps
+            [11] = 30109,  -- Ring of Endless Coils
+            [12] = 29922,  -- Band of Al'ar
+            [13] = 29370,  -- Icon of the Silver Crescent
+            [14] = 28789,  -- Eye of Magtheridon
+            [15] = 31201,  -- Illidari Cloak
+            [16] = 28770,  -- Nathrezim Mindblade
+            [17] = 29272,  -- Orb of the Soul-Eater
+            [18] = 29982,  -- Wand of the Forgotten Star
+        },
+    },
+
+    PRIEST_SHADOW_P3 = {
+        name = "Priest Shadow Phase 3 BIS (BT/Hyjal)",
+        spec = "PRIEST_SHADOW",
+        items = {
+            [1]  = 31064,  -- Hood of Absolution
+            [2]  = 32349,  -- Translucent Spellthread Necklace
+            [3]  = 31070,  -- Shoulderpads of Absolution
+            [5]  = 31065,  -- Shroud of Absolution
+            [6]  = 32256,  -- Waistwrap of Infinity
+            [7]  = 30916,  -- Leggings of Channeled Elements
+            [8]  = 32239,  -- Slippers of the Seacaller
+            [9]  = 32586,  -- Bracers of Nimble Thought
+            [10] = 31061,  -- Handguards of Absolution
+            [11] = 32527,  -- Ring of Ancient Knowledge
+            [12] = 32527,  -- Ring of Ancient Knowledge
+            [13] = 32483,  -- The Skull of Gul'dan
+            [14] = 31856,  -- Darkmoon Card: Crusade
+            [15] = 32590,  -- Nethervoid Cloak
+            [16] = 32374,  -- Zhar'doom, Greatstaff of the Devourer
+            [17] = 29272,  -- Orb of the Soul-Eater
+            [18] = 29982,  -- Wand of the Forgotten Star
+        },
+    },
+
+    PRIEST_SHADOW_P5 = {
+        name = "Priest Shadow Phase 5 BIS (Sunwell)",
+        spec = "PRIEST_SHADOW",
+        items = {
+            [1]  = 34340,  -- Dark Conjuror's Collar
+            [2]  = 34204,  -- Amulet of Unfettered Magics
+            [3]  = 31070,  -- Shoulderpads of Absolution
+            [5]  = 34364,  -- Sunfire Robe
+            [6]  = 34528,  -- Cord of Absolution
+            [7]  = 34181,  -- Leggings of Calamity
+            [8]  = 34563,  -- Treads of Absolution
+            [9]  = 34434,  -- Bracers of Absolution
+            [10] = 34344,  -- Handguards of Defiled Worlds
+            [11] = 34230,  -- Ring of Omnipotence
+            [12] = 32527,  -- Ring of Ancient Knowledge
+            [13] = 34429,  -- Shifting Naaru Sliver
+            [14] = 33829,  -- Hex Shrunken Head
+            [15] = 34242,  -- Tattered Cape of Antonidas
+            [16] = 34182,  -- Grand Magister's Staff of Torrents
+            [17] = 34179,  -- Heart of the Pit
+            [18] = 34347,  -- Wand of the Demonsoul
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Priest Holy Healer — Wowhead TBC Classic BIS guides
+    ---------------------------------------------------------------------------
+
+    PRIEST_HOLY_PRERAID = {
+        name = "Priest Holy Pre-Raid BIS",
+        spec = "PRIEST_HOLY",
+        items = {
+            [1]  = 32090,  -- Cowl of Naaru Blessings
+            [2]  = 30377,  -- Karja's Medallion
+            [3]  = 21874,  -- Primal Mooncloth Shoulders
+            [5]  = 21875,  -- Primal Mooncloth Robe
+            [6]  = 21873,  -- Primal Mooncloth Belt
+            [7]  = 24261,  -- Whitemend Pants
+            [8]  = 29251,  -- Boots of the Pious
+            [9]  = 29183,  -- Bindings of the Timewalker
+            [10] = 27536,  -- Hallowed Handwraps
+            [11] = 29373,  -- Band of Halos
+            [12] = 29168,  -- Ancestral Band
+            [13] = 29376,  -- Essence of the Martyr
+            [14] = 21625,  -- Scarab Brooch
+            [15] = 29354,  -- Light-Touched Stole of Altruism
+            [16] = 23556,  -- Hand of Eternity
+            [17] = 29170,  -- Windcaller's Orb
+            [18] = 27885,  -- Soul-Wand of the Aldor
+        },
+    },
+
+    PRIEST_HOLY_P1 = {
+        name = "Priest Holy Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "PRIEST_HOLY",
+        items = {
+            [1]  = 29049,  -- Light-Collar of the Incarnate
+            [2]  = 30726,  -- Archaic Charm of Presence
+            [3]  = 21874,  -- Primal Mooncloth Shoulders
+            [5]  = 21875,  -- Primal Mooncloth Robe
+            [6]  = 21873,  -- Primal Mooncloth Belt
+            [7]  = 30727,  -- Gilded Trousers of Benediction
+            [8]  = 28663,  -- Boots of the Incorrupt
+            [9]  = 29183,  -- Bindings of the Timewalker
+            [10] = 28508,  -- Gloves of Saintly Blessings
+            [11] = 30736,  -- Ring of Flowing Light
+            [12] = 29290,  -- Violet Signet of the Grand Restorer
+            [13] = 29376,  -- Essence of the Martyr
+            [14] = 28823,  -- Eye of Gruul
+            [15] = 28765,  -- Stainless Cloak of the Pure Hearted
+            [16] = 28771,  -- Light's Justice
+            [17] = 29170,  -- Windcaller's Orb
+            [18] = 28588,  -- Blue Diamond Witchwand
+        },
+    },
+
+    PRIEST_HOLY_P2 = {
+        name = "Priest Holy Phase 2 BIS (SSC/TK)",
+        spec = "PRIEST_HOLY",
+        items = {
+            [1]  = 30152,  -- Cowl of the Avatar
+            [2]  = 30018,  -- Lord Sanguinar's Claim
+            [3]  = 30154,  -- Mantle of the Avatar
+            [5]  = 30150,  -- Vestments of the Avatar
+            [6]  = 30036,  -- Belt of the Long Road
+            [7]  = 30153,  -- Breeches of the Avatar
+            [8]  = 30100,  -- Soul-Strider Boots
+            [9]  = 32980,  -- Veteran's Mooncloth Cuffs
+            [10] = 30151,  -- Gloves of the Avatar
+            [11] = 30110,  -- Coral Band of the Revived
+            [12] = 29290,  -- Violet Signet of the Grand Restorer
+            [13] = 29376,  -- Essence of the Martyr
+            [14] = 28823,  -- Eye of Gruul
+            [15] = 29989,  -- Sunshower Light Cloak
+            [16] = 30108,  -- Lightfathom Scepter
+            [17] = 29923,  -- Talisman of the Sun King
+            [18] = 30080,  -- Luminescent Rod of the Naaru
+        },
+    },
+
+    PRIEST_HOLY_P3 = {
+        name = "Priest Holy Phase 3 BIS (BT/Hyjal)",
+        spec = "PRIEST_HOLY",
+        items = {
+            [1]  = 31063,  -- Cowl of Absolution
+            [2]  = 32370,  -- Nadina's Pendant of Purity
+            [3]  = 31069,  -- Mantle of Absolution
+            [5]  = 31066,  -- Vestments of Absolution
+            [6]  = 30895,  -- Angelista's Sash
+            [7]  = 30912,  -- Leggings of Eternity
+            [8]  = 32609,  -- Boots of the Divine Light
+            [9]  = 32584,  -- Swiftheal Wraps
+            [10] = 31060,  -- Gloves of Absolution
+            [11] = 32528,  -- Blessed Band of Karabor
+            [12] = 29309,  -- Band of the Eternal Restorer
+            [13] = 29376,  -- Essence of the Martyr
+            [14] = 28823,  -- Eye of Gruul
+            [15] = 32524,  -- Shroud of the Highborne
+            [16] = 32500,  -- Crystal Spire of Karabor
+            [17] = 30911,  -- Scepter of Purification
+            [18] = 32363,  -- Naaru-Blessed Life Rod
+        },
+    },
+
+    PRIEST_HOLY_P5 = {
+        name = "Priest Holy Phase 5 BIS (Sunwell)",
+        spec = "PRIEST_HOLY",
+        items = {
+            [1]  = 34339,  -- Cowl of Light's Purity
+            [2]  = 33281,  -- Brooch of Nature's Mercy
+            [3]  = 34202,  -- Shawl of Wonderment
+            [5]  = 34233,  -- Robes of Faltered Light
+            [6]  = 34527,  -- Belt of Absolution
+            [7]  = 34170,  -- Pantaloons of Calming Strife
+            [8]  = 34562,  -- Boots of Absolution
+            [9]  = 34435,  -- Cuffs of Absolution
+            [10] = 34342,  -- Handguards of the Dawn
+            [11] = 32528,  -- Blessed Band of Karabor
+            [12] = 34363,  -- Ring of Flowing Life
+            [13] = 29376,  -- Essence of the Martyr
+            [14] = 19288,  -- Darkmoon Card: Blue Dragon
+            [15] = 32524,  -- Shroud of the Highborne
+            [16] = 34335,  -- Hammer of Sanctification
+            [17] = 34206,  -- Book of Highborne Hymns
+            [18] = 34348,  -- Wand of Cleansing Light
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Hunter (Marksmanship) — Wowhead TBC Classic BIS guides
+    -- https://www.wowhead.com/tbc/guide/classes/hunter/marksmanship/dps-bis-gear-pve-pre-raid
+    -- https://www.wowhead.com/tbc/guide/marksmanship-hunter-dps-karazhan-best-in-slot-gear-burning-crusade-classic-wow
+    -- https://www.wowhead.com/tbc/guide/classes/hunter/marksmanship/dps-bis-gear-pve-phase-2
+    -- https://www.wowhead.com/tbc/guide/marksmanship-hunter-dps-bt-hyjal-phase-3-best-in-slot-gear-burning-crusade
+    -- https://www.wowhead.com/tbc/guide/marksmanship-hunter-dps-swp-phase-5-best-in-slot-gear-burning-crusade
+    ---------------------------------------------------------------------------
+
+    HUNTER_MM_PRERAID = {
+        name = "Hunter MM Pre-Raid BIS",
+        spec = "HUNTER_MM",
+        items = {
+            [1]  = 28275,  -- Beast Lord Helm
+            [2]  = 29381,  -- Choker of Vile Intent
+            [3]  = 27801,  -- Beast Lord Mantle
+            [5]  = 28228,  -- Beast Lord Cuirass
+            [6]  = 29526,  -- Primalstrike Belt
+            [7]  = 27874,  -- Beast Lord Leggings
+            [8]  = 25686,  -- Fel Leather Boots
+            [9]  = 29527,  -- Primalstrike Bracers
+            [10] = 27474,  -- Beast Lord Handguards
+            [11] = 30860,  -- Kaylaan's Signet
+            [12] = 31077,  -- Slayer's Mark of the Redemption
+            [13] = 29383,  -- Bloodlust Brooch
+            [14] = 28288,  -- Abacus of Violent Odds
+            [15] = 24259,  -- Vengeance Wrap
+            [16] = 27846,  -- Claw of the Watcher
+            [17] = 28315,  -- Stormreaver Warblades
+            [18] = 29351,  -- Wrathtide Longbow
+        },
+    },
+
+    HUNTER_MM_P1 = {
+        name = "Hunter MM Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "HUNTER_MM",
+        items = {
+            [1]  = 28275,  -- Beast Lord Helm
+            [2]  = 29381,  -- Choker of Vile Intent
+            [3]  = 27801,  -- Beast Lord Mantle
+            [5]  = 28228,  -- Beast Lord Cuirass
+            [6]  = 28828,  -- Gronn-Stitched Girdle
+            [7]  = 30739,  -- Scaled Greaves of the Marksman
+            [8]  = 28545,  -- Edgewalker Longboots
+            [9]  = 29527,  -- Primalstrike Bracers
+            [10] = 27474,  -- Beast Lord Handguards
+            [11] = 28791,  -- Ring of the Recalcitrant
+            [12] = 28757,  -- Ring of a Thousand Marks
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 29383,  -- Bloodlust Brooch
+            [15] = 24259,  -- Vengeance Wrap
+            [16] = 27903,  -- Sonic Spear
+            [17] = 28315,  -- Stormreaver Warblades
+            [18] = 28772,  -- Sunfury Bow of the Phoenix
+        },
+    },
+
+    HUNTER_MM_P2 = {
+        name = "Hunter MM Phase 2 BIS (SSC/TK)",
+        spec = "HUNTER_MM",
+        items = {
+            [1]  = 30141,  -- Rift Stalker Helm
+            [2]  = 30017,  -- Telonicus's Pendant of Mayhem
+            [3]  = 30143,  -- Rift Stalker Mantle
+            [5]  = 30139,  -- Rift Stalker Hauberk
+            [6]  = 30040,  -- Belt of Deep Shadow
+            [7]  = 29995,  -- Leggings of Murderous Intent
+            [8]  = 30104,  -- Cobra-Lash Boots
+            [9]  = 30091,  -- True-Aim Stalker Bands
+            [10] = 30140,  -- Rift Stalker Gauntlets
+            [11] = 29997,  -- Band of the Ranger-General
+            [12] = 28791,  -- Ring of the Recalcitrant
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 29383,  -- Bloodlust Brooch
+            [15] = 29994,  -- Thalassian Wildercloak
+            [16] = 29993,  -- Twinblade of the Phoenix
+            [17] = 29948,  -- Claw of the Phoenix
+            [18] = 30318,  -- Netherstrand Longbow
+        },
+    },
+
+    -- P3: Wowhead page did not render via WebFetch; gear mirrors BM P3
+    -- (shared tier/phys DPS items) with MM-specific choices from adjacent phases
+    HUNTER_MM_P3 = {
+        name = "Hunter MM Phase 3 BIS (BT/Hyjal)",
+        spec = "HUNTER_MM",
+        items = {
+            [1]  = 31003,  -- Gronnstalker's Helmet
+            [2]  = 32260,  -- Choker of Endless Nightmares
+            [3]  = 31006,  -- Gronnstalker's Spaulders
+            [5]  = 31004,  -- Gronnstalker's Chestguard
+            [6]  = 32346,  -- Boneweave Girdle
+            [7]  = 31005,  -- Gronnstalker's Leggings
+            [8]  = 32510,  -- Softstep Boots of Tracking
+            [9]  = 32324,  -- Insidious Bands
+            [10] = 31001,  -- Gronnstalker's Gloves
+            [11] = 29301,  -- Band of the Eternal Champion
+            [12] = 29997,  -- Band of the Ranger-General
+            [13] = 29383,  -- Bloodlust Brooch
+            [14] = 28830,  -- Dragonspine Trophy
+            [15] = 29994,  -- Thalassian Wildercloak
+            [16] = 32248,  -- Halberd of Desolation
+            [17] = 32946,  -- Claw of Molten Fury
+            [18] = 32336,  -- Black Bow of the Betrayer
+        },
+    },
+
+    HUNTER_MM_P5 = {
+        name = "Hunter MM Phase 5 BIS (Sunwell)",
+        spec = "HUNTER_MM",
+        items = {
+            [1]  = 34333,  -- Coif of Alleria
+            [2]  = 34358,  -- Hard Khorium Choker
+            [3]  = 31006,  -- Gronnstalker's Spaulders
+            [5]  = 34397,  -- Bladed Chaos Tunic
+            [6]  = 34549,  -- Gronnstalker's Belt
+            [7]  = 34188,  -- Leggings of the Immortal Night
+            [8]  = 34570,  -- Gronnstalker's Boots
+            [9]  = 34443,  -- Gronnstalker's Bracers
+            [10] = 34370,  -- Gloves of Immortal Dusk
+            [11] = 34189,  -- Band of Ruinous Delight
+            [12] = 34361,  -- Hard Khorium Band
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 34427,  -- Blackened Naaru Sliver
+            [15] = 34241,  -- Cloak of Unforgivable Sin
+            [16] = 34331,  -- Hand of the Deceiver
+            [17] = 34893,  -- Vanir's Right Fist of Brutality
+            [18] = 34334,  -- Thori'dal, the Stars' Fury
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Hunter (Survival) — Wowhead TBC Classic BIS guides
+    -- https://www.wowhead.com/tbc/guide/classes/hunter/survival/dps-bis-gear-pve-pre-raid
+    -- https://www.wowhead.com/tbc/guide/survival-hunter-dps-karazhan-best-in-slot-gear-burning-crusade-classic-wow
+    -- https://www.wowhead.com/tbc/guide/classes/hunter/survival/dps-bis-gear-pve-phase-2
+    -- https://www.wowhead.com/tbc/guide/survival-hunter-dps-bt-hyjal-phase-3-best-in-slot-gear-burning-crusade
+    -- https://www.wowhead.com/tbc/guide/survival-hunter-dps-swp-phase-5-best-in-slot-gear-burning-crusade
+    ---------------------------------------------------------------------------
+
+    HUNTER_SURV_PRERAID = {
+        name = "Hunter Surv Pre-Raid BIS",
+        spec = "HUNTER_SURV",
+        items = {
+            [1]  = 28275,  -- Beast Lord Helm
+            [2]  = 28343,  -- Jagged Bark Pendant
+            [3]  = 27801,  -- Beast Lord Mantle
+            [5]  = 28228,  -- Beast Lord Cuirass
+            [6]  = 27760,  -- Dunewind Sash
+            [7]  = 27837,  -- Wastewalker Leggings
+            [8]  = 29262,  -- Boots of the Endless Hunt
+            [9]  = 25697,  -- Felstalker Bracers
+            [10] = 27474,  -- Beast Lord Handguards
+            [11] = 31326,  -- Truestrike Ring
+            [12] = 22961,  -- Band of Reanimation
+            [13] = 29383,  -- Bloodlust Brooch
+            [14] = 28034,  -- Hourglass of the Unraveller
+            [15] = 29382,  -- Blood Knight War Cloak
+            [16] = 28263,  -- Stellaris
+            [17] = 28263,  -- Stellaris
+            [18] = 29351,  -- Wrathtide Longbow
+        },
+    },
+
+    HUNTER_SURV_P1 = {
+        name = "Hunter Surv Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "HUNTER_SURV",
+        items = {
+            [1]  = 28275,  -- Beast Lord Helm
+            [2]  = 28343,  -- Jagged Bark Pendant
+            [3]  = 27801,  -- Beast Lord Mantle
+            [5]  = 28228,  -- Beast Lord Cuirass
+            [6]  = 30677,  -- Lurker's Belt
+            [7]  = 30739,  -- Scaled Greaves of the Marksman
+            [8]  = 30682,  -- Glider's Sabatons
+            [9]  = 30686,  -- Ravager's Bands
+            [10] = 27474,  -- Beast Lord Handguards
+            [11] = 28791,  -- Ring of the Recalcitrant
+            [12] = 31277,  -- Pathfinder's Band
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 29383,  -- Bloodlust Brooch
+            [15] = 28672,  -- Drape of the Dark Reavers
+            [16] = 28587,  -- Legacy
+            [17] = 28846,  -- Claw of the Watcher
+            [18] = 28772,  -- Sunfury Bow of the Phoenix
+        },
+    },
+
+    HUNTER_SURV_P2 = {
+        name = "Hunter Surv Phase 2 BIS (SSC/TK)",
+        spec = "HUNTER_SURV",
+        items = {
+            [1]  = 30141,  -- Rift Stalker Helm
+            [2]  = 30017,  -- Telonicus's Pendant of Mayhem
+            [3]  = 30143,  -- Rift Stalker Mantle
+            [5]  = 30139,  -- Rift Stalker Hauberk
+            [6]  = 30040,  -- Belt of Deep Shadow
+            [7]  = 30142,  -- Rift Stalker Leggings
+            [8]  = 30104,  -- Cobra-Lash Boots
+            [9]  = 29966,  -- Vambraces of Ending
+            [10] = 28506,  -- Gloves of Dexterous Manipulation
+            [11] = 28791,  -- Ring of the Recalcitrant
+            [12] = 29298,  -- Band of Eternity
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 29383,  -- Bloodlust Brooch
+            [15] = 29994,  -- Thalassian Wildercloak
+            [16] = 29924,  -- Netherbane
+            [17] = 29948,  -- Claw of the Phoenix
+            [18] = 30105,  -- Serpent Spine Longbow
+        },
+    },
+
+    HUNTER_SURV_P3 = {
+        name = "Hunter Surv Phase 3 BIS (BT/Hyjal)",
+        spec = "HUNTER_SURV",
+        items = {
+            [1]  = 31003,  -- Gronnstalker's Helmet
+            [2]  = 30017,  -- Telonicus's Pendant of Mayhem
+            [3]  = 31006,  -- Gronnstalker's Spaulders
+            [5]  = 31004,  -- Gronnstalker's Chestguard
+            [6]  = 30879,  -- Don Alejandro's Money Belt
+            [7]  = 31005,  -- Gronnstalker's Leggings
+            [8]  = 32366,  -- Shadowmaster's Boots
+            [9]  = 32324,  -- Insidious Bands
+            [10] = 31001,  -- Gronnstalker's Gloves
+            [11] = 32497,  -- Stormrage Signet Ring
+            [12] = 28791,  -- Ring of the Recalcitrant
+            [13] = 32505,  -- Madness of the Betrayer
+            [14] = 29383,  -- Bloodlust Brooch
+            [15] = 29994,  -- Thalassian Wildercloak
+            [16] = 32248,  -- Halberd of Desolation
+            [17] = 29948,  -- Claw of the Phoenix
+            [18] = 30906,  -- Bristleblitz Striker
+        },
+    },
+
+    HUNTER_SURV_P5 = {
+        name = "Hunter Surv Phase 5 BIS (Sunwell)",
+        spec = "HUNTER_SURV",
+        items = {
+            [1]  = 34333,  -- Coif of Alleria
+            [2]  = 34177,  -- Clutch of Demise
+            [3]  = 31006,  -- Gronnstalker's Spaulders
+            [5]  = 34397,  -- Bladed Chaos Tunic
+            [6]  = 34549,  -- Gronnstalker's Belt
+            [7]  = 34188,  -- Leggings of the Immortal Night
+            [8]  = 34570,  -- Gronnstalker's Boots
+            [9]  = 34443,  -- Gronnstalker's Bracers
+            [10] = 34343,  -- Thalassian Ranger Gauntlets
+            [11] = 34361,  -- Hard Khorium Band
+            [12] = 34887,  -- Angelista's Revenge
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 34427,  -- Blackened Naaru Sliver
+            [15] = 34241,  -- Cloak of Unforgivable Sin
+            [16] = 34331,  -- Hand of the Deceiver
+            [17] = 34893,  -- Vanir's Right Fist of Brutality
+            [18] = 34334,  -- Thori'dal, the Stars' Fury
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- Rogue (Assassination/Mutilate) — Wowhead TBC Classic BIS guides
+    -- Wowhead TBC guides are generic "Rogue DPS" (not spec-specific).
+    -- Assassination uses daggers; armor/jewelry/trinkets shared with Combat.
+    -- https://www.wowhead.com/tbc/guide/classes/rogue/dps-bis-gear-pve-pre-raid
+    -- https://www.wowhead.com/tbc/guide/rogue-dps-karazhan-best-in-slot-gear-burning-crusade-classic-wow
+    -- https://www.wowhead.com/tbc/guide/classes/rogue/dps-bis-gear-pve-phase-2
+    -- https://www.wowhead.com/tbc/guide/rogue-dps-bt-hyjal-phase-3-best-in-slot-gear-burning-crusade
+    -- https://www.wowhead.com/tbc/guide/rogue-dps-swp-phase-5-best-in-slot-gear-burning-crusade
+    ---------------------------------------------------------------------------
+
+    ROGUE_ASSASSIN_PRERAID = {
+        name = "Rogue Assassination Pre-Raid BIS",
+        spec = "ROGUE_ASSASSIN",
+        items = {
+            [1]  = 28224,  -- Wastewalker Helm
+            [2]  = 29381,  -- Choker of Vile Intent
+            [3]  = 27797,  -- Wastewalker Shoulderpads
+            [5]  = 28264,  -- Wastewalker Tunic
+            [6]  = 29247,  -- Girdle of the Deathdealer
+            [7]  = 27837,  -- Wastewalker Leggings
+            [8]  = 25686,  -- Fel Leather Boots
+            [9]  = 29246,  -- Nightfall Wristguards
+            [10] = 25685,  -- Fel Leather Gloves
+            [11] = 31920,  -- Shaffar's Band of Brutality
+            [12] = 30834,  -- Shapeshifter's Signet
+            [13] = 23206,  -- Mark of the Champion
+            [14] = 29383,  -- Bloodlust Brooch
+            [15] = 24259,  -- Vengeance Wrap
+            [16] = 29185,  -- Nethershard (dagger MH)
+            [17] = 32660,  -- Retainer's Blade (dagger OH)
+            [18] = 29152,  -- Marksman's Bow
+        },
+    },
+
+    ROGUE_ASSASSIN_P1 = {
+        name = "Rogue Assassination Phase 1 BIS (Kara/Gruul/Mag)",
+        spec = "ROGUE_ASSASSIN",
+        items = {
+            [1]  = 29044,  -- Netherblade Facemask
+            [2]  = 29381,  -- Choker of Vile Intent
+            [3]  = 27797,  -- Wastewalker Shoulderpads
+            [5]  = 29045,  -- Netherblade Chestpiece
+            [6]  = 29247,  -- Girdle of the Deathdealer
+            [7]  = 28741,  -- Skulker's Greaves
+            [8]  = 28545,  -- Edgewalker Longboots
+            [9]  = 29246,  -- Nightfall Wristguards
+            [10] = 27531,  -- Wastewalker Gloves
+            [11] = 28757,  -- Ring of a Thousand Marks
+            [12] = 28649,  -- Garona's Signet Ring
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 23206,  -- Mark of the Champion
+            [15] = 28672,  -- Drape of the Dark Reavers
+            [16] = 28768,  -- Malchazeen (dagger MH)
+            [17] = 28729,  -- Spiteblade (dagger OH)
+            [18] = 29151,  -- Veteran's Musket
+        },
+    },
+
+    ROGUE_ASSASSIN_P2 = {
+        name = "Rogue Assassination Phase 2 BIS (SSC/TK)",
+        spec = "ROGUE_ASSASSIN",
+        items = {
+            [1]  = 30146,  -- Deathmantle Helm
+            [2]  = 29381,  -- Choker of Vile Intent
+            [3]  = 30149,  -- Deathmantle Shoulderpads
+            [5]  = 30101,  -- Bloodsea Brigand's Vest
+            [6]  = 30106,  -- Belt of One-Hundred Deaths
+            [7]  = 30148,  -- Deathmantle Legguards
+            [8]  = 28545,  -- Edgewalker Longboots
+            [9]  = 29966,  -- Vambraces of Ending
+            [10] = 30145,  -- Deathmantle Handguards
+            [11] = 30052,  -- Ring of Lethality
+            [12] = 29997,  -- Band of the Ranger-General
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 30450,  -- Warp-Spring Coil
+            [15] = 28672,  -- Drape of the Dark Reavers
+            [16] = 30311,  -- Warp Slicer (dagger MH)
+            [17] = 29948,  -- Claw of the Phoenix (dagger OH)
+            [18] = 29949,  -- Arcanite Steam-Pistol
+        },
+    },
+
+    ROGUE_ASSASSIN_P3 = {
+        name = "Rogue Assassination Phase 3 BIS (BT/Hyjal)",
+        spec = "ROGUE_ASSASSIN",
+        items = {
+            [1]  = 32235,  -- Cursed Vision of Sargeras
+            [2]  = 32260,  -- Choker of Endless Nightmares
+            [3]  = 31030,  -- Slayer's Shoulderpads
+            [5]  = 31028,  -- Slayer's Chestguard
+            [6]  = 30106,  -- Belt of One-Hundred Deaths
+            [7]  = 31029,  -- Slayer's Legguards
+            [8]  = 32366,  -- Shadowmaster's Boots
+            [9]  = 32324,  -- Insidious Bands
+            [10] = 31026,  -- Slayer's Handguards
+            [11] = 32497,  -- Stormrage Signet Ring
+            [12] = 29301,  -- Band of the Eternal Champion
+            [13] = 28830,  -- Dragonspine Trophy
+            [14] = 30450,  -- Warp-Spring Coil
+            [15] = 32323,  -- Shadowmoon Destroyer's Drape
+            [16] = 32526,  -- Tracker's Blade (dagger MH)
+            [17] = 32526,  -- Tracker's Blade (dagger OH)
+            [18] = 29949,  -- Arcanite Steam-Pistol
+        },
+    },
+
+    ROGUE_ASSASSIN_P5 = {
+        name = "Rogue Assassination Phase 5 BIS (Sunwell)",
+        spec = "ROGUE_ASSASSIN",
+        items = {
+            [1]  = 34244,  -- Duplicitous Guise
+            [2]  = 34358,  -- Hard Khorium Choker
+            [3]  = 31030,  -- Slayer's Shoulderpads
+            [5]  = 34397,  -- Bladed Chaos Tunic
+            [6]  = 34558,  -- Slayer's Belt
+            [7]  = 34188,  -- Leggings of the Immortal Night
+            [8]  = 34575,  -- Slayer's Boots
+            [9]  = 34448,  -- Slayer's Bracers
+            [10] = 34370,  -- Gloves of Immortal Dusk
+            [11] = 32497,  -- Stormrage Signet Ring
+            [12] = 34189,  -- Band of Ruinous Delight
+            [13] = 34427,  -- Blackened Naaru Sliver
+            [14] = 28830,  -- Dragonspine Trophy
+            [15] = 34241,  -- Cloak of Unforgivable Sin
+            [16] = 34329,  -- Crux of the Apocalypse (dagger MH)
+            [17] = 34165,  -- Fang of Kalecgos (dagger OH)
+            [18] = 34196,  -- Golden Bow of Quel'Thalas
         },
     },
 }
