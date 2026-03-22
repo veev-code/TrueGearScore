@@ -386,10 +386,18 @@ function M:DetectInspectSpec(unit, guid)
     -- Try LibClassicInspector first (TacoTip bundles it, most reliable)
     local CI = LibStub and LibStub:GetLibrary("LibClassicInspector", true)
     if CI and CI.GetSpecialization and CI.GetTalentPoints then
-        -- Check both talent groups (dual spec). LCI may report the inactive spec
-        -- as "active" in Anniversary Edition. We try both and let the gear decide.
         local specMap = C.SPEC_MAP[class]
         if specMap then
+            -- Log everything LCI knows about this player's talents
+            local activeGroup = CI.GetActiveTalentGroup and CI:GetActiveTalentGroup(guid)
+            local p1, p2, p3 = CI:GetTalentPoints(guid, 1)
+            local p1b, p2b, p3b = CI:GetTalentPoints(guid, 2)
+            addon:Log("DIAG", "InspectHandler: LCI data for " .. class
+                .. " activeGroup=" .. tostring(activeGroup)
+                .. " group1=" .. tostring(p1) .. "/" .. tostring(p2) .. "/" .. tostring(p3)
+                .. " group2=" .. tostring(p1b) .. "/" .. tostring(p2b) .. "/" .. tostring(p3b))
+
+            -- Check both talent groups (dual spec)
             local specs = {}
             for group = 1, 2 do
                 local specIndex = CI:GetSpecialization(guid, group)
@@ -403,13 +411,11 @@ function M:DetectInspectSpec(unit, guid)
             end
 
             if #specs == 1 then
-                -- Both groups have same spec (or only one group exists)
                 addon:Log("DIAG", "InspectHandler: Spec via LCI: " .. specs[1])
                 return specs[1]
             elseif #specs >= 2 then
-                -- Dual spec with different specs — return both and let caller pick
-                -- Store the candidates; the scoring pipeline will try both and use higher
-                addon:Log("DIAG", "InspectHandler: Dual spec detected: " .. specs[1] .. " / " .. specs[2] .. " — gear will decide")
+                -- Dual spec with different specs — store both, gear decides via cross-role
+                addon:Log("DIAG", "InspectHandler: Dual spec detected: " .. specs[1] .. " / " .. specs[2])
                 self._dualSpecCandidates = specs
                 return specs[1]  -- Return first; ScoreCharacter handles dual-spec via gear matching
             end
