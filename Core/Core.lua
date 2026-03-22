@@ -253,15 +253,17 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1, ...)
             end
         end)
 
-        -- Auto-calibrate SPEC_SCALE from reference BIS sets on every login.
-        -- Items need caching time, so run with delay + retry.
-        -- Results logged to SavedVariables (requires /tgs debug to see in chat).
-        C_Timer.After(5, function()
-            addon.SlashCommands:RunCalibration()
-            C_Timer.After(10, function()
+        -- Auto-calibrate SPEC_SCALE when debug mode is enabled.
+        -- debugMode is persisted in AceDB profile, so this survives sessions.
+        -- Normal users never see calibration output; developers/testers do.
+        if addon.db.profile.debugMode then
+            C_Timer.After(5, function()
                 addon.SlashCommands:RunCalibration()
+                C_Timer.After(10, function()
+                    addon.SlashCommands:RunCalibration()
+                end)
             end)
-        end)
+        end
 
         self:UnregisterEvent("PLAYER_LOGIN")
 
