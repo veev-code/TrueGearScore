@@ -705,7 +705,7 @@ addon.StatWeights.SPEC_SCALE = {
 
     -- Tanks
     ["WARRIOR_PROT"]    = 1.000,  -- P1 base=1750
-    ["PALADIN_PROT"]    = 1.100,  -- estimated
+    ["PALADIN_PROT"]    = 2.100,  -- estimated from real player data (TacoTip 1289, raw ~603)
     ["DRUID_FERAL_BEAR"]= 1.050,  -- estimated
 
     -- Melee DPS
