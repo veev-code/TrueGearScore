@@ -1400,5 +1400,9 @@ function addon.StatWeights:GetSpecPvPWeights(specKey)
 end
 
 function addon.StatWeights:GetSpecPvPScale(specKey)
-    return self.PVP_SPEC_SCALE[specKey] or 1.0
+    -- Use PvE SPEC_SCALE for PvP too — the scale normalizes cross-class
+    -- stat budgets by armor type, which is the same in PvE and PvP.
+    -- Using 1.0 for PvP makes PvP scores ~3x lower than PvE, so PvE
+    -- always wins the "best mode" comparison even for full PvP gear.
+    return self.SPEC_SCALE[specKey] or 1.0
 end
