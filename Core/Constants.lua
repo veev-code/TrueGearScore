@@ -130,6 +130,13 @@ C.STAT_REVERSE["ITEM_MOD_MANA_REGENERATION"] = "MP5"
 -- Also uses separate spell hit/crit keys from melee hit/crit.
 -- Map ALL variants to canonical names.
 
+-- Primary stats (no-suffix variants)
+C.STAT_REVERSE["ITEM_MOD_STRENGTH"]  = "STRENGTH"
+C.STAT_REVERSE["ITEM_MOD_AGILITY"]   = "AGILITY"
+C.STAT_REVERSE["ITEM_MOD_STAMINA"]   = "STAMINA"
+C.STAT_REVERSE["ITEM_MOD_INTELLECT"] = "INTELLECT"
+C.STAT_REVERSE["ITEM_MOD_SPIRIT"]    = "SPIRIT"
+
 -- Hit rating: melee, spell, and no-suffix variants
 C.STAT_REVERSE["ITEM_MOD_HIT_RATING"] = "HIT_RATING"
 C.STAT_REVERSE["ITEM_MOD_HIT_SPELL_RATING"] = "HIT_RATING"  -- spell hit = same rating at 70
@@ -138,6 +145,10 @@ C.STAT_REVERSE["ITEM_MOD_HIT_SPELL_RATING"] = "HIT_RATING"  -- spell hit = same 
 C.STAT_REVERSE["ITEM_MOD_CRIT_RATING"] = "CRIT_RATING"
 C.STAT_REVERSE["ITEM_MOD_CRIT_SPELL_RATING"] = "CRIT_RATING"  -- spell crit = same rating at 70
 
+-- Haste rating: melee, spell, and no-suffix variants
+C.STAT_REVERSE["ITEM_MOD_HASTE_RATING"] = "HASTE_RATING"
+C.STAT_REVERSE["ITEM_MOD_HASTE_SPELL_RATING"] = "HASTE_RATING"  -- spell haste = same rating at 70
+
 -- Defense, dodge, parry, block, expertise, resilience (no-suffix variants)
 C.STAT_REVERSE["ITEM_MOD_DEFENSE_SKILL_RATING"] = "DEFENSE"
 C.STAT_REVERSE["ITEM_MOD_DODGE_RATING"] = "DODGE"
@@ -145,6 +156,11 @@ C.STAT_REVERSE["ITEM_MOD_PARRY_RATING"] = "PARRY"
 C.STAT_REVERSE["ITEM_MOD_BLOCK_RATING"] = "BLOCK_RATING"
 C.STAT_REVERSE["ITEM_MOD_EXPERTISE_RATING"] = "EXPERTISE"
 C.STAT_REVERSE["ITEM_MOD_RESILIENCE_RATING"] = "RESILIENCE"
+
+-- Attack power, armor pen, block value (no-suffix variants)
+C.STAT_REVERSE["ITEM_MOD_ATTACK_POWER"] = "ATTACK_POWER"
+C.STAT_REVERSE["ITEM_MOD_ARMOR_PENETRATION_RATING"] = "ARMOR_PEN"
+C.STAT_REVERSE["ITEM_MOD_BLOCK_VALUE"] = "BLOCK_VALUE"
 
 -- Spell penetration (no-suffix variant)
 C.STAT_REVERSE["ITEM_MOD_SPELL_PENETRATION"] = "SPELL_PEN"
