@@ -3612,4 +3612,680 @@ addon.ReferenceSets = {
             [18] = 33764,  -- Vengeful Gladiator's Touch of Defeat
         },
     },
+
+    -- Mage Fire S3 PvP BIS
+    -- Same Vengeful Silk set as Frost, separate entry for per-spec calibration
+    MAGE_FIRE_PVP_S3 = {
+        name = "Mage Fire S3 PvP BIS",
+        spec = "MAGE_FIRE",
+        items = {
+            [1]  = 33758,  -- Vengeful Gladiator's Silk Cowl
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33757,  -- Vengeful Gladiator's Silk Amice
+            [5]  = 33760,  -- Vengeful Gladiator's Silk Raiment
+            [6]  = 33912,  -- Vindicator's Silk Belt
+            [7]  = 33761,  -- Vengeful Gladiator's Silk Trousers
+            [8]  = 33914,  -- Vindicator's Silk Footguards
+            [9]  = 33913,  -- Vindicator's Silk Cuffs
+            [10] = 33759,  -- Vengeful Gladiator's Silk Handguards
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28242,  -- Medallion of the Horde (Mage)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33763,  -- Vengeful Gladiator's Spellblade
+            [17] = 33681,  -- Vengeful Gladiator's Endgame
+            [18] = 34066,  -- Vengeful Gladiator's Piercing Touch
+        },
+    },
+
+    -- Mage Arcane S3 PvP BIS
+    -- Same Vengeful Silk set as Frost, separate entry for per-spec calibration
+    MAGE_ARCANE_PVP_S3 = {
+        name = "Mage Arcane S3 PvP BIS",
+        spec = "MAGE_ARCANE",
+        items = {
+            [1]  = 33758,  -- Vengeful Gladiator's Silk Cowl
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33757,  -- Vengeful Gladiator's Silk Amice
+            [5]  = 33760,  -- Vengeful Gladiator's Silk Raiment
+            [6]  = 33912,  -- Vindicator's Silk Belt
+            [7]  = 33761,  -- Vengeful Gladiator's Silk Trousers
+            [8]  = 33914,  -- Vindicator's Silk Footguards
+            [9]  = 33913,  -- Vindicator's Silk Cuffs
+            [10] = 33759,  -- Vengeful Gladiator's Silk Handguards
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28242,  -- Medallion of the Horde (Mage)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33763,  -- Vengeful Gladiator's Spellblade
+            [17] = 33681,  -- Vengeful Gladiator's Endgame
+            [18] = 34066,  -- Vengeful Gladiator's Piercing Touch
+        },
+    },
+
+    -- Warlock Destruction S3 PvP BIS
+    -- Same Vengeful Dreadweave set as Affliction, separate entry for per-spec calibration
+    WARLOCK_DESTRO_PVP_S3 = {
+        name = "Warlock Destro S3 PvP BIS",
+        spec = "WARLOCK_DESTRO",
+        items = {
+            [1]  = 33677,  -- Vengeful Gladiator's Dreadweave Hood
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33679,  -- Vengeful Gladiator's Dreadweave Mantle
+            [5]  = 33680,  -- Vengeful Gladiator's Dreadweave Robe
+            [6]  = 33882,  -- Vindicator's Dreadweave Belt
+            [7]  = 33678,  -- Vengeful Gladiator's Dreadweave Leggings
+            [8]  = 33884,  -- Vindicator's Dreadweave Stalkers
+            [9]  = 33883,  -- Vindicator's Dreadweave Cuffs
+            [10] = 33676,  -- Vengeful Gladiator's Dreadweave Gloves
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28243,  -- Medallion of the Horde (Warlock)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33763,  -- Vengeful Gladiator's Spellblade
+            [17] = 34033,  -- Vengeful Gladiator's Grimoire
+            [18] = 33764,  -- Vengeful Gladiator's Touch of Defeat
+        },
+    },
+
+    -- Warlock Demonology S3 PvP BIS
+    -- Same Vengeful Dreadweave set as Affliction, separate entry for per-spec calibration
+    WARLOCK_DEMO_PVP_S3 = {
+        name = "Warlock Demo S3 PvP BIS",
+        spec = "WARLOCK_DEMO",
+        items = {
+            [1]  = 33677,  -- Vengeful Gladiator's Dreadweave Hood
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33679,  -- Vengeful Gladiator's Dreadweave Mantle
+            [5]  = 33680,  -- Vengeful Gladiator's Dreadweave Robe
+            [6]  = 33882,  -- Vindicator's Dreadweave Belt
+            [7]  = 33678,  -- Vengeful Gladiator's Dreadweave Leggings
+            [8]  = 33884,  -- Vindicator's Dreadweave Stalkers
+            [9]  = 33883,  -- Vindicator's Dreadweave Cuffs
+            [10] = 33676,  -- Vengeful Gladiator's Dreadweave Gloves
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28243,  -- Medallion of the Horde (Warlock)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33763,  -- Vengeful Gladiator's Spellblade
+            [17] = 34033,  -- Vengeful Gladiator's Grimoire
+            [18] = 33764,  -- Vengeful Gladiator's Touch of Defeat
+        },
+    },
+
+    ---------------------------------------------------------------------------
+    -- S3 PvP BIS sets for all remaining specs
+    -- Vengeful Gladiator (Arena S3) + Vindicator's (Honor S3) off-pieces
+    -- Sources: Wowhead TBC Classic, Icy Veins TBC Classic PvP guides
+    ---------------------------------------------------------------------------
+
+    -- Warrior Fury S3 PvP BIS
+    -- Same plate set as Arms, dual-wield weapons
+    WARRIOR_FURY_PVP_S3 = {
+        name = "Warrior Fury S3 PvP BIS",
+        spec = "WARRIOR_FURY",
+        items = {
+            [1]  = 33730,  -- Vengeful Gladiator's Plate Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33732,  -- Vengeful Gladiator's Plate Shoulders
+            [5]  = 33728,  -- Vengeful Gladiator's Plate Chestpiece
+            [6]  = 33811,  -- Vindicator's Plate Belt
+            [7]  = 33731,  -- Vengeful Gladiator's Plate Legguards
+            [8]  = 33812,  -- Vindicator's Plate Greaves
+            [9]  = 33813,  -- Vindicator's Plate Bracers
+            [10] = 33729,  -- Vengeful Gladiator's Plate Gauntlets
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 30344,  -- Medallion of the Horde (Warrior)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33669,  -- Vengeful Gladiator's Cleaver (MH axe)
+            [17] = 33689,  -- Vengeful Gladiator's Hacker (OH axe)
+            [18] = 33765,  -- Vengeful Gladiator's War Edge
+        },
+    },
+
+    -- Warrior Prot S3 PvP BIS
+    -- Plate set with 1H + shield for flag carrying / defensive PvP
+    WARRIOR_PROT_PVP_S3 = {
+        name = "Warrior Prot S3 PvP BIS",
+        spec = "WARRIOR_PROT",
+        items = {
+            [1]  = 33730,  -- Vengeful Gladiator's Plate Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33732,  -- Vengeful Gladiator's Plate Shoulders
+            [5]  = 33728,  -- Vengeful Gladiator's Plate Chestpiece
+            [6]  = 33811,  -- Vindicator's Plate Belt
+            [7]  = 33731,  -- Vengeful Gladiator's Plate Legguards
+            [8]  = 33812,  -- Vindicator's Plate Greaves
+            [9]  = 33813,  -- Vindicator's Plate Bracers
+            [10] = 33729,  -- Vengeful Gladiator's Plate Gauntlets
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 30344,  -- Medallion of the Horde (Warrior)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33669,  -- Vengeful Gladiator's Cleaver (MH axe)
+            [17] = 33755,  -- Vengeful Gladiator's Shield Wall
+            [18] = 33765,  -- Vengeful Gladiator's War Edge
+        },
+    },
+
+    -- Paladin Holy S3 PvP BIS
+    -- Ornamented (healing) set + Vindicator's off-pieces + healing weapons
+    PALADIN_HOLY_PVP_S3 = {
+        name = "Paladin Holy S3 PvP BIS",
+        spec = "PALADIN_HOLY",
+        items = {
+            [1]  = 33724,  -- Vengeful Gladiator's Ornamented Headcover
+            [2]  = 33922,  -- Vindicator's Pendant of Salvation
+            [3]  = 33726,  -- Vengeful Gladiator's Ornamented Spaulders
+            [5]  = 33722,  -- Vengeful Gladiator's Ornamented Chestguard
+            [6]  = 33903,  -- Vindicator's Ornamented Belt
+            [7]  = 33725,  -- Vengeful Gladiator's Ornamented Legplates
+            [8]  = 33905,  -- Vindicator's Ornamented Greaves
+            [9]  = 33904,  -- Vindicator's Ornamented Bracers
+            [10] = 33723,  -- Vengeful Gladiator's Ornamented Gloves
+            [11] = 33918,  -- Vindicator's Band of Salvation
+            [12] = 33064,  -- Veteran's Band of Salvation
+            [13] = 34050,  -- Battlemaster's Perseverance
+            [14] = 28242,  -- Medallion of the Horde (Paladin)
+            [15] = 33333,  -- Kharmaa's Shroud of Hope
+            [16] = 33743,  -- Vengeful Gladiator's Salvation (mace)
+            [17] = 33735,  -- Vengeful Gladiator's Redoubt (shield)
+            [18] = 33938,  -- Vengeful Gladiator's Libram of Fortitude
+        },
+    },
+
+    -- Paladin Prot S3 PvP BIS
+    -- Scaled (tank) set + Vindicator's off-pieces + 1H + shield
+    PALADIN_PROT_PVP_S3 = {
+        name = "Paladin Prot S3 PvP BIS",
+        spec = "PALADIN_PROT",
+        items = {
+            [1]  = 33751,  -- Vengeful Gladiator's Scaled Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33753,  -- Vengeful Gladiator's Scaled Shoulders
+            [5]  = 33749,  -- Vengeful Gladiator's Scaled Chestpiece
+            [6]  = 33909,  -- Vindicator's Scaled Belt
+            [7]  = 33752,  -- Vengeful Gladiator's Scaled Legguards
+            [8]  = 33911,  -- Vindicator's Scaled Greaves
+            [9]  = 33910,  -- Vindicator's Scaled Bracers
+            [10] = 33750,  -- Vengeful Gladiator's Scaled Gauntlets
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 28242,  -- Medallion of the Horde (Paladin)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33662,  -- Vengeful Gladiator's Bonecracker (MH mace)
+            [17] = 33735,  -- Vengeful Gladiator's Redoubt (shield)
+            [18] = 33842,  -- Vengeful Gladiator's Libram of Justice
+        },
+    },
+
+    -- Paladin Ret S3 PvP BIS
+    -- Lamellar (DPS) set + Vindicator's off-pieces + 2H weapon
+    PALADIN_RET_PVP_S3 = {
+        name = "Paladin Ret S3 PvP BIS",
+        spec = "PALADIN_RET",
+        items = {
+            [1]  = 33697,  -- Vengeful Gladiator's Lamellar Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33699,  -- Vengeful Gladiator's Lamellar Shoulders
+            [5]  = 33695,  -- Vengeful Gladiator's Lamellar Chestpiece
+            [6]  = 33888,  -- Vindicator's Lamellar Belt
+            [7]  = 33698,  -- Vengeful Gladiator's Lamellar Legguards
+            [8]  = 33890,  -- Vindicator's Lamellar Greaves
+            [9]  = 33889,  -- Vindicator's Lamellar Bracers
+            [10] = 33696,  -- Vengeful Gladiator's Lamellar Gauntlets
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 28242,  -- Medallion of the Horde (Paladin)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33688,  -- Vengeful Gladiator's Greatsword (2H sword)
+            [18] = 33950,  -- Vengeful Gladiator's Libram of Vengeance
+        },
+    },
+
+    -- Hunter BM S3 PvP BIS
+    -- Chain set + Vindicator's off-pieces + 2H weapon (BM favors melee stat stick)
+    HUNTER_BM_PVP_S3 = {
+        name = "Hunter BM S3 PvP BIS",
+        spec = "HUNTER_BM",
+        items = {
+            [1]  = 33666,  -- Vengeful Gladiator's Chain Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33668,  -- Vengeful Gladiator's Chain Spaulders
+            [5]  = 33664,  -- Vengeful Gladiator's Chain Armor
+            [6]  = 33877,  -- Vindicator's Chain Girdle
+            [7]  = 33667,  -- Vengeful Gladiator's Chain Leggings
+            [8]  = 33878,  -- Vindicator's Chain Sabatons
+            [9]  = 33876,  -- Vindicator's Chain Bracers
+            [10] = 33665,  -- Vengeful Gladiator's Chain Gauntlets
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 28243,  -- Medallion of the Horde (Hunter)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33670,  -- Vengeful Gladiator's Decapitator (2H axe stat stick)
+            [18] = 34529,  -- Vengeful Gladiator's Longbow
+        },
+    },
+
+    -- Hunter MM S3 PvP BIS
+    -- Chain set + Vindicator's off-pieces + 2H weapon
+    HUNTER_MM_PVP_S3 = {
+        name = "Hunter MM S3 PvP BIS",
+        spec = "HUNTER_MM",
+        items = {
+            [1]  = 33666,  -- Vengeful Gladiator's Chain Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33668,  -- Vengeful Gladiator's Chain Spaulders
+            [5]  = 33664,  -- Vengeful Gladiator's Chain Armor
+            [6]  = 33877,  -- Vindicator's Chain Girdle
+            [7]  = 33667,  -- Vengeful Gladiator's Chain Leggings
+            [8]  = 33878,  -- Vindicator's Chain Sabatons
+            [9]  = 33876,  -- Vindicator's Chain Bracers
+            [10] = 33665,  -- Vengeful Gladiator's Chain Gauntlets
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 28243,  -- Medallion of the Horde (Hunter)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33670,  -- Vengeful Gladiator's Decapitator (2H axe stat stick)
+            [18] = 34529,  -- Vengeful Gladiator's Longbow
+        },
+    },
+
+    -- Hunter Surv S3 PvP BIS
+    -- Chain set + Vindicator's off-pieces + 2H weapon
+    HUNTER_SURV_PVP_S3 = {
+        name = "Hunter Surv S3 PvP BIS",
+        spec = "HUNTER_SURV",
+        items = {
+            [1]  = 33666,  -- Vengeful Gladiator's Chain Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33668,  -- Vengeful Gladiator's Chain Spaulders
+            [5]  = 33664,  -- Vengeful Gladiator's Chain Armor
+            [6]  = 33877,  -- Vindicator's Chain Girdle
+            [7]  = 33667,  -- Vengeful Gladiator's Chain Leggings
+            [8]  = 33878,  -- Vindicator's Chain Sabatons
+            [9]  = 33876,  -- Vindicator's Chain Bracers
+            [10] = 33665,  -- Vengeful Gladiator's Chain Gauntlets
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 28243,  -- Medallion of the Horde (Hunter)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33670,  -- Vengeful Gladiator's Decapitator (2H axe stat stick)
+            [18] = 34529,  -- Vengeful Gladiator's Longbow
+        },
+    },
+
+    -- Rogue Combat S3 PvP BIS
+    -- Leather set + Vindicator's off-pieces + sword/fist weapons
+    ROGUE_COMBAT_PVP_S3 = {
+        name = "Rogue Combat S3 PvP BIS",
+        spec = "ROGUE_COMBAT",
+        items = {
+            [1]  = 33701,  -- Vengeful Gladiator's Leather Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33703,  -- Vengeful Gladiator's Leather Spaulders
+            [5]  = 33704,  -- Vengeful Gladiator's Leather Tunic
+            [6]  = 33891,  -- Vindicator's Leather Belt
+            [7]  = 33702,  -- Vengeful Gladiator's Leather Legguards
+            [8]  = 33892,  -- Vindicator's Leather Boots
+            [9]  = 33881,  -- Vindicator's Dragonhide Bracers
+            [10] = 33700,  -- Vengeful Gladiator's Leather Gloves
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 28240,  -- Medallion of the Horde (Rogue)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33762,  -- Vengeful Gladiator's Slicer (MH sword)
+            [17] = 33734,  -- Vengeful Gladiator's Quickblade (OH sword)
+            [18] = 33765,  -- Vengeful Gladiator's War Edge
+        },
+    },
+
+    -- Rogue Assassination S3 PvP BIS
+    -- Leather set + Vindicator's off-pieces + daggers
+    ROGUE_ASSASSIN_PVP_S3 = {
+        name = "Rogue Assassination S3 PvP BIS",
+        spec = "ROGUE_ASSASSIN",
+        items = {
+            [1]  = 33701,  -- Vengeful Gladiator's Leather Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33703,  -- Vengeful Gladiator's Leather Spaulders
+            [5]  = 33704,  -- Vengeful Gladiator's Leather Tunic
+            [6]  = 33891,  -- Vindicator's Leather Belt
+            [7]  = 33702,  -- Vengeful Gladiator's Leather Legguards
+            [8]  = 33892,  -- Vindicator's Leather Boots
+            [9]  = 33881,  -- Vindicator's Dragonhide Bracers
+            [10] = 33700,  -- Vengeful Gladiator's Leather Gloves
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 28240,  -- Medallion of the Horde (Rogue)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33754,  -- Vengeful Gladiator's Shanker (MH dagger)
+            [17] = 33801,  -- Vengeful Gladiator's Mutilator (OH dagger)
+            [18] = 33765,  -- Vengeful Gladiator's War Edge
+        },
+    },
+
+    -- Priest Holy S3 PvP BIS
+    -- Mooncloth (healing) set + Vindicator's off-pieces + healing weapons
+    PRIEST_HOLY_PVP_S3 = {
+        name = "Priest Holy S3 PvP BIS",
+        spec = "PRIEST_HOLY",
+        items = {
+            [1]  = 33718,  -- Vengeful Gladiator's Mooncloth Hood
+            [2]  = 33922,  -- Vindicator's Pendant of Salvation
+            [3]  = 33720,  -- Vengeful Gladiator's Mooncloth Mantle
+            [5]  = 33721,  -- Vengeful Gladiator's Mooncloth Robe
+            [6]  = 33900,  -- Vindicator's Mooncloth Belt
+            [7]  = 33719,  -- Vengeful Gladiator's Mooncloth Leggings
+            [8]  = 33902,  -- Vindicator's Mooncloth Slippers
+            [9]  = 33901,  -- Vindicator's Mooncloth Cuffs
+            [10] = 33717,  -- Vengeful Gladiator's Mooncloth Gloves
+            [11] = 33918,  -- Vindicator's Band of Salvation
+            [12] = 33064,  -- Veteran's Band of Salvation
+            [13] = 34050,  -- Battlemaster's Perseverance
+            [14] = 28240,  -- Medallion of the Horde (Priest)
+            [15] = 33333,  -- Kharmaa's Shroud of Hope
+            [16] = 33743,  -- Vengeful Gladiator's Salvation (mace)
+            [17] = 33736,  -- Vengeful Gladiator's Reprieve (offhand)
+            [18] = 34059,  -- Vengeful Gladiator's Baton of Light (wand)
+        },
+    },
+
+    -- Priest Shadow S3 PvP BIS
+    -- Satin (DPS) set + Vindicator's Silk off-pieces + caster weapons
+    PRIEST_SHADOW_PVP_S3 = {
+        name = "Priest Shadow S3 PvP BIS",
+        spec = "PRIEST_SHADOW",
+        items = {
+            [1]  = 33745,  -- Vengeful Gladiator's Satin Hood
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33747,  -- Vengeful Gladiator's Satin Mantle
+            [5]  = 33748,  -- Vengeful Gladiator's Satin Robe
+            [6]  = 33912,  -- Vindicator's Silk Belt
+            [7]  = 33746,  -- Vengeful Gladiator's Satin Leggings
+            [8]  = 33914,  -- Vindicator's Silk Footguards
+            [9]  = 33913,  -- Vindicator's Silk Cuffs
+            [10] = 33744,  -- Vengeful Gladiator's Satin Gloves
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28240,  -- Medallion of the Horde (Priest)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33763,  -- Vengeful Gladiator's Spellblade
+            [17] = 33681,  -- Vengeful Gladiator's Endgame
+            [18] = 34066,  -- Vengeful Gladiator's Piercing Touch (wand)
+        },
+    },
+
+    -- Shaman Elemental S3 PvP BIS
+    -- Mail (caster) set + Vindicator's Mail off-pieces + caster weapons
+    SHAMAN_ELE_PVP_S3 = {
+        name = "Shaman Elemental S3 PvP BIS",
+        spec = "SHAMAN_ELE",
+        items = {
+            [1]  = 33713,  -- Vengeful Gladiator's Mail Helm
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33715,  -- Vengeful Gladiator's Mail Spaulders
+            [5]  = 33711,  -- Vengeful Gladiator's Mail Armor
+            [6]  = 33898,  -- Vindicator's Mail Girdle
+            [7]  = 33714,  -- Vengeful Gladiator's Mail Leggings
+            [8]  = 33899,  -- Vindicator's Mail Sabatons
+            [9]  = 33897,  -- Vindicator's Mail Bracers
+            [10] = 33712,  -- Vengeful Gladiator's Mail Gauntlets
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 30345,  -- Medallion of the Horde (Shaman)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33687,  -- Vengeful Gladiator's Gavel (caster mace)
+            [17] = 33661,  -- Vengeful Gladiator's Barrier (shield)
+            [18] = 33953,  -- Vengeful Gladiator's Totem of Survival
+        },
+    },
+
+    -- Shaman Enhancement S3 PvP BIS
+    -- Linked (melee) set + Vindicator's Linked off-pieces + dual-wield weapons
+    SHAMAN_ENH_PVP_S3 = {
+        name = "Shaman Enhancement S3 PvP BIS",
+        spec = "SHAMAN_ENH",
+        items = {
+            [1]  = 33708,  -- Vengeful Gladiator's Linked Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33710,  -- Vengeful Gladiator's Linked Spaulders
+            [5]  = 33706,  -- Vengeful Gladiator's Linked Armor
+            [6]  = 33895,  -- Vindicator's Linked Girdle
+            [7]  = 33709,  -- Vengeful Gladiator's Linked Leggings
+            [8]  = 33896,  -- Vindicator's Linked Sabatons
+            [9]  = 33894,  -- Vindicator's Linked Bracers
+            [10] = 33707,  -- Vengeful Gladiator's Linked Gauntlets
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 30345,  -- Medallion of the Horde (Shaman)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33737,  -- Vengeful Gladiator's Right Ripper (MH fist)
+            [17] = 33705,  -- Vengeful Gladiator's Left Ripper (OH fist)
+            [18] = 33941,  -- Vengeful Gladiator's Totem of Indomitability
+        },
+    },
+
+    -- Shaman Resto S3 PvP BIS
+    -- Ringmail (healing) set + Vindicator's Ringmail off-pieces + healing weapons
+    SHAMAN_RESTO_PVP_S3 = {
+        name = "Shaman Resto S3 PvP BIS",
+        spec = "SHAMAN_RESTO",
+        items = {
+            [1]  = 33740,  -- Vengeful Gladiator's Ringmail Helm
+            [2]  = 33922,  -- Vindicator's Pendant of Salvation
+            [3]  = 33742,  -- Vengeful Gladiator's Ringmail Spaulders
+            [5]  = 33738,  -- Vengeful Gladiator's Ringmail Armor
+            [6]  = 33907,  -- Vindicator's Ringmail Girdle
+            [7]  = 33741,  -- Vengeful Gladiator's Ringmail Leggings
+            [8]  = 33908,  -- Vindicator's Ringmail Sabatons
+            [9]  = 33906,  -- Vindicator's Ringmail Bracers
+            [10] = 33739,  -- Vengeful Gladiator's Ringmail Gauntlets
+            [11] = 33918,  -- Vindicator's Band of Salvation
+            [12] = 33064,  -- Veteran's Band of Salvation
+            [13] = 34050,  -- Battlemaster's Perseverance
+            [14] = 30345,  -- Medallion of the Horde (Shaman)
+            [15] = 33333,  -- Kharmaa's Shroud of Hope
+            [16] = 33687,  -- Vengeful Gladiator's Gavel (caster mace)
+            [17] = 33661,  -- Vengeful Gladiator's Barrier (shield)
+            [18] = 33843,  -- Vengeful Gladiator's Totem of the Third Wind
+        },
+    },
+
+    -- Mage Fire S3 PvP BIS
+    -- Same Silk set as Frost, same gear
+    MAGE_FIRE_PVP_S3 = {
+        name = "Mage Fire S3 PvP BIS",
+        spec = "MAGE_FIRE",
+        items = {
+            [1]  = 33758,  -- Vengeful Gladiator's Silk Cowl
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33757,  -- Vengeful Gladiator's Silk Amice
+            [5]  = 33760,  -- Vengeful Gladiator's Silk Raiment
+            [6]  = 33912,  -- Vindicator's Silk Belt
+            [7]  = 33761,  -- Vengeful Gladiator's Silk Trousers
+            [8]  = 33914,  -- Vindicator's Silk Footguards
+            [9]  = 33913,  -- Vindicator's Silk Cuffs
+            [10] = 33759,  -- Vengeful Gladiator's Silk Handguards
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28239,  -- Medallion of the Horde (Mage)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33763,  -- Vengeful Gladiator's Spellblade
+            [17] = 33681,  -- Vengeful Gladiator's Endgame
+            [18] = 34066,  -- Vengeful Gladiator's Piercing Touch
+        },
+    },
+
+    -- Mage Arcane S3 PvP BIS
+    -- Same Silk set as Frost, same gear
+    MAGE_ARCANE_PVP_S3 = {
+        name = "Mage Arcane S3 PvP BIS",
+        spec = "MAGE_ARCANE",
+        items = {
+            [1]  = 33758,  -- Vengeful Gladiator's Silk Cowl
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33757,  -- Vengeful Gladiator's Silk Amice
+            [5]  = 33760,  -- Vengeful Gladiator's Silk Raiment
+            [6]  = 33912,  -- Vindicator's Silk Belt
+            [7]  = 33761,  -- Vengeful Gladiator's Silk Trousers
+            [8]  = 33914,  -- Vindicator's Silk Footguards
+            [9]  = 33913,  -- Vindicator's Silk Cuffs
+            [10] = 33759,  -- Vengeful Gladiator's Silk Handguards
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28239,  -- Medallion of the Horde (Mage)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33763,  -- Vengeful Gladiator's Spellblade
+            [17] = 33681,  -- Vengeful Gladiator's Endgame
+            [18] = 34066,  -- Vengeful Gladiator's Piercing Touch
+        },
+    },
+
+    -- Warlock Destro S3 PvP BIS
+    -- Same Dreadweave set as Affliction
+    WARLOCK_DESTRO_PVP_S3 = {
+        name = "Warlock Destro S3 PvP BIS",
+        spec = "WARLOCK_DESTRO",
+        items = {
+            [1]  = 33677,  -- Vengeful Gladiator's Dreadweave Hood
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33679,  -- Vengeful Gladiator's Dreadweave Mantle
+            [5]  = 33680,  -- Vengeful Gladiator's Dreadweave Robe
+            [6]  = 33882,  -- Vindicator's Dreadweave Belt
+            [7]  = 33678,  -- Vengeful Gladiator's Dreadweave Leggings
+            [8]  = 33884,  -- Vindicator's Dreadweave Stalkers
+            [9]  = 33883,  -- Vindicator's Dreadweave Cuffs
+            [10] = 33676,  -- Vengeful Gladiator's Dreadweave Gloves
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28243,  -- Medallion of the Horde (Warlock)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33763,  -- Vengeful Gladiator's Spellblade
+            [17] = 34033,  -- Vengeful Gladiator's Grimoire
+            [18] = 33764,  -- Vengeful Gladiator's Touch of Defeat
+        },
+    },
+
+    -- Warlock Demo S3 PvP BIS
+    -- Same Dreadweave set as Affliction
+    WARLOCK_DEMO_PVP_S3 = {
+        name = "Warlock Demo S3 PvP BIS",
+        spec = "WARLOCK_DEMO",
+        items = {
+            [1]  = 33677,  -- Vengeful Gladiator's Dreadweave Hood
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33679,  -- Vengeful Gladiator's Dreadweave Mantle
+            [5]  = 33680,  -- Vengeful Gladiator's Dreadweave Robe
+            [6]  = 33882,  -- Vindicator's Dreadweave Belt
+            [7]  = 33678,  -- Vengeful Gladiator's Dreadweave Leggings
+            [8]  = 33884,  -- Vindicator's Dreadweave Stalkers
+            [9]  = 33883,  -- Vindicator's Dreadweave Cuffs
+            [10] = 33676,  -- Vengeful Gladiator's Dreadweave Gloves
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28243,  -- Medallion of the Horde (Warlock)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33763,  -- Vengeful Gladiator's Spellblade
+            [17] = 34033,  -- Vengeful Gladiator's Grimoire
+            [18] = 33764,  -- Vengeful Gladiator's Touch of Defeat
+        },
+    },
+
+    -- Druid Balance S3 PvP BIS
+    -- Wyrmhide (caster) set + Vindicator's Wyrmhide off-pieces + caster weapons
+    DRUID_BALANCE_PVP_S3 = {
+        name = "Druid Balance S3 PvP BIS",
+        spec = "DRUID_BALANCE",
+        items = {
+            [1]  = 33768,  -- Vengeful Gladiator's Wyrmhide Helm
+            [2]  = 33921,  -- Vindicator's Pendant of Dominance
+            [3]  = 33770,  -- Vengeful Gladiator's Wyrmhide Spaulders
+            [5]  = 33771,  -- Vengeful Gladiator's Wyrmhide Tunic
+            [6]  = 33915,  -- Vindicator's Wyrmhide Belt
+            [7]  = 33769,  -- Vengeful Gladiator's Wyrmhide Legguards
+            [8]  = 33916,  -- Vindicator's Wyrmhide Boots
+            [9]  = 33917,  -- Vindicator's Wyrmhide Bracers
+            [10] = 33767,  -- Vengeful Gladiator's Wyrmhide Gloves
+            [11] = 33853,  -- Vindicator's Band of Dominance
+            [12] = 33056,  -- Veteran's Band of Dominance
+            [13] = 34049,  -- Battlemaster's Audacity
+            [14] = 28241,  -- Medallion of the Horde (Druid)
+            [15] = 35321,  -- Cloak of Arcane Alacrity
+            [16] = 33716,  -- Vengeful Gladiator's Staff (2H caster staff)
+            [18] = 33944,  -- Vengeful Gladiator's Idol of Steadfastness
+        },
+    },
+
+    -- Druid Feral S3 PvP BIS
+    -- Dragonhide (melee) set + Vindicator's Dragonhide off-pieces + 2H staff
+    DRUID_FERAL_PVP_S3 = {
+        name = "Druid Feral S3 PvP BIS",
+        spec = "DRUID_FERAL",
+        items = {
+            [1]  = 33672,  -- Vengeful Gladiator's Dragonhide Helm
+            [2]  = 33923,  -- Vindicator's Pendant of Triumph
+            [3]  = 33674,  -- Vengeful Gladiator's Dragonhide Spaulders
+            [5]  = 33675,  -- Vengeful Gladiator's Dragonhide Tunic
+            [6]  = 33879,  -- Vindicator's Dragonhide Belt
+            [7]  = 33673,  -- Vengeful Gladiator's Dragonhide Legguards
+            [8]  = 33880,  -- Vindicator's Dragonhide Boots
+            [9]  = 33881,  -- Vindicator's Dragonhide Bracers
+            [10] = 33671,  -- Vengeful Gladiator's Dragonhide Gloves
+            [11] = 33919,  -- Vindicator's Band of Triumph
+            [12] = 33057,  -- Veteran's Band of Triumph
+            [13] = 34576,  -- Battlemaster's Cruelty
+            [14] = 28241,  -- Medallion of the Horde (Druid)
+            [15] = 33484,  -- Dory's Embrace
+            [16] = 33766,  -- Vengeful Gladiator's War Staff (2H melee staff)
+            [18] = 33947,  -- Vengeful Gladiator's Idol of Resolve
+        },
+    },
+
+    -- Druid Resto S3 PvP BIS
+    -- Kodohide (healing) set + Vindicator's Kodohide off-pieces + healing weapons
+    DRUID_RESTO_PVP_S3 = {
+        name = "Druid Resto S3 PvP BIS",
+        spec = "DRUID_RESTO",
+        items = {
+            [1]  = 33691,  -- Vengeful Gladiator's Kodohide Helm
+            [2]  = 33922,  -- Vindicator's Pendant of Salvation
+            [3]  = 33693,  -- Vengeful Gladiator's Kodohide Spaulders
+            [5]  = 33694,  -- Vengeful Gladiator's Kodohide Tunic
+            [6]  = 33885,  -- Vindicator's Kodohide Belt
+            [7]  = 33692,  -- Vengeful Gladiator's Kodohide Legguards
+            [8]  = 33886,  -- Vindicator's Kodohide Boots
+            [9]  = 33887,  -- Vindicator's Kodohide Bracers
+            [10] = 33690,  -- Vengeful Gladiator's Kodohide Gloves
+            [11] = 33918,  -- Vindicator's Band of Salvation
+            [12] = 33064,  -- Veteran's Band of Salvation
+            [13] = 34050,  -- Battlemaster's Perseverance
+            [14] = 28241,  -- Medallion of the Horde (Druid)
+            [15] = 33333,  -- Kharmaa's Shroud of Hope
+            [16] = 33687,  -- Vengeful Gladiator's Gavel (caster mace)
+            [17] = 33681,  -- Vengeful Gladiator's Endgame (offhand)
+            [18] = 33841,  -- Vengeful Gladiator's Idol of Tenacity
+        },
+    },
 }
