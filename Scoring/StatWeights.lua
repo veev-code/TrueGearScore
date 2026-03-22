@@ -696,41 +696,44 @@ addon.StatWeights.SPEC_SCALE = {
     -- Healers/tanks have low scale (their gear has many weighted stats).
     -- DPS specs have high scale (gear concentrates into fewer stats).
 
+    -- All values from /tgs calibrate with 137 reference BIS sets.
+    -- Calibration target: PRIEST_DISC P1 base = 1750.
+
     -- Healers
     ["PRIEST_DISC"]     = 1.000,  -- P1 base=1750 (anchor)
-    ["PRIEST_HOLY"]     = 1.000,  -- same gear as Disc
+    ["PRIEST_HOLY"]     = 0.946,  -- P1 base=1850
     ["DRUID_RESTO"]     = 0.984,  -- P1 base=1778
     ["PALADIN_HOLY"]    = 1.202,  -- P1 base=1456
     ["SHAMAN_RESTO"]    = 1.312,  -- P1 base=1334
 
     -- Tanks
     ["WARRIOR_PROT"]    = 1.000,  -- P1 base=1750
-    ["PALADIN_PROT"]    = 2.100,  -- estimated from real player data (TacoTip 1289, raw ~603)
-    ["DRUID_FERAL_BEAR"]= 1.050,  -- estimated
+    ["PALADIN_PROT"]    = 0.957,  -- P1 base=1828
+    ["DRUID_FERAL_BEAR"]= 2.091,  -- shares DRUID_FERAL weights; same scale
 
     -- Melee DPS
     ["ROGUE_COMBAT"]    = 3.125,  -- P1 base=560
-    ["ROGUE_ASSASSIN"]  = 3.125,  -- same gear type
-    ["ROGUE_SUBTLETY"]  = 3.125,  -- same gear type
+    ["ROGUE_ASSASSIN"]  = 3.125,  -- P1 items uncached; same gear type as Combat
+    ["ROGUE_SUBTLETY"]  = 3.125,  -- same gear type as Combat
     ["WARRIOR_FURY"]    = 3.043,  -- P1 base=575
-    ["WARRIOR_ARMS"]    = 3.043,  -- same gear type
+    ["WARRIOR_ARMS"]    = 3.076,  -- P1 base=569
     ["PALADIN_RET"]     = 3.165,  -- P1 base=553
     ["SHAMAN_ENH"]      = 3.327,  -- P1 base=526
     ["HUNTER_BM"]       = 2.796,  -- P1 base=626
-    ["HUNTER_MM"]       = 2.796,  -- same gear type
-    ["HUNTER_SURV"]     = 2.796,  -- same gear type
+    ["HUNTER_MM"]       = 2.511,  -- P1 base=697
+    ["HUNTER_SURV"]     = 2.511,  -- P1 items uncached; same gear type as MM
     ["DRUID_FERAL"]     = 2.091,  -- P1 base=837
 
     -- Caster DPS
     ["MAGE_FIRE"]       = 1.581,  -- P1 base=1107
-    ["MAGE_ARCANE"]     = 1.581,  -- same gear type
-    ["MAGE_FROST"]      = 1.581,  -- same gear type
+    ["MAGE_ARCANE"]     = 1.823,  -- P1 base=960
+    ["MAGE_FROST"]      = 1.670,  -- P1 base=1048
     ["DRUID_BALANCE"]   = 1.597,  -- P1 base=1096
     ["WARLOCK_DESTRO"]  = 1.634,  -- P1 base=1071
-    ["WARLOCK_AFFLIC"]  = 1.634,  -- same gear type
-    ["WARLOCK_DEMO"]    = 1.634,  -- same gear type
+    ["WARLOCK_AFFLIC"]  = 1.902,  -- P1 base=920
+    ["WARLOCK_DEMO"]    = 1.823,  -- P1 base=960
     ["SHAMAN_ELE"]      = 2.163,  -- P1 base=809
-    ["PRIEST_SHADOW"]   = 1.600,  -- estimated (caster DPS cloth)
+    ["PRIEST_SHADOW"]   = 1.823,  -- P1 items uncached; similar to Arcane Mage/Demo Lock cloth caster
 }
 
 ---------------------------------------------------------------------------
