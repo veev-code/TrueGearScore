@@ -692,21 +692,18 @@ function addon.ItemScoring:ScoreCharacterBestMode(equippedItems, specKey)
     local bestResult = self:ScoreCharacter(equippedItems, specKey, "pve")
     local bestSpec = specKey
 
-    -- Try ALL specs for this class — the gear might not match the detected spec.
-    -- Example: Holy Paladin wearing Prot gear for off-tanking. Their Holy spec
-    -- scores terribly on tank stats, but PALADIN_PROT weights score correctly.
-    -- The gear self-selects the most appropriate spec.
-    local _, class = nil, nil
-    if specKey then
-        -- Extract class from spec key (e.g., "PALADIN_HOLY" → "PALADIN")
-        class = specKey:match("^([A-Z]+)_")
-    end
+    -- Try other specs for this class ONLY when gear dramatically mismatches
+    -- the detected spec (e.g., Holy Paladin in full Prot gear).
+    -- Threshold: alternative must score 50%+ higher to override.
+    -- This prevents minor weight differences between same-role specs
+    -- (e.g., BM vs Surv Hunter) from inflating scores via higher SPEC_SCALE.
+    local class = specKey and specKey:match("^([A-Z]+)_")
 
     if class and C.SPEC_MAP[class] then
         for _, candidateSpec in ipairs(C.SPEC_MAP[class]) do
             if candidateSpec ~= specKey then
                 local candidateResult = self:ScoreCharacter(equippedItems, candidateSpec, "pve")
-                if type(candidateResult) == "table" and candidateResult.totalScore > bestResult.totalScore then
+                if type(candidateResult) == "table" and candidateResult.totalScore > bestResult.totalScore * 1.5 then
                     bestResult = candidateResult
                     bestSpec = candidateSpec
                 end
@@ -715,7 +712,7 @@ function addon.ItemScoring:ScoreCharacterBestMode(equippedItems, specKey)
     end
 
     if bestSpec ~= specKey then
-        addon:DebugPrint("ScoreCharacterBestMode: Gear chose " .. bestSpec .. " over detected " .. specKey .. " (" .. bestResult.totalScore .. ")")
+        addon:DebugPrint("ScoreCharacterBestMode: Gear override — " .. bestSpec .. " over detected " .. specKey .. " (" .. bestResult.totalScore .. ")")
     end
 
     -- Check PvP mode only if gear has meaningful resilience (≥50 rating ≈ 2+ PvP pieces)
