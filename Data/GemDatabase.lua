@@ -212,17 +212,23 @@ addon.GemDatabase = {
     -- NOT checked — we score metas at full value regardless. Most players who
     -- socket a meta meet the requirements, and the scoring error for inactive
     -- metas is small relative to total gear score.
+    --
+    -- Meta gem SPECIAL EFFECTS are included as equivalent stat values:
+    -- +3% crit damage ≈ +40 crit rating equivalent (varies by spec, using mid-range)
+    -- Mana proc (Insightful) ≈ +18 MP5 equivalent (avg ~500 mana/min at typical proc rate)
+    -- +2% INT (Ember) ≈ +7 INT equivalent (at ~350 INT)
+    -- +5% block value (Eternal) ≈ +10 block value equivalent (at ~200 BV)
 
-    [25896] = { _COLOR = "META", STAMINA = 18 },                                    -- Powerful Earthstorm Diamond (+18 STA)
+    [25896] = { _COLOR = "META", STAMINA = 18 },                                    -- Powerful Earthstorm Diamond (+18 STA, stun resist)
     [25897] = { _COLOR = "META", HEAL_POWER = 26, SPELL_POWER = 9 },                -- Bracing Earthstorm Diamond (+26 heal, +9 SD, -2% threat)
     [25898] = { _COLOR = "META", DEFENSE = 12 },                                    -- Tenacious Earthstorm Diamond (+12 defense, +5% stun resist)
-    [25901] = { _COLOR = "META", INTELLECT = 12 },                                  -- Insightful Earthstorm Diamond (+12 INT, mana proc)
-    [32409] = { _COLOR = "META", AGILITY = 12 },                                    -- Relentless Earthstorm Diamond (+12 AGI, +3% crit dmg)
+    [25901] = { _COLOR = "META", INTELLECT = 12, MP5 = 18 },                        -- Insightful Earthstorm Diamond (+12 INT, mana proc ≈ 18 MP5)
+    [32409] = { _COLOR = "META", AGILITY = 12, CRIT_RATING = 40 },                  -- Relentless Earthstorm Diamond (+12 AGI, +3% crit dmg ≈ 40 crit)
     [25890] = { _COLOR = "META", CRIT_RATING = 14 },                                -- Destructive Skyfire Diamond (+14 spell crit, +1% spell reflect)
     [25894] = { _COLOR = "META", ATTACK_POWER = 24 },                               -- Swift Skyfire Diamond (+24 AP, minor run speed)
-    [34220] = { _COLOR = "META", CRIT_RATING = 12 },                                -- Chaotic Skyfire Diamond (+12 crit, +3% crit dmg)
-    [35501] = { _COLOR = "META", DEFENSE = 12 },                                    -- Eternal Earthstorm Diamond (+12 defense, +5% block value)
-    [35503] = { _COLOR = "META", SPELL_POWER = 14 },                                -- Ember Skyfire Diamond (+14 SD, +2% INT)
+    [34220] = { _COLOR = "META", CRIT_RATING = 52 },                                -- Chaotic Skyfire Diamond (+12 crit + 3% crit dmg ≈ 40 crit = 52 total)
+    [35501] = { _COLOR = "META", DEFENSE = 12, BLOCK_VALUE = 10 },                  -- Eternal Earthstorm Diamond (+12 defense, +5% block value ≈ 10 BV)
+    [35503] = { _COLOR = "META", SPELL_POWER = 14, INTELLECT = 7 },                 -- Ember Skyfire Diamond (+14 SD, +2% INT ≈ 7 INT at 350)
 
     ---------------------------------------------------------------------------
     -- HEROIC DUNGEON BoP EPIC GEMS (unique-equipped)
