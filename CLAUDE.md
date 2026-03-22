@@ -11,6 +11,22 @@ TrueGearScore is a gear score addon for World of Warcraft (TBC Classic / Anniver
 - **Works on everyone**: Scores any player via inspect — no addon required on their end. Addon-to-addon communication provides instant scores without inspect range.
 - **Hardcoded weights**: No user-configurable weights for the main score. Everyone sees the same number for the same gear. Consistent, comparable, no debates.
 
+## Stat Weight Rules (MUST follow)
+
+Stat weights are the foundation of TrueGearScore's accuracy. These rules are non-negotiable:
+
+1. **Data-driven, not guessed.** Every spec's weights MUST be sourced from established community simulations, spreadsheets, or theorycrafting (ClassicSim, WoWSims, Simonize spreadsheet, EnhanceShaman.com, RetSim, Landsoul spreadsheet, Zephan/Leulier warlock spreadsheet, class Discord pins, Elitist Jerks archives). Cite sources in code comments. Never invent weights without a reference.
+
+2. **Cross-spec normalization via SPEC_SCALE.** A Kara-geared mage must score the same as a Kara-geared warrior with equivalent quality gear. This is enforced by `SPEC_SCALE[specKey]` — a per-spec multiplier computed from reference BIS gear sets. Every spec that has a SPEC_SCALE value MUST have a corresponding P1 reference BIS set in `Data/ReferenceSets.lua`. **Never estimate SPEC_SCALE** — always compute it from `/tgs calibrate` with real item data.
+
+3. **Calibration anchor.** PRIEST_DISC P1 BIS base score is the anchor (SPEC_SCALE = 1.000). All other specs' P1 BIS base scores are normalized to match this anchor. The formula: `SPEC_SCALE[spec] = PRIEST_DISC_P1_base / spec_P1_base`.
+
+4. **Reference BIS sets required.** Every spec that appears in SPEC_SCALE must have at least a P1 BIS reference set in `Data/ReferenceSets.lua`. If a spec shares gear with another (e.g., MAGE_ARCANE uses same items as MAGE_FIRE), it can share the scale factor, but this must be documented.
+
+5. **Recalibrate after any change.** When stat weights, stat key mappings, or the scoring pipeline change, ALL SPEC_SCALE values must be recomputed via `/tgs calibrate`. Stale SPEC_SCALE values produce incorrect cross-class comparisons.
+
+6. **Stat key mappings must be exhaustive.** Anniversary Edition uses variant key names from `GetItemStats()` (e.g., `ITEM_MOD_HIT_RATING` without `_SHORT`, `ITEM_MOD_HIT_SPELL_RATING` for spell hit, `ITEM_MOD_MELEE_ATTACK_POWER_SHORT` for melee AP). All variants must be mapped in `Constants.STAT_REVERSE`. Missing mappings silently drop stats and corrupt scores. Run `/tgs statkeys` to audit.
+
 ## Scoring Formula
 
 ```
